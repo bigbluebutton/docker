@@ -70,7 +70,7 @@ sed -i "s/<param name=\"ws-binding\".*/<param name=\"ws-binding\"  value=\"$HOST
 
 sed -i "s/proxy_pass .*/proxy_pass $PROTOCOL_HTTP:\/\/$HOST:5066;/g" /etc/bigbluebutton/nginx/sip.nginx
 
-sed -i "s/porttest host=\(\"[^\"]*\"\)/porttest host=\"$HOST\"/g" /var/www/bigbluebutton/client/conf/config.xml
+sed -i "s/porttest host=\(\"[^\"]*\"\)/porttest host=rtmp://\"$HOST\"/g" /var/www/bigbluebutton/client/conf/config.xml
 sed -i "s/publishURI=\"[^\"]*\"/publishURI=\"$HOST\"/" /var/www/bigbluebutton/client/conf/config.xml
 sed -i "s/http[s]*:\/\/\([^\"\/]*\)\([\"\/]\)/$PROTOCOL_HTTP:\/\/$HOST\2/g"  /var/www/bigbluebutton/client/conf/config.xml
 sed -i "s/rtmp[s]*:\/\/\([^\"\/]*\)\([\"\/]\)/$PROTOCOL_RTMP:\/\/$HOST\2/g" /var/www/bigbluebutton/client/conf/config.xml
