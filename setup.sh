@@ -114,6 +114,15 @@ sed -i "s/deskshareip[ ]*=[ ]*\"[^\"]*\"/deskshareip=\"$HOST\"/g" \
 sed -i  "s/defaultPresentationURL[ ]*=[ ]*\"[^\"]*\"/defaultPresentationURL=\"${PROTOCOL_HTTP}:\/\/$HOST\/default.pdf\"/g" \
   /usr/share/bbb-apps-akka/conf/application.conf
 
+cat > /etc/kurento/modules/kurento/BaseRtpEndpoint.conf.ini << HERE
+minPort=16435
+maxPort=16484
+HERE
+
+sed -i 's/.*stunServerAddress.*/stunServerAddress=64.233.177.127/g' /etc/kurento/modules/kurento/WebRtcEndpoint.conf.ini
+sed -i 's/.*stunServerPort.*/stunServerPort=19302/g' /etc/kurento/modules/kurento/WebRtcEndpoint.conf.ini
+
+
 # Fix to ensure application.conf has the latest shared secret
 SECRET=$(cat /var/lib/tomcat7/webapps/bigbluebutton/WEB-INF/classes/bigbluebutton.properties | grep -v '#' | grep securitySalt | cut -d= -f2);
 sed -i "s/sharedSecret[ ]*=[ ]*\"[^\"]*\"/sharedSecret=\"$SECRET\"/g" \
@@ -134,14 +143,18 @@ rm /usr/share/red5/log/sip.log
 
 # Add a sleep to each recording process so we can restart with supervisord
 sed -i 's/BigBlueButton.logger.debug("rap-archive-worker done")/sleep 20; BigBlueButton.logger.debug("rap-archive-worker done")/g' /usr/local/bigbluebutton/core/scripts/rap-archive-worker.rb
-
 sed -i 's/BigBlueButton.logger.debug("rap-process-worker done")/sleep 20; BigBlueButton.logger.debug("rap-process-worker done")/g' /usr/local/bigbluebutton/core/scripts/rap-process-worker.rb
-
-sed -i 's/BigBlueButton.logger.debug("rap-sanity-worker done")/sleep 20; BigBlueButton.logger.debug("rap-sanity-worker done")/g' /usr/local/bigbluebutton/core/scripts/rap-sanity-worker.rb
-
+sed -i 's/BigBlueButton.logger.debug("rap-sanity-worker done")/sleep 20 ; BigBlueButton.logger.debug("rap-sanity-worker done")/g'  /usr/local/bigbluebutton/core/scripts/rap-sanity-worker.rb
 sed -i 's/BigBlueButton.logger.debug("rap-publish-worker done")/sleep 20; BigBlueButton.logger.debug("rap-publish-worker done")/g' /usr/local/bigbluebutton/core/scripts/rap-publish-worker.rb 
 
 # Start BigBlueButton!
 #
+
+export NODE_ENV=production
+
+export DAEMON_LOG=/var/log/kurento-media-server
+export GST_DEBUG="3,Kurento*:4,kms*:4"
+export KURENTO_LOGS_PATH=$DAEMON_LOG
+
 /usr/bin/supervisord
 

@@ -2,10 +2,10 @@ FROM ubuntu:16.04
 MAINTAINER ffdixon@bigbluebutton.org
 
 ENV DEBIAN_FRONTEND noninteractive
-RUN echo 'Acquire::http::Proxy "http://192.168.0.130:3142   ";'  > /etc/apt/apt.conf.d/01proxy
+# RUN echo 'Acquire::http::Proxy "http://192.168.0.130:3142";'  > /etc/apt/apt.conf.d/01proxy
 RUN apt-get update && apt-get install -y wget
 
-RUN echo "deb http://ubuntu.bigbluebutton.org/xenial-200-dev bigbluebutton-xenial main   " | tee /etc/apt/sources.list.d/bigbluebutton.list
+RUN echo "deb http://ubuntu.bigbluebutton.org/xenial-200 bigbluebutton-xenial main   " | tee /etc/apt/sources.list.d/bigbluebutton.list
 RUN wget http://ubuntu.bigbluebutton.org/repo/bigbluebutton.asc -O- | apt-key add -
 RUN apt-get update && apt-get -y dist-upgrade
 
@@ -55,5 +55,5 @@ ADD mod/event_socket.conf.xml /opt/freeswitch/etc/freeswitch/autoload_configs
 # -- Finish startup
 ADD setup.sh /root/setup.sh
 ENTRYPOINT ["/root/setup.sh"]
-RUN apt-get install -y vim
+# RUN apt-get install -y vim
 CMD []
