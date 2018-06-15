@@ -18,7 +18,7 @@ while getopts "eh:" opt; do
     h)
       HOST=$OPTARG
       ;;
-    e)
+    s)
       SECRET=$OPTARG
       ;;
     :) 
