@@ -97,9 +97,15 @@ sed -i  "s/defaultPresentationURL[ ]*=[ ]*\"[^\"]*\"/defaultPresentationURL=\"${
 	/usr/share/bbb-apps-akka/conf/application.conf
 
 # Fix to ensure application.conf has the latest shared secret
-SECRET=$(cat /var/lib/tomcat7/webapps/bigbluebutton/WEB-INF/classes/bigbluebutton.properties | grep -v '#' | grep securitySalt | cut -d= -f2);
+if [ ! $SECRET]; then
+  SECRET=$(cat /var/lib/tomcat7/webapps/bigbluebutton/WEB-INF/classes/bigbluebutton.properties | grep -v '#' | grep securitySalt | cut -d= -f2);
+fi
+
 sed -i "s/sharedSecret[ ]*=[ ]*\"[^\"]*\"/sharedSecret=\"$SECRET\"/g" \
-	/usr/share/bbb-apps-akka/conf/application.conf
+  /usr/share/bbb-apps-akka/conf/application.conf
+
+change_var_value /var/lib/tomcat7/webapps/bigbluebutton/WEB-INF/classes/bigbluebutton.properties "securitySalt" $SECRET
+
 
 sed -i "s/BigBlueButtonURL = \"http[s]*:\/\/\([^\"\/]*\)\([\"\/]\)/BigBlueButtonURL = \"$PROTOCOL_HTTP:\/\/$HOST\2/g" \
                         /var/lib/tomcat7/webapps/demo/bbb_api_conf.jsp
