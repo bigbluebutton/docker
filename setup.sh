@@ -3,7 +3,7 @@
 #
 # BlueButton open source conferencing system - http://www.bigbluebutton.org/
 #
-# Copyright (c) 2018 BigBlueButton Inc. 
+# Copyright (c) 2018 BigBlueButton Inc.
 #
 # This program is free software; you can redistribute it and/or modify it under the
 # terms of the GNU Lesser General Public License as published by the Free Software
@@ -37,8 +37,8 @@ while getopts "eh:" opt; do
     e)
       SECRET=$OPTARG
       ;;
-    :) 
-      echo "Missing option argument for -$OPTARG" >&2; 
+    :)
+      echo "Missing option argument for -$OPTARG" >&2;
       exit 1
       ;;
     \?)
@@ -74,19 +74,19 @@ PROTOCOL_HTTP=http
 PROTOCOL_RTMP=rtmp
 IP=$(echo "$(LANG=c ifconfig  | awk -v RS="" '{gsub (/\n[ ]*inet /," ")}1' | grep ^et.* | grep addr: | head -n1 | sed 's/.*addr://g' | sed 's/ .*//g')$(LANG=c ifconfig  | awk -v RS="" '{gsub (/\n[ ]*inet /," ")}1' | grep ^en.* | grep addr: | head -n1 | sed 's/.*addr://g' | sed 's/ .*//g')" | head -n1)
 
-sed -i 's/<param name="rtp-start-port" value="[^"]*"\/>/<param name="rtp-start-port" value="16384"\/>/g' \
-  /opt/freeswitch/etc/freeswitch/autoload_configs/switch.conf.xml
-sed -i 's/<param name="rtp-end-port" value="[^"]*"\/>/<param name="rtp-end-port" value="16434"\/>/g' \
-  /opt/freeswitch/etc/freeswitch/autoload_configs/switch.conf.xml
+#sed -i 's/<param name="rtp-start-port" value="[^"]*"\/>/<param name="rtp-start-port" value="16384"\/>/g' \
+#  /opt/freeswitch/etc/freeswitch/autoload_configs/switch.conf.xml
+#sed -i 's/<param name="rtp-end-port" value="[^"]*"\/>/<param name="rtp-end-port" value="16434"\/>/g' \
+#  /opt/freeswitch/etc/freeswitch/autoload_configs/switch.conf.xml
 
 sed -i "s/stun:stun.freeswitch.org/$HOST/g" /opt/freeswitch/etc/freeswitch/vars.xml
 sed -i "s/<X-PRE-PROCESS cmd=\"set\" data=\"local_ip_v4=.*//g" /opt/freeswitch/etc/freeswitch/vars.xml
 
-sed -i "s/ext-rtp-ip\" value=\"\$\${local_ip_v4/ext-rtp-ip\" value=\"\$\${external_rtp_ip/g" /opt/freeswitch/conf/sip_profiles/external.xml
-sed -i "s/ext-sip-ip\" value=\"\$\${local_ip_v4/ext-sip-ip\" value=\"\$\${external_sip_ip/g" /opt/freeswitch/conf/sip_profiles/external.xml
-sed -i "s/<param name=\"ws-binding\".*/<param name=\"ws-binding\"  value=\"$HOST:5066\"\/>/g" /opt/freeswitch/conf/sip_profiles/external.xml
+#sed -i "s/ext-rtp-ip\" value=\"\$\${local_ip_v4/ext-rtp-ip\" value=\"\$\${external_rtp_ip/g" /opt/freeswitch/conf/sip_profiles/external.xml
+#sed -i "s/ext-sip-ip\" value=\"\$\${local_ip_v4/ext-sip-ip\" value=\"\$\${external_sip_ip/g" /opt/freeswitch/conf/sip_profiles/external.xml
+#sed -i "s/<param name=\"ws-binding\".*/<param name=\"ws-binding\"  value=\":5066\"\/>/g" /opt/freeswitch/conf/sip_profiles/external.xml
 
-sed -i "s/proxy_pass .*/proxy_pass $PROTOCOL_HTTP:\/\/$HOST:5066;/g" /etc/bigbluebutton/nginx/sip.nginx
+sed -i "s/proxy_pass .*/proxy_pass $PROTOCOL_HTTP:\/\/$IP:5066;/g" /etc/bigbluebutton/nginx/sip.nginx
 
 #sed -i "s/porttest host=\(\"[^\"]*\"\)/porttest host=\"$HOST\"/g" /var/www/bigbluebutton/client/conf/config.xml
 sed -i "s/publishURI=\"[^\"]*\"/publishURI=\"$HOST\"/" /var/www/bigbluebutton/client/conf/config.xml
@@ -114,13 +114,82 @@ sed -i "s/deskshareip[ ]*=[ ]*\"[^\"]*\"/deskshareip=\"$HOST\"/g" \
 sed -i  "s/defaultPresentationURL[ ]*=[ ]*\"[^\"]*\"/defaultPresentationURL=\"${PROTOCOL_HTTP}:\/\/$HOST\/default.pdf\"/g" \
   /usr/share/bbb-apps-akka/conf/application.conf
 
-cat > /etc/kurento/modules/kurento/BaseRtpEndpoint.conf.ini << HERE
-minPort=16435
-maxPort=16484
-HERE
+#cat > /etc/kurento/modules/kurento/BaseRtpEndpoint.conf.ini << HERE
+#minPort=16435
+#maxPort=16484
+#HERE
 
 sed -i 's/.*stunServerAddress.*/stunServerAddress=64.233.177.127/g' /etc/kurento/modules/kurento/WebRtcEndpoint.conf.ini
 sed -i 's/.*stunServerPort.*/stunServerPort=19302/g' /etc/kurento/modules/kurento/WebRtcEndpoint.conf.ini
+
+echo "denied-peer-ip=0.0.0.0-255.255.255.255" >> /etc/turnserver.conf
+echo "allowed-peer-ip=$IP"                    >> /etc/turnserver.conf
+
+TURN_SECRET=`openssl rand -hex 16`
+
+cat > /etc/turnserver.conf << HERE
+denied-peer-ip=0.0.0.0-255.255.255.255
+allowed-peer-ip=$IP
+fingerprint
+lt-cred-mech
+use-auth-secret
+static-auth-secret=$TURN_SECRET
+HERE
+
+cat > /var/lib/tomcat7/webapps/bigbluebutton/WEB-INF/spring/turn-stun-servers.xml << HERE
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+<bean id="turn0" class="org.bigbluebutton.web.services.turn.TurnServer">
+<constructor-arg index="0"
+value="$TURN_SECRET"/>
+<constructor-arg index="1"
+value="turn:$HOST:3478"/>
+<constructor-arg index="2" value="86400"/>
+        </bean>
+
+        <bean id="turn1" class="org.bigbluebutton.web.services.turn.TurnServer">
+                <constructor-arg index="0"
+value="$TURN_SECRET"/>
+<constructor-arg index="1"
+value="turn:$HOST:3479?transport=tcp"/>
+<constructor-arg index="2" value="86400"/>
+</bean>
+
+<bean id="stunTurnService"
+class="org.bigbluebutton.web.services.turn.StunTurnService">
+<property name="stunServers"><set></set></property>
+<property name="turnServers">
+<set>
+<ref bean="turn0"/>
+<ref bean="turn1"/>
+</set>
+</property>
+<property name="remoteIceCandidates"><set></set></property>
+        </bean>
+</beans>
+HERE
+
+cat > /opt/freeswitch/conf/autoload_configs/acl.conf.xml << HERE
+<configuration name="acl.conf" description="Network Lists">
+  <network-lists>
+    <list name="domains" default="allow">
+      <!-- domain= is special it scans the domain from the directory to build the ACL -->
+      <node type="allow" domain="\$\${domain}"/>
+      <!-- use cidr= if you wish to allow ip ranges to this domains acl. -->
+      <!-- <node type="allow" cidr="192.168.0.0/24"/> -->
+    </list>
+
+    <list name="webrtc-turn" default="deny">
+      <node type="allow" cidr="$IP/32"/>
+    </list>
+
+  </network-lists>
+</configuration>
+HERE
 
 
 # Fix to ensure application.conf has the latest shared secret
@@ -145,7 +214,7 @@ rm /usr/share/red5/log/sip.log
 sed -i 's/BigBlueButton.logger.debug("rap-archive-worker done")/sleep 20; BigBlueButton.logger.debug("rap-archive-worker done")/g' /usr/local/bigbluebutton/core/scripts/rap-archive-worker.rb
 sed -i 's/BigBlueButton.logger.debug("rap-process-worker done")/sleep 20; BigBlueButton.logger.debug("rap-process-worker done")/g' /usr/local/bigbluebutton/core/scripts/rap-process-worker.rb
 sed -i 's/BigBlueButton.logger.debug("rap-sanity-worker done")/sleep 20 ; BigBlueButton.logger.debug("rap-sanity-worker done")/g'  /usr/local/bigbluebutton/core/scripts/rap-sanity-worker.rb
-sed -i 's/BigBlueButton.logger.debug("rap-publish-worker done")/sleep 20; BigBlueButton.logger.debug("rap-publish-worker done")/g' /usr/local/bigbluebutton/core/scripts/rap-publish-worker.rb 
+sed -i 's/BigBlueButton.logger.debug("rap-publish-worker done")/sleep 20; BigBlueButton.logger.debug("rap-publish-worker done")/g' /usr/local/bigbluebutton/core/scripts/rap-publish-worker.rb
 
 # Start BigBlueButton!
 #
@@ -156,5 +225,5 @@ export DAEMON_LOG=/var/log/kurento-media-server
 export GST_DEBUG="3,Kurento*:4,kms*:4"
 export KURENTO_LOGS_PATH=$DAEMON_LOG
 
-/usr/bin/supervisord
+exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
 
