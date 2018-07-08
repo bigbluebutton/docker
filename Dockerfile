@@ -2,11 +2,12 @@ FROM ubuntu:16.04
 MAINTAINER ffdixon@bigbluebutton.org
 
 ENV DEBIAN_FRONTEND noninteractive
-RUN echo 'Acquire::http::Proxy "http://192.168.0.130:3142 ";'  > /etc/apt/apt.conf.d/01proxy
-RUN apt-get update && apt-get install -y wget
+RUN echo 'Acquire::http::Proxy "http://10.0.9.74:3142 ";'  > /etc/apt/apt.conf.d/01proxy
+RUN apt-get update && apt-get install -y wget software-properties-common
 
 RUN echo "deb http://ubuntu.bigbluebutton.org/xenial-200 bigbluebutton-xenial main   " | tee /etc/apt/sources.list.d/bigbluebutton.list
 RUN wget http://ubuntu.bigbluebutton.org/repo/bigbluebutton.asc -O- | apt-key add -
+RUN add-apt-repository ppa:jonathonf/ffmpeg-4 -y
 RUN apt-get update && apt-get -y dist-upgrade
 
 # -- Setup tomcat7 to run under docker
@@ -44,6 +45,10 @@ RUN apt-get update && apt-get install -y nodejs
 # -- Install HTML5 client
 RUN apt-get install -y bbb-html5
 
+RUN echo 'Acquire::http::Proxy "http://192.168.0.16:3142 ";'  > /etc/apt/apt.conf.d/01proxy
+RUN apt-get update 
+RUN apt-get install -y coturn vim
+
 # -- Install supervisor to run all the BigBlueButton processes (replaces systemd)
 RUN apt-get install -y supervisor
 RUN mkdir -p /var/log/supervisor
@@ -53,10 +58,7 @@ ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 ADD mod/event_socket.conf.xml /opt/freeswitch/etc/freeswitch/autoload_configs
 ADD mod/external.xml          /opt/freeswitch/conf/sip_profiles/external.xml
 
-RUN apt-get install -y coturn vim
-
 # -- Finish startup
 ADD setup.sh /root/setup.sh
 ENTRYPOINT ["/root/setup.sh"]
-# RUN apt-get install -y vim
 CMD []
