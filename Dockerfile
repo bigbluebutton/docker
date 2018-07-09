@@ -51,7 +51,11 @@ ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # -- Modify FreeSWITCH event_socket.conf.xml to listen to IPV4
 ADD mod/event_socket.conf.xml /opt/freeswitch/etc/freeswitch/autoload_configs
+RUN sudo mv /opt/freeswitch/etc/freeswitch/sip_profiles/internal-ipv6.xml /opt/freeswitch/etc/freeswitch/sip_profiles/internal-ipv6.xml_
+RUN sudo mv /opt/freeswitch/etc/freeswitch/sip_profiles/external-ipv6.xml /opt/freeswitch/etc/freeswitch/sip_profiles/external-ipv6.xml_
 
+# -- Configure SSL
+ADD ssl /etc/nginx/ssl
 # -- Finish startup
 ADD setup.sh /root/setup.sh
 ENTRYPOINT ["/root/setup.sh"]

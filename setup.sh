@@ -9,7 +9,7 @@ change_var_value () {
 # docker run -p 80:80/tcp -p 443:443/tcp -p 1935:1935/tcp -p 5066:5066/tcp -p 2202:2202 -p 32750-32768:32750-32768/udp --cap-add=NET_ADMIN ffdixon/play_win -h 192.168.0.130
 # docker run -p 80:80/tcp -p 443:443/tcp -p 1935:1935/tcp -p 5066:5066/tcp -p 2202:2202 -p 32750-32768:32750-32768/udp --cap-add=NET_ADMIN ffdixon/play_win -h 192.168.10.186
 
-while getopts "eh:" opt; do
+while getopts ":eh:s:" opt; do
   case $opt in
     e)
       env
@@ -50,11 +50,11 @@ sudo /etc/init.d/tomcat7 stop
 
 # Setup loopback address so FreeSWITCH can bind WS-BIND-URL to host IP
 #
-sudo ip addr add $HOST dev lo
+sudo ip addr add 10.130.218.200 dev lo
 
 # Setup the BigBlueButton configuration files
 #
-PROTOCOL_HTTP=http
+PROTOCOL_HTTP=https
 PROTOCOL_RTMP=rtmp
 IP=$(echo "$(LANG=c ifconfig  | awk -v RS="" '{gsub (/\n[ ]*inet /," ")}1' | grep ^et.* | grep addr: | head -n1 | sed 's/.*addr://g' | sed 's/ .*//g')$(LANG=c ifconfig  | awk -v RS="" '{gsub (/\n[ ]*inet /," ")}1' | grep ^en.* | grep addr: | head -n1 | sed 's/.*addr://g' | sed 's/ .*//g')" | head -n1)
 
@@ -66,9 +66,10 @@ sed -i "s/<X-PRE-PROCESS cmd=\"set\" data=\"local_ip_v4=.*//g" /opt/freeswitch/e
 
 sed -i "s/ext-rtp-ip\" value=\"\$\${local_ip_v4/ext-rtp-ip\" value=\"\$\${external_rtp_ip/g" /opt/freeswitch/conf/sip_profiles/external.xml
 sed -i "s/ext-sip-ip\" value=\"\$\${local_ip_v4/ext-sip-ip\" value=\"\$\${external_sip_ip/g" /opt/freeswitch/conf/sip_profiles/external.xml
-sed -i "s/<param name=\"ws-binding\".*/<param name=\"ws-binding\"  value=\"$HOST:5066\"\/>/g" /opt/freeswitch/conf/sip_profiles/external.xml
+#sed -i "s/<param name=\"ws-binding\".*/<param name=\"ws-binding\"  value=\":5066\"\/>/g" /opt/freeswitch/conf/sip_profiles/external.xml
+sed -i "s/<param name=\"ws-binding\".*/<param name=\"wss-binding\"  value=\":7443\"\/>/g" /opt/freeswitch/conf/sip_profiles/external.xml
 
-sed -i "s/proxy_pass .*/proxy_pass $PROTOCOL_HTTP:\/\/$HOST:5066;/g" /etc/bigbluebutton/nginx/sip.nginx
+sed -i "s/proxy_pass .*/proxy_pass $PROTOCOL_HTTP:\/\/$HOST:7443;/g" /etc/bigbluebutton/nginx/sip.nginx
 
 sed -i "s/porttest host=\(\"[^\"]*\"\)/porttest host=rtmp://\"$HOST\"/g" /var/www/bigbluebutton/client/conf/config.xml
 sed -i "s/publishURI=\"[^\"]*\"/publishURI=\"$HOST\"/" /var/www/bigbluebutton/client/conf/config.xml
@@ -97,14 +98,21 @@ sed -i  "s/defaultPresentationURL[ ]*=[ ]*\"[^\"]*\"/defaultPresentationURL=\"${
 	/usr/share/bbb-apps-akka/conf/application.conf
 
 # Fix to ensure application.conf has the latest shared secret
-SECRET=$(cat /var/lib/tomcat7/webapps/bigbluebutton/WEB-INF/classes/bigbluebutton.properties | grep -v '#' | grep securitySalt | cut -d= -f2);
+if [ ! $SECRET]; then
+  SECRET=$(cat /var/lib/tomcat7/webapps/bigbluebutton/WEB-INF/classes/bigbluebutton.properties | grep -v '#' | grep securitySalt | cut -d= -f2);
+fi
+
 sed -i "s/sharedSecret[ ]*=[ ]*\"[^\"]*\"/sharedSecret=\"$SECRET\"/g" \
-	/usr/share/bbb-apps-akka/conf/application.conf
+  /usr/share/bbb-apps-akka/conf/application.conf
+
+change_var_value /var/lib/tomcat7/webapps/bigbluebutton/WEB-INF/classes/bigbluebutton.properties "securitySalt" $SECRET
+
 
 sed -i "s/BigBlueButtonURL = \"http[s]*:\/\/\([^\"\/]*\)\([\"\/]\)/BigBlueButtonURL = \"$PROTOCOL_HTTP:\/\/$HOST\2/g" \
                         /var/lib/tomcat7/webapps/demo/bbb_api_conf.jsp
 
 sed -i "s/playback_host: .*/playback_host: $HOST/g" /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml
+sed -i "s/playback_protocol: .*/playback_protocol: $PROTOCOL_HTTP/g" /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml
 
 sed -i 's/daemonize no/daemonize yes/g' /etc/redis/redis.conf
 
