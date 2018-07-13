@@ -1,0 +1,23 @@
+sudo: required
+
+services:
+  - docker
+
+script:
+  - docker build -t bigbluebutton/bigbluebutton:master .
+
+after_script:
+  - docker images
+
+before_deploy:
+  - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
+
+deploy:
+  provider: script
+  script: docker push bigbluebutton/bigbluebutton:master
+  on:
+    branch: master
+
+notifications:
+  slack:
+    secure: 45+AWSHhNUFPUpDQY88tW5cquLhP7epb5hE1GXcWX0+5rAomY0W8cw1B9L57iCgzU0rFV9ztm3pKqijYuG7BWxts7nLpAvNQWzLy5IqqBoy1sclKAT1upIUCu72iqJog32Vx+XJUyZDVpsqMyp/VR2zCAqtgh8ThdgNhuLCkVTB7ZGLGaU7yCQYdP4tfYape/ISYbRr2qKDi5qWQ61kUAChkEGeYN7gbQkvR8szuaDR4tj/zOmE/2R1xR/PAZz0We6SpzQjCebf4vfp6adF2na9Ev/bKlMEIKyA2KYp5YOkZQcdrj9/FeR2muUD4IgBAOdUiinVhvYs6Ig7o1xeBQ6YLA9FWOSj8XTuGC+C9K4VJGXqDjefRSf11pmFSbMlXA66r/CQZslcnQrZu06ns5jMR46jiUYqXvU5vzg+4oPFyNso+SuQ9R7RtTHYDxCrTFEr4DlYVZ25D6FNX4ZD2Uu5FQDxKxJaDk9xMxMAEXrUMABe3tZyeNabyiKIt7RkHVJiadpF7oEuwD7luQmfPd9blbRE7ZcqArT10RIQGMAEHQ+8XnSfWfb+4v6l1xYiL6ifT+/6P+xfXWNH5JNCDptER28Hf1R4bUF8joi/sn037F3/1bOXiE6TlLqaerZe6qK/FfM5SPgLv0LmMtxEKkG4ta8GzDMwSC43jzB0OSr8=
