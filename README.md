@@ -1,6 +1,6 @@
 # Overview
 
-These are scripts to run BigBlueButton within Docker.  
+These are scripts to run BigBlueButton within Docker.
 
 For detailed instructions on how to setup BigBlueButton in Docker, see the [setup instructions](http://docs.bigbluebutton.org/labs/docker.html).
 
