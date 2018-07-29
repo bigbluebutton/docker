@@ -23,7 +23,7 @@ change_var_value () {
         sed -i "s<^[[:blank:]#]*\(${2}\).*<\1=${3}<" $1
 }
 
-# docker run -p 80:80/tcp -p 443:443/tcp -p 1935:1935/tcp -p 5066:5066/tcp -p 3478:3478/udp -p 3478:3478/tcp --cap-add=NET_ADMIN bigbluebutton/d2 -h 10.0.9.74
+# docker run -p 80:80/tcp -p 443:443/tcp -p 1935:1935/tcp -p 5066:5066/tcp -p 3478:3478/udp -p 3478:3478/tcp --cap-add=NET_ADMIN bigbluebutton/d2 -h 192.168.0.130
 
 while getopts "eh:" opt; do
   case $opt in
@@ -120,10 +120,10 @@ cat > /etc/kurento/modules/kurento/WebRtcEndpoint.conf.ini  << HERE
 ; You have to find a valid stun server. You can check if it works
 ; usin this tool:
 ;   http://webrtc.github.io/samples/src/content/peerconnection/trickle-ice/
-stunServerAddress=64.233.177.127
-stunServerPort=19302
+;stunServerAddress=64.233.177.127
+;stunServerPort=19302
 
-turnURL=user:password@${HOST}:3478
+turnURL=kurento:kurento@${HOST}:3478
 
 ;pemCertificate is deprecated. Please use pemCertificateRSA instead
 ;pemCertificate=<path>
@@ -149,6 +149,7 @@ lt-cred-mech
 use-auth-secret
 static-auth-secret=$TURN_SECRET
 user=user:password
+log-file=/var/log/turn.log
 HERE
 
 # Setup tomcat7 to use the TURN server (wiht matching secret)
@@ -237,9 +238,12 @@ export KURENTO_LOGS_PATH=$DAEMON_LOG
 
 cat << HERE
 
-  BigBlueButton is running at http://$HOST/
+BigBlueButton is running at 
+
+  http://$HOST
 
 HERE
 
-exec /usr/bin/supervisord
+updatedb
+exec /usr/bin/supervisord > /var/log/supervisord.log
 
