@@ -23,7 +23,6 @@ change_var_value () {
         sed -i "s<^[[:blank:]#]*\(${2}\).*<\1=${3}<" $1
 }
 
-# docker run -p 80:80/tcp -p 443:443/tcp -p 1935:1935/tcp -p 5066:5066/tcp -p 3478:3478/udp -p 3478:3478/tcp --cap-add=NET_ADMIN bigbluebutton/d2 -h 192.168.0.130
 # docker run -p 80:80/tcp -p 443:443/tcp -p 1935:1935 -p 5066:5066 -p 3478:3478 -p 3478:3478/udp b2 -h 192.168.0.130
 
 while getopts "eh:" opt; do

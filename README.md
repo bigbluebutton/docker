@@ -1,11 +1,11 @@
 # Overview
 
-This repository contains the scripts create a single docker container running BigBlueButton.  
+Note: This branch contains work in progress for incorporating the HTML5 client into the Docker image.
 
 To run BigBlueButton in Docker, run the command
 
 ~~~
-docker run -p 80:80/tcp -p 1935:1935/tcp -p 5066:5066/tcp -p 16384-16484:16384-16484/udp -p 2202:2202 --cap-add=NET_ADMIN --name bigbluebutton bigbluebutton/bigbluebutton -h <YOUR_HOST_IP>
+docker run -p 80:80/tcp -p 443:443/tcp -p 1935:1935 -p 5066:5066 -p 3478:3478 -p 3478:3478/udp b2 -h <HOST_IP>
 ~~~
 
 Make sure you provide the host IP at the end of the command. This will take some time to pull the image from Docker hub.
