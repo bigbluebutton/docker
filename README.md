@@ -1,6 +1,9 @@
-# Overview
+# BigBlueButton Docker
 
-Note: This branch contains work in progress for incorporating the HTML5 client into the Docker image.
+![Travis CI](https://travis-ci.org/bigbluebutton/docker.svg?branch=master)
+![Docker Pulls](https://img.shields.io/docker/pulls/bigbluebutton/bigbluebutton.svg)
+
+These are scripts to run BigBlueButton within Docker.
 
 To run BigBlueButton in Docker, run the command
 
