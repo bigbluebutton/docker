@@ -23,7 +23,7 @@ change_var_value () {
         sed -i "s<^[[:blank:]#]*\(${2}\).*<\1=${3}<" $1
 }
 
-# docker run -p 80:80/tcp -p 443:443/tcp -p 1935:1935/tcp -p 5066:5066/tcp -p 3478:3478/udp -p 3478:3478/tcp --cap-add=NET_ADMIN bigbluebutton/d2 -h 10.0.9.74
+# docker run -p 80:80/tcp -p 443:443/tcp -p 1935:1935 -p 5066:5066 -p 3478:3478 -p 3478:3478/udp b2 -h 192.168.0.130
 
 while getopts "eh:" opt; do
   case $opt in
@@ -64,27 +64,19 @@ while [ ! -f /var/lib/tomcat7/webapps/demo/bbb_api_conf.jsp ]; do sleep 1; done
 sudo /etc/init.d/tomcat7 stop
 
 
-# Setup loopback address so FreeSWITCH can bind WS-BIND-URL to host IP
-#
-sudo ip addr add $HOST dev lo
-
 # Setup the BigBlueButton configuration files
 #
 PROTOCOL_HTTP=http
 PROTOCOL_RTMP=rtmp
+
 IP=$(echo "$(LANG=c ifconfig  | awk -v RS="" '{gsub (/\n[ ]*inet /," ")}1' | grep ^et.* | grep addr: | head -n1 | sed 's/.*addr://g' | sed 's/ .*//g')$(LANG=c ifconfig  | awk -v RS="" '{gsub (/\n[ ]*inet /," ")}1' | grep ^en.* | grep addr: | head -n1 | sed 's/.*addr://g' | sed 's/ .*//g')" | head -n1)
 
-sed -i "s/stun:stun.freeswitch.org/$HOST/g" /opt/freeswitch/etc/freeswitch/vars.xml
-sed -i "s/<X-PRE-PROCESS cmd=\"set\" data=\"local_ip_v4=.*//g" /opt/freeswitch/etc/freeswitch/vars.xml
-
-#sed -i "s/ext-rtp-ip\" value=\"\$\${local_ip_v4/ext-rtp-ip\" value=\"\$\${external_rtp_ip/g" /opt/freeswitch/conf/sip_profiles/external.xml
-#sed -i "s/ext-sip-ip\" value=\"\$\${local_ip_v4/ext-sip-ip\" value=\"\$\${external_sip_ip/g" /opt/freeswitch/conf/sip_profiles/external.xml
-#sed -i "s/<param name=\"ws-binding\".*/<param name=\"ws-binding\"  value=\":5066\"\/>/g" /opt/freeswitch/conf/sip_profiles/external.xml
+xmlstarlet edit --inplace --update '//X-PRE-PROCESS[@cmd="set" and starts-with(@data, "external_rtp_ip=")]/@data' --value "stun:coturn" /opt/freeswitch/conf/vars.xml
+xmlstarlet edit --inplace --update '//X-PRE-PROCESS[@cmd="set" and starts-with(@data, "external_sip_ip=")]/@data' --value "stun:coturn" /opt/freeswitch/conf/vars.xml
+xmlstarlet edit --inplace --update '//X-PRE-PROCESS[@cmd="set" and starts-with(@data, "local_ip_v4=")]/@data' --value "${IP}" /opt/freeswitch/conf/vars.xml
 
 sed -i "s/proxy_pass .*/proxy_pass $PROTOCOL_HTTP:\/\/$IP:5066;/g" /etc/bigbluebutton/nginx/sip.nginx
 
-#sed -i "s/porttest host=\(\"[^\"]*\"\)/porttest host=\"$HOST\"/g" /var/www/bigbluebutton/client/conf/config.xml
-sed -i "s/publishURI=\"[^\"]*\"/publishURI=\"$HOST\"/" /var/www/bigbluebutton/client/conf/config.xml
 sed -i "s/http[s]*:\/\/\([^\"\/]*\)\([\"\/]\)/$PROTOCOL_HTTP:\/\/$HOST\2/g"  /var/www/bigbluebutton/client/conf/config.xml
 sed -i "s/rtmp[s]*:\/\/\([^\"\/]*\)\([\"\/]\)/$PROTOCOL_RTMP:\/\/$HOST\2/g" /var/www/bigbluebutton/client/conf/config.xml
 
@@ -110,33 +102,21 @@ sed -i "s/deskshareip[ ]*=[ ]*\"[^\"]*\"/deskshareip=\"$HOST\"/g" \
 sed -i  "s/defaultPresentationURL[ ]*=[ ]*\"[^\"]*\"/defaultPresentationURL=\"${PROTOCOL_HTTP}:\/\/$HOST\/default.pdf\"/g" \
   /usr/share/bbb-apps-akka/conf/application.conf
 
-#cat > /etc/kurento/modules/kurento/BaseRtpEndpoint.conf.ini << HERE
-#minPort=16435
-#maxPort=16484
-#HERE
-
 cat > /etc/kurento/modules/kurento/WebRtcEndpoint.conf.ini  << HERE
 ; Only IP address are supported, not domain names for addresses
 ; You have to find a valid stun server. You can check if it works
-; usin this tool:
+; using this tool:
 ;   http://webrtc.github.io/samples/src/content/peerconnection/trickle-ice/
-stunServerAddress=64.233.177.127
-stunServerPort=19302
+;stunServerAddress=64.233.177.127
+;stunServerPort=19302
 
-turnURL=user:password@${HOST}:3478
+turnURL=kurento:kurento@${HOST}:3478
 
 ;pemCertificate is deprecated. Please use pemCertificateRSA instead
 ;pemCertificate=<path>
 ;pemCertificateRSA=<path>
 ;pemCertificateECDSA=<path>
 HERE
-
-#sed -i 's/.*stunServerAddress.*/stunServerAddress=64.233.177.127/g' /etc/kurento/modules/kurento/WebRtcEndpoint.conf.ini
-#sed -i 's/.*stunServerPort.*/stunServerPort=19302/g'   /etc/kurento/modules/kurento/WebRtcEndpoint.conf.ini
-#sed -i 's/.*turnURL*/turnURL=user:password@$IP:3478/g' /etc/kurento/modules/kurento/WebRtcEndpoint.conf.ini
-
-echo "denied-peer-ip=0.0.0.0-255.255.255.255" >> /etc/turnserver.conf
-echo "allowed-peer-ip=$IP" >> /etc/turnserver.conf
 
 TURN_SECRET=`openssl rand -hex 16`
 
@@ -149,9 +129,10 @@ lt-cred-mech
 use-auth-secret
 static-auth-secret=$TURN_SECRET
 user=user:password
+log-file=/var/log/turn.log
 HERE
 
-# Setup tomcat7 to use the TURN server (wiht matching secret)
+# Setup tomcat7 to share the TURN server information with clients (with matching secret)
 cat > /var/lib/tomcat7/webapps/bigbluebutton/WEB-INF/spring/turn-stun-servers.xml << HERE
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" 
@@ -203,7 +184,7 @@ cat > /opt/freeswitch/conf/autoload_configs/acl.conf.xml << HERE
 HERE
 
 
-# Fix to ensure application.conf has the latest shared secret
+# Ensure bbb-apps-akka has the latest shared secret from bbb-web
 SECRET=$(cat /var/lib/tomcat7/webapps/bigbluebutton/WEB-INF/classes/bigbluebutton.properties | grep -v '#' | grep securitySalt | cut -d= -f2);
 sed -i "s/sharedSecret[ ]*=[ ]*\"[^\"]*\"/sharedSecret=\"$SECRET\"/g" \
   /usr/share/bbb-apps-akka/conf/application.conf
@@ -221,6 +202,7 @@ sed -i "s|\"wsUrl.*|\"wsUrl\": \"ws://$HOST/bbb-webrtc-sfu\",|g" \
 rm /usr/share/red5/log/sip.log
 
 # Add a sleep to each recording process so we can restart with supervisord
+# (This works around the limitation that supervisord can't restart after intervals)
 sed -i 's/BigBlueButton.logger.debug("rap-archive-worker done")/sleep 20; BigBlueButton.logger.debug("rap-archive-worker done")/g' /usr/local/bigbluebutton/core/scripts/rap-archive-worker.rb
 sed -i 's/BigBlueButton.logger.debug("rap-process-worker done")/sleep 20; BigBlueButton.logger.debug("rap-process-worker done")/g' /usr/local/bigbluebutton/core/scripts/rap-process-worker.rb
 sed -i 's/BigBlueButton.logger.debug("rap-sanity-worker done")/sleep 20 ; BigBlueButton.logger.debug("rap-sanity-worker done")/g'  /usr/local/bigbluebutton/core/scripts/rap-sanity-worker.rb
@@ -237,9 +219,12 @@ export KURENTO_LOGS_PATH=$DAEMON_LOG
 
 cat << HERE
 
-  BigBlueButton is running at http://$HOST/
+BigBlueButton is now starting up at this address
+
+  http://$HOST
 
 HERE
 
-exec /usr/bin/supervisord
+updatedb
+exec /usr/bin/supervisord > /var/log/supervisord.log
 
