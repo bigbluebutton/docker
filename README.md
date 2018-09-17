@@ -19,7 +19,7 @@ docker run -p 80:80/tcp -p 443:443/tcp -p 1935:1935 -p 5066:5066 -p 3478:3478 -p
 
 Make sure you provide the host IP at the end of the command. This will take some time to pull the image from Docker hub.
 
-For details see the [setup instructions](http://docs.bigbluebutton.org/labs/docker.html).
+For details see the [setup instructions](http://docs.bigbluebutton.org/install/docker.html).
 
 Once running, you can navigate to `http://<YOUR_HOST_IP>` to access your BigBlueButton server.
 
