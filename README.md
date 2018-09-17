@@ -5,7 +5,13 @@
 
 These are scripts to run BigBlueButton within Docker.
 
-To run BigBlueButton in Docker, run the command
+To build the Docker container, run the command
+
+~~~
+docker build -t b2 .
+~~~
+
+Here we called the BigBlueButton container `b2`. To run BigBlueButton in Docker, run the command
 
 ~~~
 docker run -p 80:80/tcp -p 443:443/tcp -p 1935:1935 -p 5066:5066 -p 3478:3478 -p 3478:3478/udp b2 -h <HOST_IP>
