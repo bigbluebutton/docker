@@ -12,7 +12,7 @@ docker build -t bigbluebutton .
 Here we called the BigBlueButton container `bigbluebutton`. To run BigBlueButton in Docker, run the command
 
 ~~~
-docker run --rm -p 80:80/tcp -p 443:443/tcp -p 1935:1935 -p 5066:5066 -p 3478:3478 -p 3478:3478/udp bigbluebutton -h <HOST_IP>
+docker run --rm -p 80:80/tcp -p 1935:1935 -p 3478:3478 -p 3478:3478/udp bigbluebutton -h <HOST_IP>
 ~~~
 
 Make sure you provide the host IP of the server on which you run the docker command. Once running, you can navigate to `http://<HOST_IP>` to access your BigBlueButton server.

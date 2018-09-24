@@ -240,16 +240,16 @@ export KURENTO_LOGS_PATH=$DAEMON_LOG
 
 cat << HERE
 
-BigBlueButton is now starting up at this address
+BigBlueButton is now starting up.  You can access the API demos here (use FireFox for WebRTC audio/video)
 
-  http://$HOST
+  http://$HOST/demo/demo1.jsp
 
-For API calles, use
+For API calls, use the following credentials
 
-     IP: $HOST
- Secret: $SECRET
+   host: $HOST
+ secret: $SECRET
 
-Here's a direct link for APIMate to make API calls
+To interactively create API calls, here's a link to configure APIMate
 
   http://mconf.github.io/api-mate/#server=http://$HOST/bigbluebutton/&sharedSecret=$SECRET
 
