@@ -20,8 +20,13 @@
 set -x
 
 change_var_value () {
-        sed -i "s<^[[:blank:]#]*\(${2}\).*<\1=${3}<" $1
+  sed -i "s<^[[:blank:]#]*\(${2}\).*<\1=${3}<" $1
 }
+
+change_yml_value () {
+  sed -i "s<^\([[:blank:]#]*\)\(${2}\): .*<\1\2: ${3}<" $1
+}
+
 
 # docker run -p 80:80/tcp -p 443:443/tcp -p 1935:1935 -p 5066:5066 -p 3478:3478 -p 3478:3478/udp b2 -h 192.168.0.130
 
@@ -63,6 +68,10 @@ apt-get install -y bbb-demo && /etc/init.d/tomcat7 start
 while [ ! -f /var/lib/tomcat7/webapps/demo/bbb_api_conf.jsp ]; do sleep 1; done
 sudo /etc/init.d/tomcat7 stop
 
+# In a standard BigBlueButton server you would use `bbb-conf --setip IP` to configure it listen to a given IP, but
+# we are using supervisorctl (not systemd) in, so we apply all the configuration changes before running supervisorctl at
+# the end of this script
+
 
 # Setup the BigBlueButton configuration files
 #
@@ -73,7 +82,7 @@ IP=$(echo "$(LANG=c ifconfig  | awk -v RS="" '{gsub (/\n[ ]*inet /," ")}1' | gre
 
 xmlstarlet edit --inplace --update '//X-PRE-PROCESS[@cmd="set" and starts-with(@data, "external_rtp_ip=")]/@data' --value "stun:coturn" /opt/freeswitch/conf/vars.xml
 xmlstarlet edit --inplace --update '//X-PRE-PROCESS[@cmd="set" and starts-with(@data, "external_sip_ip=")]/@data' --value "stun:coturn" /opt/freeswitch/conf/vars.xml
-xmlstarlet edit --inplace --update '//X-PRE-PROCESS[@cmd="set" and starts-with(@data, "local_ip_v4=")]/@data' --value "${IP}" /opt/freeswitch/conf/vars.xml
+xmlstarlet edit --inplace --update '//X-PRE-PROCESS[@cmd="set" and starts-with(@data, "local_ip_v4=")]/@data' --value "local_ip_v4=${IP}" /opt/freeswitch/conf/vars.xml
 
 if [ -f /opt/freeswitch/conf/sip_profiles/external-ipv6.xml ]; then
   mv /opt/freeswitch/conf/sip_profiles/external-ipv6.xml /opt/freeswitch/conf/sip_profiles/external-ipv6.xml_
@@ -99,6 +108,11 @@ change_var_value /usr/share/red5/webapps/screenshare/WEB-INF/screenshare.propert
 
 change_var_value /usr/share/red5/webapps/sip/WEB-INF/bigbluebutton-sip.properties bbb.sip.app.ip $IP
 change_var_value /usr/share/red5/webapps/sip/WEB-INF/bigbluebutton-sip.properties freeswitch.ip $IP
+
+change_yml_value /usr/local/bigbluebutton/bbb-webrtc-sfu/config/default.yml kurentoUrl "ws://$IP:8888/kurento"
+change_yml_value /usr/local/bigbluebutton/bbb-webrtc-sfu/config/default.yml kurentoIp "$IP"
+change_yml_value /usr/local/bigbluebutton/bbb-webrtc-sfu/config/default.yml localIpAddress "$IP"
+change_yml_value /usr/local/bigbluebutton/bbb-webrtc-sfu/config/default.yml ip "$IP"
 
 sed -i  "s/bbbWebAPI[ ]*=[ ]*\"[^\"]*\"/bbbWebAPI=\"${PROTOCOL_HTTP}:\/\/$HOST\/bigbluebutton\/api\"/g" \
   /usr/share/bbb-apps-akka/conf/application.conf
@@ -229,6 +243,15 @@ cat << HERE
 BigBlueButton is now starting up at this address
 
   http://$HOST
+
+For API calles, use
+
+     IP: $HOST
+ Secret: $SECRET
+
+Here's a direct link for APIMate to make API calls
+
+  http://mconf.github.io/api-mate/#server=http://$HOST/bigbluebutton/&sharedSecret=$SECRET
 
 HERE
 
