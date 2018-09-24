@@ -30,7 +30,7 @@ change_yml_value () {
 
 # docker run -p 80:80/tcp -p 443:443/tcp -p 1935:1935 -p 5066:5066 -p 3478:3478 -p 3478:3478/udp b2 -h 192.168.0.130
 
-while getopts "eh:" opt; do
+while getopts ":eh:s:" opt; do
   case $opt in
     e)
       env
