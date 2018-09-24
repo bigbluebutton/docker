@@ -75,6 +75,13 @@ xmlstarlet edit --inplace --update '//X-PRE-PROCESS[@cmd="set" and starts-with(@
 xmlstarlet edit --inplace --update '//X-PRE-PROCESS[@cmd="set" and starts-with(@data, "external_sip_ip=")]/@data' --value "stun:coturn" /opt/freeswitch/conf/vars.xml
 xmlstarlet edit --inplace --update '//X-PRE-PROCESS[@cmd="set" and starts-with(@data, "local_ip_v4=")]/@data' --value "${IP}" /opt/freeswitch/conf/vars.xml
 
+if [ -f /opt/freeswitch/conf/sip_profiles/external-ipv6.xml ]; then
+  mv /opt/freeswitch/conf/sip_profiles/external-ipv6.xml /opt/freeswitch/conf/sip_profiles/external-ipv6.xml_
+fi
+if [ -f /opt/freeswitch/conf/sip_profiles/internal-ipv6.xml ]; then
+  mv /opt/freeswitch/conf/sip_profiles/internal-ipv6.xml /opt/freeswitch/conf/sip_profiles/internal-ipv6.xml_
+fi
+
 sed -i "s/proxy_pass .*/proxy_pass $PROTOCOL_HTTP:\/\/$IP:5066;/g" /etc/bigbluebutton/nginx/sip.nginx
 
 sed -i "s/http[s]*:\/\/\([^\"\/]*\)\([\"\/]\)/$PROTOCOL_HTTP:\/\/$HOST\2/g"  /var/www/bigbluebutton/client/conf/config.xml
