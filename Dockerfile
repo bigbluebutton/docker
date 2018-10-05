@@ -3,7 +3,7 @@ MAINTAINER ffdixon@bigbluebutton.org
 
 ENV DEBIAN_FRONTEND noninteractive
 # RUN echo 'Acquire::http::Proxy "http://192.168.2.9:3142";'  > /etc/apt/apt.conf.d/01proxy
-RUN apt-get update && apt-get install -y wget
+RUN apt-get update && apt-get install -y wget apt-transport-https
 
 RUN echo "deb http://ubuntu.bigbluebutton.org/xenial-200 bigbluebutton-xenial main " | tee /etc/apt/sources.list.d/bigbluebutton.list
 RUN wget http://ubuntu.bigbluebutton.org/repo/bigbluebutton.asc -O- | apt-key add -
