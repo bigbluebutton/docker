@@ -2,10 +2,10 @@ FROM ubuntu:16.04
 MAINTAINER ffdixon@bigbluebutton.org
 
 ENV DEBIAN_FRONTEND noninteractive
-# RUN echo 'Acquire::http::Proxy "http://192.168.0.130:3142  ";'  > /etc/apt/apt.conf.d/01proxy
+# RUN echo 'Acquire::http::Proxy "http://192.168.0.130:3142 ";'  > /etc/apt/apt.conf.d/01proxy
 RUN apt-get update && apt-get install -y wget software-properties-common
 
-RUN echo "deb http://ubuntu.bigbluebutton.org/xenial-200 bigbluebutton-xenial main   " | tee /etc/apt/sources.list.d/bigbluebutton.list
+RUN echo "deb http://ubuntu.bigbluebutton.org/xenial-200-dev bigbluebutton-xenial main   " | tee /etc/apt/sources.list.d/bigbluebutton.list
 RUN wget http://ubuntu.bigbluebutton.org/repo/bigbluebutton.asc -O- | apt-key add -
 RUN add-apt-repository ppa:jonathonf/ffmpeg-4 -y
 RUN apt-get update && apt-get -y dist-upgrade
@@ -44,9 +44,11 @@ RUN apt-get update && apt-get install -y nodejs
 
 # -- Install HTML5 client
 RUN apt-get install -y bbb-html5
+RUN apt-get install -y coturn vim mlocate
 
-RUN apt-get update 
-RUN apt-get install -y coturn vim
+# -- Install Meteor
+RUN curl https://install.meteor.com/ | sh
+ENV METEOR_ALLOW_SUPERUSER true
 
 # -- Install supervisor to run all the BigBlueButton processes (replaces systemd)
 RUN apt-get install -y supervisor
@@ -56,6 +58,13 @@ ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 # -- Modify FreeSWITCH event_socket.conf.xml to listen to IPV4
 ADD mod/event_socket.conf.xml /opt/freeswitch/etc/freeswitch/autoload_configs
 ADD mod/external.xml          /opt/freeswitch/conf/sip_profiles/external.xml
+
+# -- Install latest HTML5 client from source
+RUN supervisorctl stop bbb-html5
+ADD . /bigbluebutton-html5
+WORKDIR /bigbluebutton-html5
+RUN meteor npm install
+WORKDIR /
 
 # -- Finish startup
 ADD setup.sh /root/setup.sh
