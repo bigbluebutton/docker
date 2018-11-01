@@ -255,6 +255,9 @@ To interactively create API calls, here's a link to configure APIMate
 
 HERE
 
-updatedb
+if [ -f /usr/bin/updatedb ]; then
+  updatedb
+fi
+
 exec /usr/bin/supervisord > /var/log/supervisord.log
 
