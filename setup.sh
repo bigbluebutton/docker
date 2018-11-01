@@ -206,7 +206,13 @@ HERE
 
 
 # Ensure bbb-apps-akka has the latest shared secret from bbb-web
-SECRET=$(cat /var/lib/tomcat7/webapps/bigbluebutton/WEB-INF/classes/bigbluebutton.properties | grep -v '#' | grep securitySalt | cut -d= -f2);
+if [ -z "$SECRET" ]; then 
+  SECRET=$(cat /var/lib/tomcat7/webapps/bigbluebutton/WEB-INF/classes/bigbluebutton.properties | grep -v '#' | grep securitySalt | cut -d= -f2);
+else
+  change_var_value /var/lib/tomcat7/webapps/bigbluebutton/WEB-INF/classes/bigbluebutton.properties securitySalt $SECRET
+  sed -i "s/String salt = .*/String salt = \"$SECRET\";/g" /var/lib/tomcat7/webapps/demo/bbb_api_conf.jsp
+fi
+
 sed -i "s/sharedSecret[ ]*=[ ]*\"[^\"]*\"/sharedSecret=\"$SECRET\"/g" \
   /usr/share/bbb-apps-akka/conf/application.conf
 
@@ -255,9 +261,7 @@ To interactively create API calls, here's a link to configure APIMate
 
 HERE
 
-if [ -f /usr/bin/updatedb ]; then
-  updatedb
-fi
+updatedb
 
 exec /usr/bin/supervisord > /var/log/supervisord.log
 
