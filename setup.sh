@@ -20,12 +20,17 @@
 set -x
 
 change_var_value () {
-        sed -i "s<^[[:blank:]#]*\(${2}\).*<\1=${3}<" $1
+  sed -i "s<^[[:blank:]#]*\(${2}\).*<\1=${3}<" $1
 }
+
+change_yml_value () {
+  sed -i "s<^\([[:blank:]#]*\)\(${2}\): .*<\1\2: ${3}<" $1
+}
+
 
 # docker run -p 80:80/tcp -p 443:443/tcp -p 1935:1935 -p 5066:5066 -p 3478:3478 -p 3478:3478/udp b2 -h 192.168.0.130
 
-while getopts "eh:" opt; do
+while getopts ":eh:s:" opt; do
   case $opt in
     e)
       env
@@ -34,7 +39,7 @@ while getopts "eh:" opt; do
     h)
       HOST=$OPTARG
       ;;
-    e)
+    s)
       SECRET=$OPTARG
       ;;
     :)
@@ -63,6 +68,10 @@ apt-get install -y bbb-demo && /etc/init.d/tomcat7 start
 while [ ! -f /var/lib/tomcat7/webapps/demo/bbb_api_conf.jsp ]; do sleep 1; done
 sudo /etc/init.d/tomcat7 stop
 
+# In a standard BigBlueButton server you would use `bbb-conf --setip IP` to configure it listen to a given IP, but
+# we are using supervisorctl (not systemd) in, so we apply all the configuration changes before running supervisorctl at
+# the end of this script
+
 
 # Setup the BigBlueButton configuration files
 #
@@ -71,9 +80,16 @@ PROTOCOL_RTMP=rtmp
 
 IP=$(echo "$(LANG=c ifconfig  | awk -v RS="" '{gsub (/\n[ ]*inet /," ")}1' | grep ^et.* | grep addr: | head -n1 | sed 's/.*addr://g' | sed 's/ .*//g')$(LANG=c ifconfig  | awk -v RS="" '{gsub (/\n[ ]*inet /," ")}1' | grep ^en.* | grep addr: | head -n1 | sed 's/.*addr://g' | sed 's/ .*//g')" | head -n1)
 
-xmlstarlet edit --inplace --update '//X-PRE-PROCESS[@cmd="set" and starts-with(@data, "external_rtp_ip=")]/@data' --value "stun:coturn" /opt/freeswitch/conf/vars.xml
-xmlstarlet edit --inplace --update '//X-PRE-PROCESS[@cmd="set" and starts-with(@data, "external_sip_ip=")]/@data' --value "stun:coturn" /opt/freeswitch/conf/vars.xml
-xmlstarlet edit --inplace --update '//X-PRE-PROCESS[@cmd="set" and starts-with(@data, "local_ip_v4=")]/@data' --value "${IP}" /opt/freeswitch/conf/vars.xml
+xmlstarlet edit --inplace --update '//X-PRE-PROCESS[@cmd="set" and starts-with(@data, "external_rtp_ip=")]/@data' --value "external_rtp_ip=stun:coturn" /opt/freeswitch/conf/vars.xml
+xmlstarlet edit --inplace --update '//X-PRE-PROCESS[@cmd="set" and starts-with(@data, "external_sip_ip=")]/@data' --value "external_sip_ip=stun:coturn" /opt/freeswitch/conf/vars.xml
+xmlstarlet edit --inplace --update '//X-PRE-PROCESS[@cmd="set" and starts-with(@data, "local_ip_v4=")]/@data' --value "local_ip_v4=${IP}" /opt/freeswitch/conf/vars.xml
+
+if [ -f /opt/freeswitch/conf/sip_profiles/external-ipv6.xml ]; then
+  mv /opt/freeswitch/conf/sip_profiles/external-ipv6.xml /opt/freeswitch/conf/sip_profiles/external-ipv6.xml_
+fi
+if [ -f /opt/freeswitch/conf/sip_profiles/internal-ipv6.xml ]; then
+  mv /opt/freeswitch/conf/sip_profiles/internal-ipv6.xml /opt/freeswitch/conf/sip_profiles/internal-ipv6.xml_
+fi
 
 sed -i "s/proxy_pass .*/proxy_pass $PROTOCOL_HTTP:\/\/$IP:5066;/g" /etc/bigbluebutton/nginx/sip.nginx
 
@@ -92,6 +108,11 @@ change_var_value /usr/share/red5/webapps/screenshare/WEB-INF/screenshare.propert
 
 change_var_value /usr/share/red5/webapps/sip/WEB-INF/bigbluebutton-sip.properties bbb.sip.app.ip $IP
 change_var_value /usr/share/red5/webapps/sip/WEB-INF/bigbluebutton-sip.properties freeswitch.ip $IP
+
+change_yml_value /usr/local/bigbluebutton/bbb-webrtc-sfu/config/default.yml kurentoUrl "ws://$IP:8888/kurento"
+change_yml_value /usr/local/bigbluebutton/bbb-webrtc-sfu/config/default.yml kurentoIp "$IP"
+change_yml_value /usr/local/bigbluebutton/bbb-webrtc-sfu/config/default.yml localIpAddress "$IP"
+change_yml_value /usr/local/bigbluebutton/bbb-webrtc-sfu/config/default.yml ip "$IP"
 
 sed -i  "s/bbbWebAPI[ ]*=[ ]*\"[^\"]*\"/bbbWebAPI=\"${PROTOCOL_HTTP}:\/\/$HOST\/bigbluebutton\/api\"/g" \
   /usr/share/bbb-apps-akka/conf/application.conf
@@ -185,7 +206,13 @@ HERE
 
 
 # Ensure bbb-apps-akka has the latest shared secret from bbb-web
-SECRET=$(cat /var/lib/tomcat7/webapps/bigbluebutton/WEB-INF/classes/bigbluebutton.properties | grep -v '#' | grep securitySalt | cut -d= -f2);
+if [ -z "$SECRET" ]; then 
+  SECRET=$(cat /var/lib/tomcat7/webapps/bigbluebutton/WEB-INF/classes/bigbluebutton.properties | grep -v '#' | grep securitySalt | cut -d= -f2);
+else
+  change_var_value /var/lib/tomcat7/webapps/bigbluebutton/WEB-INF/classes/bigbluebutton.properties securitySalt $SECRET
+  sed -i "s/String salt = .*/String salt = \"$SECRET\";/g" /var/lib/tomcat7/webapps/demo/bbb_api_conf.jsp
+fi
+
 sed -i "s/sharedSecret[ ]*=[ ]*\"[^\"]*\"/sharedSecret=\"$SECRET\"/g" \
   /usr/share/bbb-apps-akka/conf/application.conf
 
@@ -219,12 +246,22 @@ export KURENTO_LOGS_PATH=$DAEMON_LOG
 
 cat << HERE
 
-BigBlueButton is now starting up at this address
+BigBlueButton is now starting up.  You can access the API demos here (use FireFox for WebRTC audio/video)
 
-  http://$HOST
+  http://$HOST/demo/demo1.jsp
+
+For API calls, use the following credentials
+
+   host: $HOST
+ secret: $SECRET
+
+To interactively create API calls, here's a link to configure APIMate
+
+  http://mconf.github.io/api-mate/#server=http://$HOST/bigbluebutton/&sharedSecret=$SECRET
 
 HERE
 
 updatedb
+
 exec /usr/bin/supervisord > /var/log/supervisord.log
 

@@ -1,18 +1,23 @@
-# Overview
+# BigBlueButton Docker
 
-Note: This branch contains work in progress for incorporating the HTML5 client into the Docker image.
+![Travis CI](https://travis-ci.org/bigbluebutton/docker.svg?branch=master)
+![Docker Pulls](https://img.shields.io/docker/pulls/bigbluebutton/bigbluebutton.svg)
 
-To run BigBlueButton in Docker, run the command
+These are scripts to build a Docker that runs BigBlueButton with both the Flash and HTML5 client.  To build the Docker container, run the command
 
 ~~~
-docker run -p 80:80/tcp -p 443:443/tcp -p 1935:1935 -p 5066:5066 -p 3478:3478 -p 3478:3478/udp b2 -h <HOST_IP>
+docker build -t bigbluebutton .
 ~~~
 
-Make sure you provide the host IP at the end of the command. This will take some time to pull the image from Docker hub.
+Here we called the BigBlueButton container `bigbluebutton`. To run BigBlueButton in Docker, run the command
 
-For details see the [setup instructions](http://docs.bigbluebutton.org/labs/docker.html).
+~~~
+docker run --rm -p 80:80/tcp -p 1935:1935 -p 3478:3478 -p 3478:3478/udp bigbluebutton -h <HOST_IP>
+~~~
 
-Once running, you can navigate to `http://<YOUR_HOST_IP>` to access your BigBlueButton server.
+Make sure you provide the host IP of the server on which you run the docker command. Once running, you can navigate to `http://<HOST_IP>` to access your BigBlueButton server.
+
+For details see the [setup instructions](http://docs.bigbluebutton.org/install/docker.html).
 
 ## Future Plans
 
