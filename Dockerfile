@@ -54,7 +54,7 @@ RUN systemctl disable systemd-update-utmp.service
 
 # -- Finish startup 
 #    Add a number there to force update of files on build
-RUN echo "Finishing ... @12"
+RUN echo "Finishing ... @13"
 RUN mkdir /opt/docker-bbb/
 RUN wget https://raw.githubusercontent.com/bigbluebutton/bbb-install/master/bbb-install.sh -O- | sed 's|https://\$PACKAGE_REPOSITORY|http://\$PACKAGE_REPOSITORY|g' > /opt/docker-bbb/bbb-install.sh
 RUN chmod 755 /opt/docker-bbb/bbb-install.sh

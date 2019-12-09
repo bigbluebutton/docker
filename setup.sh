@@ -26,6 +26,8 @@ mkdir /home/bbb
 chown bbb /home/bbb
 echo "bbb ALL=(ALL:ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/bbb
 
+RUN echo "bbb:bbb" | chpasswd
+
 ./bbb-install.sh -d -s "`hostname -f`" -v xenial-220-dev22a -a
 sed -i 's/::/0.0.0.0/g' /opt/freeswitch/etc/freeswitch/autoload_configs/event_socket.conf.xml
 

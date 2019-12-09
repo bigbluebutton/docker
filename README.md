@@ -13,10 +13,32 @@ cp privkey.pem certs/
 docker-compose build bbb
 NAME=bbb001 DOMAIN=bbbvm.imdt.com.br sh -c 'docker-compose run --name $NAME bbb'
 ```
-
 ## Defining an entry in your `/etc/hosts` file
+
+In order to access the container, you need to get the IP address of container by running the following command:
+
 ```
 docker exec -it bbb001 ifconfig eth0
+```
+
+After that, add a line in your `/etc/hosts` file with the full domain name specified at previous step.
+
+## Useful commands
+
+### Start container (after host reboot)
+```
+docker start bbb001
+docker attach bbb001
+```
+
+### Stop the container
+```
+docker stop bbb001
+```
+
+### Kill the container (force exit)
+```
+docker kill bbb001
 ```
 
 ## MAC users
