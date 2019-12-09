@@ -23,6 +23,7 @@ services:
     volumes:
       - ./certs/:/local/certs/
       - /var/run/docker.sock:/var/run/docker.sock
+      - ../src/:/home/bbb/src/
     security_opt:
       - seccomp:unconfined
     networks:
