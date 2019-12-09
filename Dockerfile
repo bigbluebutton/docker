@@ -4,7 +4,7 @@ MAINTAINER ffdixon@bigbluebutton.org
 ENV DEBIAN_FRONTEND noninteractive
 ENV container docker
 
-RUN apt-get update && apt-get install -y netcat
+RUN apt-get update && apt-get install  -y netcat
 
 # -- Test if we have apt cache running on docker host, if yes, use it.
 # RUN nc -zv host.docker.internal 3142 &> /dev/null && echo 'Acquire::http::Proxy "http://host.docker.internal:3142";'  > /etc/apt/apt.conf.d/01proxy
