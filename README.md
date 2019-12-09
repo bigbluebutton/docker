@@ -1,26 +1,39 @@
 # BigBlueButton Docker
 
-![Travis CI](https://travis-ci.org/bigbluebutton/docker.svg?branch=master)
-![Docker Pulls](https://img.shields.io/docker/pulls/bigbluebutton/bigbluebutton.svg)
+## Setting up the SSL
+Generate a certificate to your container using letsencrypt and then copy your certificate to certs/ folder with the commands:
+```
+mkdir certs/
+cp fullchain.pem certs/
+cp privkey.pem certs/
+```
 
-These are scripts to build a Docker that runs BigBlueButton with both the Flash and HTML5 client.  To build the Docker container, run the command
+## Creating container
+```
+docker-compose build bbb
+NAME=bbb001 DOMAIN=bbbvm.imdt.com.br sh -c 'docker-compose run --name $NAME bbb'
+```
 
-~~~
-docker build -t bigbluebutton .
-~~~
+## Defining an entry in your `/etc/hosts` file
+```
+docker exec -it bbb001 ifconfig eth0
+```
 
-Here we called the BigBlueButton container `bigbluebutton`. To run BigBlueButton in Docker, run the command
+## MAC users
+Docker for Mac OS doesn't allow direct access to container IP's.
 
-~~~
-docker run --rm -p 80:80/tcp -p 1935:1935 -p 3478:3478 -p 3478:3478/udp bigbluebutton -h <HOST_IP>
-~~~
+In order to access the BBB container from your MAC os host, you can use openvpn:
 
-Make sure you provide the host IP of the server on which you run the docker command. Once running, you can navigate to `http://<HOST_IP>` to access your BigBlueButton server.
+1. Build containers:
+```
+docker-compose build mac_proxy mac_openvpn
+```
 
-For details see the [setup instructions](http://docs.bigbluebutton.org/install/docker.html).
+2. Add `comp-lzo no` at bottom of `mac-vpn/docker-for-mac.ovpn`
 
-## Future Plans
+3. Install openvpn configuration generated on `mac-vpn/docker-for-mac.ovpn` (double click and open on Tunnelblick)
 
-Our goal was to allow developers to run BigBlueButton server with a single command.  This Docker image is not meant for production use, but rather for testing and trying out BigBlueButton.
-
-Still, it good step towards separating BigBlueButton into individual components for running under docker-compose or kubernetes.
+4. Start containers
+```
+docker-compose start mac_proxy mac_openvpn
+```

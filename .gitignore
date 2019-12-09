@@ -1,1 +1,4 @@
 id_rsa.pub
+mac-vpn/docker-for-mac.ovpn
+mac-vpn/config
+certs/
