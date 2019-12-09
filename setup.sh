@@ -28,15 +28,15 @@ echo "bbb ALL=(ALL:ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/bbb
 
 echo "bbb:bbb" | chpasswd
 
+# Allow to have executable files in /tmp/ folder (tomcat JNA)
+mount /tmp -o remount,exec
+
 ./bbb-install.sh -d -s "`hostname -f`" -v xenial-220-dev22a -a
 sed -i 's/::/0.0.0.0/g' /opt/freeswitch/etc/freeswitch/autoload_configs/event_socket.conf.xml
 
 # Repository is broken (remove it later)
 cd /usr/local/bigbluebutton/bbb-webrtc-sfu/
 npm install --unsafe-perm
-
-# Allow to have executable files in /tmp/ folder (tomcat JNA)
-mount /tmp -o remount,exec
 
 # Restart
 bbb-conf --restart
