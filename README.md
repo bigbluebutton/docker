@@ -9,6 +9,10 @@ cp privkey.pem certs/
 ```
 
 ## Creating container
+In order to create the container you must specify the hostname of container and the domain name.
+
+In this example your container will be acessible from https://bbb001.bbbvm.imdt.com.br :
+
 ```
 docker-compose build bbb
 NAME=bbb001 DOMAIN=bbbvm.imdt.com.br sh -c 'docker-compose run --name $NAME bbb'
@@ -22,6 +26,11 @@ docker exec -it bbb001 ifconfig eth0
 ```
 
 After that, add a line in your `/etc/hosts` file with the full domain name specified at previous step.
+
+In this example, the line added on hosts file is:
+```
+172.20.0.2      bbb001.bbbvm.imdt.com.br
+```
 
 ## Useful commands
 
