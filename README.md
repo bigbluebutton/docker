@@ -1,26 +1,101 @@
 # BigBlueButton Docker
 
-![Travis CI](https://travis-ci.org/bigbluebutton/docker.svg?branch=master)
-![Docker Pulls](https://img.shields.io/docker/pulls/bigbluebutton/bigbluebutton.svg)
+## Dependencies
 
-These are scripts to build a Docker that runs BigBlueButton with both the Flash and HTML5 client.  To build the Docker container, run the command
+This container depends on docker-ce.
 
-~~~
-docker build -t bigbluebutton .
-~~~
+1 - Make sure you don't have docker installed:
+`sudo apt-get remove docker docker-engine docker.io`
 
-Here we called the BigBlueButton container `bigbluebutton`. To run BigBlueButton in Docker, run the command
+2 - Install docker-ce:
+```
+sudo apt-get update;
+sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    software-properties-common;
 
-~~~
-docker run --rm -p 80:80/tcp -p 1935:1935 -p 3478:3478 -p 3478:3478/udp bigbluebutton -h <HOST_IP>
-~~~
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 
-Make sure you provide the host IP of the server on which you run the docker command. Once running, you can navigate to `http://<HOST_IP>` to access your BigBlueButton server.
+sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
 
-For details see the [setup instructions](http://docs.bigbluebutton.org/install/docker.html).
+sudo apt-get update
 
-## Future Plans
+sudo apt-get install docker-ce
 
-Our goal was to allow developers to run BigBlueButton server with a single command.  This Docker image is not meant for production use, but rather for testing and trying out BigBlueButton.
+sudo addgroup `whoami` docker
 
-Still, it good step towards separating BigBlueButton into individual components for running under docker-compose or kubernetes.
+```
+
+## Setting up the SSL
+Generate a certificate to your container using letsencrypt and then copy your certificate to certs/ folder with the commands:
+```
+mkdir certs/
+cp fullchain.pem certs/
+cp privkey.pem certs/
+```
+
+## Creating container
+In order to create the container you must specify the hostname of container and the domain name.
+
+In this example your container will be acessible from https://bbb001.bbbvm.imdt.com.br :
+
+```
+docker-compose build bbb
+NAME=bbb001 DOMAIN=bbbvm.imdt.com.br sh -c 'docker-compose run --name $NAME bbb'
+```
+## Defining an entry in your `/etc/hosts` file
+
+In order to access the container, you need to get the IP address of container by running the following command:
+
+```
+docker exec -it bbb001 ifconfig eth0
+```
+
+After that, add a line in your `/etc/hosts` file with the full domain name specified at previous step.
+
+In this example, the line added on hosts file is:
+```
+172.20.0.2      bbb001.bbbvm.imdt.com.br
+```
+
+## Useful commands
+
+### Start container (after host reboot)
+```
+docker start bbb001
+docker attach bbb001
+```
+
+### Stop the container
+```
+docker stop bbb001
+```
+
+### Kill the container (force exit)
+```
+docker kill bbb001
+```
+
+## MAC users
+Docker for Mac OS doesn't allow direct access to container IP's.
+
+In order to access the BBB container from your MAC os host, you can use openvpn:
+
+1. Build containers:
+```
+docker-compose build mac_proxy mac_openvpn
+```
+
+2. Add `comp-lzo no` at bottom of `mac-vpn/docker-for-mac.ovpn`
+
+3. Install openvpn configuration generated on `mac-vpn/docker-for-mac.ovpn` (double click and open on Tunnelblick)
+
+4. Start containers
+```
+docker-compose start mac_proxy mac_openvpn
+```

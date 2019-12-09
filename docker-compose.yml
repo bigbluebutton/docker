@@ -1,0 +1,53 @@
+version: '2'
+
+networks:
+  backend:
+
+services:
+  bbb:
+    build: .
+    privileged: true
+    environment:
+      - "NAME=${NAME}"
+      - "DOMAIN=${DOMAIN}"
+    hostname: ${NAME}.${DOMAIN}
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    environment:
+      - container=docker
+    tmpfs:
+      - /run
+      - /run/lock
+      - /tmp
+    volumes:
+      - ./certs/:/local/certs/
+      - /var/run/docker.sock:/var/run/docker.sock
+    security_opt:
+      - seccomp:unconfined
+    networks:
+      - backend
+
+  mac_proxy:
+      build: mac-vpn/
+      ports:
+          - "127.0.0.1:13194:13194"
+      command: TCP-LISTEN:13194,fork TCP:172.17.0.1:1194
+      restart: always
+      networks:
+        - backend
+
+  mac_openvpn:
+      image: kylemanna/openvpn
+      volumes:
+          - ./mac-vpn:/local
+          - ./mac-vpn/config:/etc/openvpn
+      network_mode: host
+      privileged: true
+      cap_add:
+          - NET_ADMIN
+      environment:
+          dest: docker-for-mac.ovpn
+          DEBUG: '1'
+      command: /local/helpers/run-vpn.sh
+      restart: always
