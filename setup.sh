@@ -31,8 +31,11 @@ echo "bbb:bbb" | chpasswd
 # Allow to have executable files in /tmp/ folder (tomcat JNA)
 mount /tmp -o remount,exec
 
-./bbb-install.sh -d -s "`hostname -f`" -v xenial-220-dev22a -a
+sed -i 's/bind 127.0.0.1 ::1/bind 127.0.0.1/g'  /etc/redis/redis.conf
+
+./bbb-install.sh -d -s "`hostname -f`" -v bionic-230-dev -a
 sed -i 's/::/0.0.0.0/g' /opt/freeswitch/etc/freeswitch/autoload_configs/event_socket.conf.xml
+
 
 # Repository is broken (remove it later)
 cd /usr/local/bigbluebutton/bbb-webrtc-sfu/

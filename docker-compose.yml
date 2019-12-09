@@ -13,6 +13,7 @@ services:
     hostname: ${NAME}.${DOMAIN}
     cap_add:
       - NET_ADMIN
+      - SYS_ADMIN
     environment:
       - container=docker
     tmpfs:

@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 MAINTAINER ffdixon@bigbluebutton.org
 
 ENV DEBIAN_FRONTEND noninteractive
@@ -25,17 +25,13 @@ RUN LC_CTYPE=C.UTF-8 add-apt-repository ppa:rmescandon/yq
 RUN apt update
 RUN LC_CTYPE=C.UTF-8 apt install yq -y
 
-# -- Setup tomcat7 to run under docker
+# -- Setup tomcat to run under docker
 RUN apt-get install -y \
   haveged    \
   net-tools  \
   supervisor \
   sudo       \
-  tomcat7
-
-RUN sed -i 's|securerandom.source=file:/dev/random|securerandom.source=file:/dev/urandom|g'  /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/security/java.security
-ADD mod/tomcat7 /etc/init.d/tomcat7
-RUN chmod +x /etc/init.d/tomcat7
+  tomcat8
 
 # -- Modify systemd to be able to run inside container
 RUN apt-get update \
@@ -52,15 +48,20 @@ RUN systemctl enable nginx
 RUN systemctl disable systemd-journal-flush
 RUN systemctl disable systemd-update-utmp.service
 
+# -- Install redis (in order to change bind ip before bbb-install)
+RUN apt-get install -y redis-server
+
 # -- Finish startup 
 #    Add a number there to force update of files on build
-RUN echo "Finishing ... @13"
+RUN echo "Finishing ... @15"
 RUN mkdir /opt/docker-bbb/
 RUN wget https://raw.githubusercontent.com/bigbluebutton/bbb-install/master/bbb-install.sh -O- | sed 's|https://\$PACKAGE_REPOSITORY|http://\$PACKAGE_REPOSITORY|g' > /opt/docker-bbb/bbb-install.sh
 RUN chmod 755 /opt/docker-bbb/bbb-install.sh
 ADD setup.sh /opt/docker-bbb/setup.sh
 ADD rc.local /etc/
 RUN chmod 755 /etc/rc.local
+
+ADD haveged.service /etc/systemd/system/default.target.wants/haveged.service
 
 ENTRYPOINT ["/bin/systemd", "--system", "--unit=multi-user.target"]
 CMD []
