@@ -82,6 +82,12 @@ In this example, the line added on hosts file is:
 
 http://bbb001.bbbvm.imdt.com.br
 
+## 8. Install meteor:
+
+```
+curl https://install.meteor.com/ | sh
+```
+OBS: If you get bunch of errors in console related to missing files, run `meteor reset; meteor`
 
 # Useful commands
 
