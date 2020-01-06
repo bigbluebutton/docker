@@ -33,9 +33,21 @@ mount /tmp -o remount,exec
 
 sed -i 's/bind 127.0.0.1 ::1/bind 127.0.0.1/g'  /etc/redis/redis.conf
 
-./bbb-install.sh -d -s "`hostname -f`" -v bionic-230-dev -a
-sed -i 's/::/0.0.0.0/g' /opt/freeswitch/etc/freeswitch/autoload_configs/event_socket.conf.xml
+#./bbb-install.sh -d -s "`hostname -f`" -v bionic-230-dev -a
+sed -i 's/  install_HTML5/  exit\n  install_HTML5/g' /opt/docker-bbb/bbb-install.sh
+cd /opt/docker-bbb
+./bbb-install.sh -d -s droplet-935.meetbbb.com -v bionic-230-dev -a
 
+sed -i 's/::/0.0.0.0/g' /opt/freeswitch/etc/freeswitch/autoload_configs/event_socket.conf.xml
+if [ -f /opt/freeswitch/conf/sip_profiles/external-ipv6.xml ]; then
+  mv /opt/freeswitch/conf/sip_profiles/external-ipv6.xml /opt/freeswitch/conf/sip_profiles/external-ipv6.xml_
+fi
+if [ -f /opt/freeswitch/conf/sip_profiles/internal-ipv6.xml ]; then
+  mv /opt/freeswitch/conf/sip_profiles/internal-ipv6.xml /opt/freeswitch/conf/sip_profiles/internal-ipv6.xml_
+fi
+bbb-conf --restart
+
+exit
 
 # Repository is broken (remove it later)
 cd /usr/local/bigbluebutton/bbb-webrtc-sfu/

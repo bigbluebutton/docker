@@ -1,2 +1,2 @@
 #!/bin/sh
-[ ! -f /opt/docker-bbb/setup-executed ] && /opt/docker-bbb/setup.sh
+# [ ! -f /opt/docker-bbb/setup-executed ] && /opt/docker-bbb/setup.sh
