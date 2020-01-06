@@ -123,5 +123,5 @@ docker-compose build mac_proxy mac_openvpn
 
 4. Start containers
 ```
-docker-compose start mac_proxy mac_openvpn
+NAME=bbb001 DOMAIN=bbbvm.imdt.com.br docker-compose start mac_proxy mac_openvpn
 ```
