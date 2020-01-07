@@ -111,11 +111,18 @@ In order to access the BBB container from your MAC os host, you can use openvpn:
 docker-compose build mac_proxy mac_openvpn
 ```
 
-2. Add `comp-lzo no` at bottom of `mac-vpn/docker-for-mac.ovpn`
-
-3. Install openvpn configuration generated on `mac-vpn/docker-for-mac.ovpn` (double click and open on Tunnelblick)
-
-4. Start containers
+2. Start containers
 ```
-docker-compose start mac_proxy mac_openvpn
+docker-compose up mac_proxy mac_openvpn
+```
+
+After it finishes ( until it shows "Initialization Sequence Completed" ), hit CTRL+C.
+
+3. Add `comp-lzo no` at bottom of `mac-vpn/docker-for-mac.ovpn`
+
+4. Install openvpn configuration generated on `mac-vpn/docker-for-mac.ovpn` (double click and open on Tunnelblick)
+
+5. Start containers again
+```
+docker-compose up mac_proxy mac_openvpn
 ```
