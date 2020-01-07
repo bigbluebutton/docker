@@ -7,7 +7,6 @@ services:
   bbb:
     build: .
     privileged: true
-    container_name: $NAME
     environment:
       - "NAME=${NAME}"
       - "DOMAIN=${DOMAIN}"
