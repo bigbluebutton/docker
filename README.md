@@ -61,7 +61,7 @@ In this example your container will be acessible from https://bbb001.bbbvm.imdt.
 
 ```
 docker-compose build bbb
-NAME=bbb001 DOMAIN=bbbvm.imdt.com.br sh -c 'docker-compose run --name $NAME bbb'
+NAME=bbb001 DOMAIN=bbbvm.imdt.com.br sh -c 'docker-compose up bbb'
 ```
 ## 6. Add an entry in your `/etc/hosts` file
 
