@@ -6,7 +6,6 @@ networks:
 services:
   bbb:
     build: .
-    container_name: $NAME
     privileged: true
     environment:
       - "NAME=${NAME}"
