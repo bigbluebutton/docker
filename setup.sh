@@ -21,7 +21,7 @@ set -x
 
 cd "$(dirname "$0")"
 
-useradd bbb
+useradd bbb --uid 1099 -s /bin/bash
 mkdir /home/bbb
 chown bbb /home/bbb
 echo "bbb ALL=(ALL:ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/bbb
