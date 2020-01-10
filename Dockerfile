@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y netcat
 # RUN nc -zv host.docker.internal 3142 &> /dev/null && echo 'Acquire::http::Proxy "http://host.docker.internal:3142";'  > /etc/apt/apt.conf.d/01proxy
 
 # -- Install utils
-RUN apt-get update && apt-get install -y wget apt-transport-https
+RUN apt-get update && apt-get install -y wget apt-transport-https curl
 
 RUN apt-get install -y language-pack-en
 RUN update-locale LANG=en_US.UTF-8
