@@ -3,6 +3,8 @@
 ![Travis CI](https://travis-ci.org/bigbluebutton/docker.svg?branch=master)
 ![Docker Pulls](https://img.shields.io/docker/pulls/bigbluebutton/bigbluebutton.svg)
 
+(Note: These scripts are work in progress and not yet updated for BigBlueButton 2.2)
+
 These are scripts to build a Docker that runs BigBlueButton with both the Flash and HTML5 client.  To build the Docker container, run the command
 
 ~~~
