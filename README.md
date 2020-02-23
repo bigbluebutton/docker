@@ -19,8 +19,6 @@ docker run --rm -p 80:80/tcp -p 1935:1935 -p 3478:3478 -p 3478:3478/udp bigblueb
 
 Make sure you provide the host IP of the server on which you run the docker command. Once running, you can navigate to `http://<HOST_IP>` to access your BigBlueButton server.
 
-For details see the [setup instructions](http://docs.bigbluebutton.org/install/docker.html).
-
 ## Future Plans
 
 Our goal was to allow developers to run BigBlueButton server with a single command.  This Docker image is not meant for production use, but rather for testing and trying out BigBlueButton.
