@@ -60,8 +60,8 @@ In order to create the container you must specify the hostname of container and 
 In this example your container will be acessible from https://bbb001.bbbvm.imdt.com.br :
 
 ```
-docker-compose build bbb
-NAME=bbb001 DOMAIN=bbbvm.imdt.com.br sh -c 'docker-compose run --name $NAME bbb'
+docker-compose build bbb22
+NAME=bbb001 DOMAIN=bbbvm.imdt.com.br sh -c 'docker-compose run --name $NAME bbb22'
 ```
 ## 6. Add an entry in your `/etc/hosts` file
 
