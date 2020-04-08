@@ -1,4 +1,3 @@
 #!/bin/sh
-/bin/mount -o remount,exec /tmp
+/usr/bin/bbb-conf --restart
 
-[ ! -f /opt/docker-bbb/setup-executed ] && /opt/docker-bbb/setup.sh

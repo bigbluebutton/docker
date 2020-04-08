@@ -21,31 +21,18 @@ set -x
 
 cd "$(dirname "$0")"
 
-useradd bbb --uid 1099 -s /bin/bash
-mkdir /home/bbb
-chown bbb /home/bbb
-echo "bbb ALL=(ALL:ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/bbb
-
-echo "bbb:bbb" | chpasswd
-
-# Allow to have executable files in /tmp/ folder (tomcat JNA)
-mount /tmp -o remount,exec
-
 ./bbb-install.sh -d -s "`hostname -f`" -v xenial-220 -a
 sed -i 's/::/0.0.0.0/g' /opt/freeswitch/etc/freeswitch/autoload_configs/event_socket.conf.xml
-
-# Repository is broken (remove it later)
-cd /usr/local/bigbluebutton/bbb-webrtc-sfu/
-npm install --unsafe-perm
 
 # Restart
 bbb-conf --restart
 
+# Disable auto start 
+find /etc/systemd/ | grep wants | xargs -r -n 1 basename | grep service | grep -v networking | grep -v tty   | xargs -r -n 1 -I __ systemctl disable __
+systemctl disable tomcat7
+
 # Update files
 updatedb
-
-# Tell system to not run this script again
-touch /opt/docker-bbb/setup-executed
 
 echo "BBB configuration completed.";
 exit 0;

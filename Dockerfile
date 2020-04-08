@@ -59,6 +59,13 @@ RUN mkdir /opt/docker-bbb/
 RUN wget https://raw.githubusercontent.com/bigbluebutton/bbb-install/master/bbb-install.sh -O- | sed 's|https://\$PACKAGE_REPOSITORY|http://\$PACKAGE_REPOSITORY|g' > /opt/docker-bbb/bbb-install.sh
 RUN chmod 755 /opt/docker-bbb/bbb-install.sh
 ADD setup.sh /opt/docker-bbb/setup.sh
+
+RUN useradd bbb --uid 1000 -s /bin/bash
+RUN mkdir /home/bbb
+RUN chown bbb /home/bbb
+RUN sh -c 'echo "bbb ALL=(ALL:ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/bbb'
+RUN sh -c 'echo "bbb:bbb" | chpasswd'
+
 ADD rc.local /etc/
 RUN chmod 755 /etc/rc.local
 
