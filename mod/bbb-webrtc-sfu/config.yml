@@ -1,0 +1,218 @@
+kurento:
+- ip: 144.76.97.34
+  url: ws://127.0.0.1:8888/kurento
+  # mediaType: (main|audio|content)
+  ipClassMappings:
+    local:
+    private:
+    public:
+  options:
+    failAfter: 5
+    request_timeout: 30000
+    response_timeout: 30000
+# Number of attemps of connecting to the configured kurento instances the first
+# time. Infinity means it tries forever until it's able to connect. Default is 10.
+kurentoStartupRetries: 10
+# balancing-strategy: can be either ROUND_ROBIN or MEDIA_TYPE. The MEDIA_TYPE only
+# works properly if you annotated the configured kurento instances in the
+# 'kurento' config parameter with a mediaType field (main|audio|content) which
+# will specify what will each server handle. Default is ROUND_ROBIN
+balancing-strategy: ROUND_ROBIN
+video-transposing-ceiling: 50
+audio-transposing-ceiling: 100
+localIpAddress: 172.17.0.2
+acceptSelfSignedCertificate: false
+redisHost: 127.0.0.1
+redisPort: "6379"
+# Uncomment to set a password if Redis requires auth.
+# redisPassword: foobared
+clientPort: "3008"
+minVideoPort: 30000
+maxVideoPort: 33000
+mediaFlowTimeoutDuration: 15000
+mediaStateTimeoutDuration: 30000
+from-screenshare: from-screenshare-sfu
+to-screenshare: to-screenshare-sfu
+from-video: from-video-sfu
+to-video: to-video-sfu
+from-audio: from-audio-sfu
+to-audio: to-audio-sfu
+to-akka: to-akka-apps-redis-channel
+from-akka: from-akka-apps-redis-channel
+to-stream: to-sfu-redis-channel
+from-stream: from-stream-sfu
+to-html5: to-html5-redis-channel
+common-message-version: 2.x
+screenshareKeyframeInterval: 0
+screenshareEnableFlashRTPBridge: false
+screenshareSubscriberSpecSlave: false
+videoSubscriberSpecSlave: false
+recordScreenSharing: true
+recordWebcams: true
+recordingBasePath: file:///var/kurento
+recordingMediaProfile: WEBM_VIDEO_ONLY
+recordingFormat: webm
+redisExpireTime: 1209600 # 14 days as per the akka keys
+# mcs-core entrypoint configured on nginx
+mcs-path: /mcs
+mcs-port: 3010
+mcs-address: localhost
+mcs-ws-timeout: 30000
+freeswitch:
+  ip: 172.17.0.2
+  sip_ip: 144.76.97.34
+  port: 5066
+  esl_ip: 127.0.0.1
+  esl_port: 8021
+  handleExternalConnections: false
+  ipClassMappings:
+    local:
+    private:
+    public:
+log:
+  filename: /var/log/bbb-webrtc-sfu/bbb-webrtc-sfu.log
+  level: verbose
+bbb-stream:
+  image_name: bbb-stream
+  container_type: docker
+  bigbluebutton_url: BBBHOST
+  bigbluebutton_secret: BBBSECRET
+  bot_name: BBBBOTNAME
+  bot_join_options:
+    userdata-html5autoswaplayout: false
+    userdata-html5hidepresentation: false
+    bot: true
+    joinViaHtml5: true
+  gop:
+    rnp: 5
+    youtube: 12
+    rtmp: 12
+  k8s:
+    namespace: default
+    template:
+      apiVersion: batch/v1
+      kind: Job
+      metadata:
+        name: bbb-stream-
+      spec:
+        template:
+          spec:
+            containers:
+            - name: bbb-stream-firefox
+              image: gcr.io/PROJECT-ID/bbb-stream
+              env:
+              - name: LINK
+                value: ""
+              - name: OUTPUT
+                value: ""
+              - name: "RTMP"
+                value: "rtmp"
+              - name: "GOP"
+                value: ""
+            restartPolicy: OnFailure
+        backoffLimit: 0
+rnp:
+  oauth2:
+    client_id: client_id
+    client_secret: client_secret
+    redirect_uri: redirect_uri
+    host_ip: 0.0.0.0
+    base_url: videornpurl
+processes:
+- path: ./lib/mcs-core/process.js
+- path: ./lib/screenshare/ScreenshareProcess
+- path: ./lib/video/VideoProcess.js
+- path: ./lib/audio/AudioProcess.js
+# media-server-adapters: path could refer to a npm module
+media-server-adapters:
+- path: kurento/kurento.js
+  name: Kurento
+- path: freeswitch/freeswitch.js
+  name: Freeswitch
+# strategies: path could refer to a npm module
+strategies:
+#- path: ./voice-switching-handler.js
+# name: VOICE_SWITCHING
+
+# Codec values (codec_video_main, codec_video_content, codec_audio):
+# it'll force the specified codec.
+# Put the 'ANY' value to prevent forcing a specific codec without the _priority options.
+# For the 'ANY' option, there's a trio of optional configuration where you are
+# able to specify the priority codec to force in a lenient way (codec_*_priority).
+# If codec_*_priority is undefined or not found in the media description,
+# no specific codec will be forced (base ANY behaviour).
+# If the priority codec is found in the media description, any codec
+# that doesn't match it will be filtered out (ie it will act as if the priority
+# codec was forced).
+# If you wanna add other codecs (e.g.: VP9)
+# add it to the list with its specifiers. If the codec isn't in the list,
+# it'll default to the specifier values in codec_*_priority OR VP8,
+# but still force the entered codec option.
+# P.S.: _video_main refers to webcam/main video content, _video_content refers to
+# screenshare/content:slides streams.
+conference-media-specs:
+  codec_video_main: VP8
+  codec_video_main_priority: VP8
+  codec_video_content: VP8
+  codec_video_content_priority: VP8
+  codec_audio: ANY
+  codec_audio_priority: OPUS
+  H264:
+    profile_level_id: "42e01f"
+    packetization_mode: "1"
+    level_asymmetry_allowed: "1"
+    tias_main: "300000"
+    as_main: "300"
+    tias_content: "1500000"
+    as_content: "1500"
+    max_mbps_main: "0"
+    max_fs_main: "0"
+    max_br_main: "0"
+    max_mbps_content: "0"
+    max_fs_content: "12288"
+    max_br_content: "0"
+  VP8:
+    tias_main: "300000"
+    as_main: "300"
+    tias_content: "1500000"
+    as_content: "1500"
+  OPUS:
+    useinbandfec: "1"
+    maxaveragebitrate: "30000"
+    maxplaybackrate: "48000"
+    ptime: "20"
+    minptime: "10"
+    maxptime: "40"
+kurentoRembParams:
+  rembOnConnect: 300
+  upLosses: 12
+  decrementFactor: 0.5
+  thresholdFactor: 0.8
+# kurentoAllowedCandidateIps: optional configuration. List of VALID IPs to be used
+# to define valid outbound ICE candidates.
+# This is a short-term optimization to reduce the number of candidates sent to
+# the client by filtering out anything that isn't in this list
+kurentoAllowedCandidateIps:
+#- <ipv4|ipv6>
+# mediaThresholds: mandatory configuration. Establishes type-agnostic media thresholds
+# that when hit will make the server refuse to negotiate new medias.
+# Any attemps to inject medias past the thresholds will return an error with code
+# 2002 and message MEDIA_SERVER_NO_RESOURCES.
+# The threshold priority order is global -> perRoom -> perUser. Value 0 means unlimited
+# (default). An optional API parameter may be sent on pub/sub calls (ignoreThresholds)
+# to make the media ignore the configured thresholds. This is used here for recording
+# and audio medias.
+mediaThresholds:
+  global: 0
+  perRoom: 0
+  perUser: 0
+# Whether to append a timestamp to akka-app's message envelopes
+addTimestampToAkkaMessages: true
+# Whether to allow duplicate externalUserId's on join. If allowed, join requests with
+# a externalUserId specified in the optional parameters will associate the new connection
+# with a pre-existing user (if it exists), or create a new one.
+# This will create a new virtual link between the request
+# and the pre-existing user with a unique internal user ID. The user will be
+# cleared from the system when a leave call for it is sent OR it has the autoLeave
+# optional parameter set to true and all of its medias were cleared
+allowDuplicateExtUserId: true

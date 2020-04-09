@@ -1,18 +1,13 @@
 version: '2'
 
-networks:
-  backend:
-
 services:
-  bbb22:
-    build: .
+  bbb:
+    image: bbb
     privileged: true
-    environment:
-      - "NAME=${NAME}"
-      - "DOMAIN=${DOMAIN}"
-    hostname: ${NAME}.${DOMAIN}
+    hostname: meet.livingutopia.org
     cap_add:
       - NET_ADMIN
+      - SYS_NICE # for realtime scheduling
     environment:
       - container=docker
     tmpfs:
@@ -20,34 +15,18 @@ services:
       - /run/lock
       - /tmp:exec,mode=777
     volumes:
-      - ./certs/:/local/certs/
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ../src/:/home/bbb/src/
+      - ./setup.sh:/opt/docker-bbb/setup.sh
+      - ./mod/freeswitch/vars.xml:/opt/freeswitch/conf/vars.xml
+      - ./mod/freeswitch/external.xml:/opt/freeswitch/conf/sip_profiles/external.xml
+      - ./mod/nginx/sip.nginx:/etc/bigbluebutton/nginx/sip.nginx
+      - ./mod/nginx/bigbluebutton:/etc/nginx/sites-available/bigbluebutton
+      - ./mod/html5/systemd_start.sh:/usr/share/meteor/bundle/systemd_start.sh
+      - ./mod/html5/config.yml:/usr/share/meteor/bundle/programs/server/assets/app/config/settings.yml
+      - ./mod/web/override.conf:/etc/systemd/system/bbb-web.service.d/override.conf
+      - ./mod/web/bigbluebutton.properties:/usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties
+      - ./mod/kurento/WebRtcEndpoint.conf.ini:/etc/kurento/modules/kurento/WebRtcEndpoint.conf.ini
+      - ./mod/bbb-webrtc-sfu/config.yml:/usr/local/bigbluebutton/bbb-webrtc-sfu/config/default.yml
+      - ./rc.local:/etc/rc.local
     security_opt:
       - seccomp:unconfined
-    networks:
-      - backend
-
-#  mac_proxy:
-#      build: mac-vpn/
-#      ports:
-#          - "127.0.0.1:13194:13194"
-#      command: TCP-LISTEN:13194,fork TCP:172.17.0.1:1194
-#      restart: always
-#      networks:
-#        - backend
-
-#  mac_openvpn:
-#      image: kylemanna/openvpn
-#      volumes:
-#          - ./mac-vpn:/local
-#          - ./mac-vpn/config:/etc/openvpn
-#      network_mode: host
-#      privileged: true
-#      cap_add:
-#          - NET_ADMIN
-#      environment:
-#          dest: docker-for-mac.ovpn
-#          DEBUG: '1'
-#      command: /local/helpers/run-vpn.sh
-#      restart: always
+    network_mode: host
