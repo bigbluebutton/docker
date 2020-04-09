@@ -55,11 +55,11 @@ RUN equivs-control redis-server.control \
 
 # -- create nginx service (in order to enable it - to avoid the "nginx.service is not active" error)
 RUN rm -f /etc/systemd/system/nginx.service
-COPY dummy/dummy.service /etc/systemd/system/nginx.service
-COPY dummy/dummy.service /etc/systemd/system/redis.service
-COPY dummy/dummy.service /etc/systemd/system/redis-server.service
-COPY dummy/dummy.service /etc/systemd/system/kurento-media-server.service
-COPY dummy/dummy.service /etc/systemd/system/bbb-webrtc-sfu.service
+COPY dummy.service /etc/systemd/system/nginx.service
+COPY dummy.service /etc/systemd/system/redis.service
+COPY dummy.service /etc/systemd/system/redis-server.service
+COPY dummy.service /etc/systemd/system/kurento-media-server.service
+COPY dummy.service /etc/systemd/system/bbb-webrtc-sfu.service
 
 RUN apt-get install -y nodejs
 
