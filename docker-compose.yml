@@ -22,7 +22,6 @@ services:
       - ./mod/html5/config.yml:/usr/share/meteor/bundle/programs/server/assets/app/config/settings.yml
       - ./mod/web/override.conf:/etc/systemd/system/bbb-web.service.d/override.conf
       - ./mod/web/bigbluebutton.properties:/usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties
-      - ./mod/bbb-webrtc-sfu/config.yml:/usr/local/bigbluebutton/bbb-webrtc-sfu/config/default.yml
     network_mode: host
 
   nginx:
@@ -61,6 +60,12 @@ services:
     networks:
       bluenet:
         ipv4_address: 10.7.7.5 
+
+  mongodb:
+    image: mongo:3.4
+    networks:
+      bluenet:
+        ipv4_address: 10.7.7.6
 
   kurento:
     image: kurento/kurento-media-server:6.13
