@@ -10,6 +10,11 @@ TURN_XML=$SERVLET_DIR/WEB-INF/classes/spring/turn-stun-servers.xml
 while [ ! -f $SERVLET_DIR/WEB-INF/classes/bigbluebutton.properties ]; do sleep 1; echo -n '.'; done
 
 
+# provide dummy nginx config
+# so bbb scripts are happy, even if we don't use nginx here
+echo -e "pid /run/nginx.pid;\n events {}" > /etc/nginx/nginx.conf
+systemctl restart nginx
+
 # delete IPv6 sip profiles
 rm -rf /opt/freeswitch/conf/sip_profiles/*-ipv6*
 

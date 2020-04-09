@@ -1,5 +1,7 @@
 version: '2'
 
+
+
 services:
   bbb:
     image: bbb
@@ -18,12 +20,33 @@ services:
       - ./setup.sh:/opt/setup.sh
       - ./mod/freeswitch/vars.xml:/opt/freeswitch/conf/vars.xml
       - ./mod/freeswitch/external.xml:/opt/freeswitch/conf/sip_profiles/external.xml
-      - ./mod/nginx/sip.nginx:/etc/bigbluebutton/nginx/sip.nginx
-      - ./mod/nginx/bigbluebutton:/etc/nginx/sites-available/bigbluebutton
       - ./mod/html5/systemd_start.sh:/usr/share/meteor/bundle/systemd_start.sh
       - ./mod/html5/config.yml:/usr/share/meteor/bundle/programs/server/assets/app/config/settings.yml
       - ./mod/web/override.conf:/etc/systemd/system/bbb-web.service.d/override.conf
       - ./mod/web/bigbluebutton.properties:/usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties
       - ./mod/kurento/WebRtcEndpoint.conf.ini:/etc/kurento/modules/kurento/WebRtcEndpoint.conf.ini
       - ./mod/bbb-webrtc-sfu/config.yml:/usr/local/bigbluebutton/bbb-webrtc-sfu/config/default.yml
+      - ./mod/pad/settings.json:/usr/share/etherpad-lite/settings.json
     network_mode: host
+
+  nginx:
+    image: nginx:1.17
+    ports:
+      - "80:80"
+    volumes:
+      - ./mod/nginx/bbb:/etc/nginx/bbb
+      - ./mod/nginx/bigbluebutton:/etc/nginx/conf.d/default.conf
+    networks:
+      - bluenet
+    extra_hosts:
+      - "host.docker.internal:10.7.7.1"
+
+
+
+networks:
+  bluenet:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.7.7.0/24
+         gateway: 10.7.7.1

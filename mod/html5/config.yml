@@ -315,7 +315,7 @@ private:
   etherpad:
     apikey: 9xLdxQJ8XoTUy3q7W4ZgpvKYqX16yqirdESk9i54FVm6PiJ1paRd8JOI1MT4pywm
     version: 1.2.13
-    host: 127.0.0.1
+    host: 10.7.7.1
     port: 9001
   redis:
     host: 127.0.0.1
