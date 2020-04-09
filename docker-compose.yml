@@ -1,7 +1,7 @@
 version: '3.6'
 
 services:
-  bbb:
+  base:
     image: bbb
     hostname: meet.livingutopia.org
     cap_add:
@@ -27,6 +27,9 @@ services:
 
   nginx:
     image: nginx:1.17
+    depends_on:
+      - etherpad
+      - webrtc-sfu
     ports:
       - "80:80"
     volumes:
@@ -39,6 +42,8 @@ services:
 
   etherpad:
     image: etherpad/etherpad:1.8.0
+    depends_on:
+      - redis
     environment:
       ETHERPAD_API_KEY: ${ETHERPAD_API_KEY}
     volumes:
@@ -59,8 +64,6 @@ services:
 
   kurento:
     image: kurento/kurento-media-server:6.13
-    # ports:
-    #   # - "127.0.0.1:8889:8888"
     environment: 
       KMS_STUN_IP: 64.233.177.127 # google stun server
       KMS_STUN_PORT: 19302
@@ -68,10 +71,31 @@ services:
       KMS_MAX_PORT: 32768
       KMS_EXTERNAL_ADDRESS: 
       KMS_TURN_URL: 
-    networks:
-      bluenet:
-        ipv4_address: 10.7.7.6
+    network_mode: host
   
+  webrtc-sfu:
+    build: ./bbb-webrtc-sfu
+    depends_on:
+      - redis
+      - kurento
+      - base
+    environment:
+      CLIENT_HOST: 0.0.0.0
+      KURENTO_NAME: kurento
+      REDIS_HOST: redis
+      FREESWITCH_IP: host.docker.internal
+      FREESWITCH_SIP_IP: 144.76.97.34
+      ESL_IP: host.docker.internal
+      LOG_LEVEL: debug
+      NODE_CONFIG: '{"kurento":[{"ip":"144.76.97.34","url":"ws://kurento:8888/kurento"}]}'
+    ports:
+      - "127.0.0.1:3008:3008"
+    extra_hosts:
+      - host.docker.internal:10.7.7.1
+      - kurento:10.7.7.1
+    networks:
+      - bluenet
+
 networks:
   bluenet:
     ipam:

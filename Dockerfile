@@ -18,7 +18,7 @@ RUN apt-get update \
 
 # -- Install Dependencies
 RUN apt-get install -y wget apt-transport-https curl mlocate strace iputils-ping telnet tcpdump vim htop \
-                       tidy libreoffice sudo netcat-openbsd net-tools penjdk-8-jre perl build-essential  \
+                       tidy libreoffice sudo netcat-openbsd net-tools openjdk-8-jre perl build-essential  \
                        ruby rake unzip xmlstarlet rsync tomcat7 yq equivs
 
 
@@ -47,6 +47,9 @@ RUN equivs-control redis-server.control \
     && equivs-control kurento-media-server.control \
     && sed -i 's/<package name; defaults to equivs-dummy>/kurento-media-server/g' kurento-media-server.control \
     && equivs-build kurento-media-server.control \
+    && equivs-control bbb-webrtc-sfu.control \
+    && sed -i 's/<package name; defaults to equivs-dummy>/bbb-webrtc-sfu/g' bbb-webrtc-sfu.control \
+    && equivs-build bbb-webrtc-sfu.control \
     && dpkg -i /*.deb \
     && rm /*.deb
 
@@ -56,6 +59,7 @@ COPY dummy/dummy.service /etc/systemd/system/nginx.service
 COPY dummy/dummy.service /etc/systemd/system/redis.service
 COPY dummy/dummy.service /etc/systemd/system/redis-server.service
 COPY dummy/dummy.service /etc/systemd/system/kurento-media-server.service
+COPY dummy/dummy.service /etc/systemd/system/bbb-webrtc-sfu.service
 
 RUN apt-get install -y nodejs
 
@@ -68,10 +72,11 @@ RUN apt-get install -y bbb-web bbb-record-core bbb-playback-presentation bbb-fre
                     bbb-fsesl-akka bbb-apps-akka bbb-transcode-akka bbb-apps bbb-apps-sip \
                     bbb-apps-video bbb-apps-screenshare bbb-apps-video-broadcast
 
-RUN mkdir -p /etc/nginx/sites-enabled
-RUN apt-get install -y bbb-html5 bbb-config bbb-client bbb-webrtc-sfu
+RUN mkdir -p /etc/nginx/sites-enabled /var/kurento
+
+RUN apt-get install -y bbb-html5 bbb-config
 RUN apt-get install -y mongodb-org
-RUN apt-get install -y bbb-demo
+# RUN apt-get install -y bbb-demo
 
 
 # -- Disable unneeded services
