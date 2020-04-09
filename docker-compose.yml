@@ -2,7 +2,7 @@ version: '3.6'
 
 services:
   base:
-    image: bbb
+    image: bbb-base
     hostname: meet.livingutopia.org
     cap_add:
       - SYS_NICE # for realtime scheduling
@@ -15,13 +15,13 @@ services:
       - /tmp:exec,mode=777
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro # for systemd
-      - ./setup.sh:/opt/setup.sh
+      - ./mod/base/setup.sh:/opt/setup.sh
       - ./mod/freeswitch/vars.xml:/opt/freeswitch/conf/vars.xml
       - ./mod/freeswitch/external.xml:/opt/freeswitch/conf/sip_profiles/external.xml
-      - ./mod/html5/systemd_start.sh:/usr/share/meteor/bundle/systemd_start.sh
-      - ./mod/html5/config.yml:/usr/share/meteor/bundle/programs/server/assets/app/config/settings.yml
       - ./mod/web/override.conf:/etc/systemd/system/bbb-web.service.d/override.conf
       - ./mod/web/bigbluebutton.properties:/usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties
+      - ./mod/base/bigbluebutton.yml:/usr/local/bigbluebutton/core/scripts/bigbluebutton.yml
+      - ./mod/bbb-apps-akka/application.conf:/usr/share/bbb-apps-akka/conf/application.conf
     network_mode: host
 
   nginx:
@@ -29,6 +29,7 @@ services:
     depends_on:
       - etherpad
       - webrtc-sfu
+      - html5
     ports:
       - "80:80"
     volumes:
@@ -100,6 +101,17 @@ services:
       - kurento:10.7.7.1
     networks:
       - bluenet
+
+  html5:
+    image: bbb-html5
+    depends_on:
+      - redis
+      - etherpad
+    networks:
+      - bluenet
+    volumes:
+       - ./mod/html5/entrypoint.sh:/entrypoint.sh
+       - ./mod/html5/settings.yml:/app/programs/server/assets/app/config/settings.yml
 
 networks:
   bluenet:

@@ -27,13 +27,6 @@ RUN LC_CTYPE=C.UTF-8 add-apt-repository ppa:bigbluebutton/support
 RUN sh -c 'wget https://ubuntu.bigbluebutton.org/repo/bigbluebutton.asc -O- | apt-key add -' \
     && sh -c 'echo "deb https://ubuntu.bigbluebutton.org/xenial-220 bigbluebutton-xenial main" > /etc/apt/sources.list.d/bigbluebutton.list' 
 
-RUN  sh -c 'wget -qO - https://www.mongodb.org/static/pgp/server-3.4.asc | sudo apt-key add -' \
-  && sh -c 'echo "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.4.list' 
-
-# nodejs
-RUN sh -c "curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -"
-
-
 # create dummy packages to satisfy dependencies
 RUN equivs-control redis-server.control \
     && sed -i 's/<package name; defaults to equivs-dummy>/redis-server/g' redis-server.control \
@@ -61,23 +54,14 @@ COPY dummy.service /etc/systemd/system/redis-server.service
 COPY dummy.service /etc/systemd/system/kurento-media-server.service
 COPY dummy.service /etc/systemd/system/bbb-webrtc-sfu.service
 
-RUN apt-get install -y nodejs
-
-# bbb-html5 installer expects this file
-RUN mkdir /usr/share/etherpad-lite && sh -c 'echo invalid > /usr/share/etherpad-lite/APIKEY.txt'
-
-
 RUN touch /etc/init.d/nginx && chmod +x /etc/init.d/nginx
-RUN apt-get install -y bbb-web bbb-record-core bbb-playback-presentation bbb-freeswitch-core \
+RUN apt-get update && apt-get install -y bbb-web bbb-record-core bbb-playback-presentation bbb-freeswitch-core \
                     bbb-fsesl-akka bbb-apps-akka bbb-transcode-akka bbb-apps bbb-apps-sip \
                     bbb-apps-video bbb-apps-screenshare bbb-apps-video-broadcast
 
 RUN mkdir -p /etc/nginx/sites-enabled /var/kurento
 
-RUN apt-get install -y bbb-html5 bbb-config
-RUN apt-get install -y mongodb-org
-# RUN apt-get install -y bbb-demo
-
+RUN apt-get install -y bbb-config
 
 # -- Disable unneeded services
 RUN systemctl disable systemd-journal-flush
@@ -93,7 +77,15 @@ RUN chown bbb /home/bbb
 RUN sh -c 'echo "bbb ALL=(ALL:ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/bbb'
 RUN sh -c 'echo "bbb:bbb" | chpasswd'
 
-COPY mod/tomcat7 /etc/init.d/tomcat7
+# disable IPv6 support
+RUN rm -rf /opt/freeswitch/conf/sip_profiles/*-ipv6*
+
+# disable all services
+RUN find /etc/systemd/ | grep wants | xargs -r -n 1 basename | grep service | grep -v networking | grep -v tty   | xargs -r -n 1 -I __ systemctl disable __
+RUN systemctl disable tomcat7
+RUN systemctl enable red5 freeswitch bbb-apps-akka bbb-transcode-akka bbb-fsesl-akka bbb-rap-caption-inbox bbb-web
+
+COPY tomcat7 /etc/init.d/tomcat7
 RUN chmod +x /etc/init.d/tomcat7
 
 COPY setup.sh /opt/setup.sh
