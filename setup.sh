@@ -5,8 +5,6 @@ HOST=meet.livingutopia.org
 TOMCAT_USER=tomcat7
 SERVLET_DIR=/usr/share/bbb-web
 
-echo $HOST > /etc/hostname
-
 TURN_XML=$SERVLET_DIR/WEB-INF/classes/spring/turn-stun-servers.xml
 
 while [ ! -f $SERVLET_DIR/WEB-INF/classes/bigbluebutton.properties ]; do sleep 1; echo -n '.'; done

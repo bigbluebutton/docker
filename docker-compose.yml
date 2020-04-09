@@ -3,11 +3,10 @@ version: '2'
 services:
   bbb:
     image: bbb
-    privileged: true
     hostname: meet.livingutopia.org
     cap_add:
-      - NET_ADMIN
       - SYS_NICE # for realtime scheduling
+      - SYS_ADMIN # for systemd
     environment:
       - container=docker
     tmpfs:
@@ -15,7 +14,8 @@ services:
       - /run/lock
       - /tmp:exec,mode=777
     volumes:
-      - ./setup.sh:/opt/docker-bbb/setup.sh
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro # for systemd
+      - ./setup.sh:/opt/setup.sh
       - ./mod/freeswitch/vars.xml:/opt/freeswitch/conf/vars.xml
       - ./mod/freeswitch/external.xml:/opt/freeswitch/conf/sip_profiles/external.xml
       - ./mod/nginx/sip.nginx:/etc/bigbluebutton/nginx/sip.nginx
@@ -26,7 +26,4 @@ services:
       - ./mod/web/bigbluebutton.properties:/usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties
       - ./mod/kurento/WebRtcEndpoint.conf.ini:/etc/kurento/modules/kurento/WebRtcEndpoint.conf.ini
       - ./mod/bbb-webrtc-sfu/config.yml:/usr/local/bigbluebutton/bbb-webrtc-sfu/config/default.yml
-      - ./rc.local:/etc/rc.local
-    security_opt:
-      - seccomp:unconfined
     network_mode: host
