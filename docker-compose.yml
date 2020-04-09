@@ -1,6 +1,4 @@
-version: '2'
-
-
+version: '3.6'
 
 services:
   bbb:
@@ -26,7 +24,6 @@ services:
       - ./mod/web/bigbluebutton.properties:/usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties
       - ./mod/kurento/WebRtcEndpoint.conf.ini:/etc/kurento/modules/kurento/WebRtcEndpoint.conf.ini
       - ./mod/bbb-webrtc-sfu/config.yml:/usr/local/bigbluebutton/bbb-webrtc-sfu/config/default.yml
-      - ./mod/pad/settings.json:/usr/share/etherpad-lite/settings.json
     network_mode: host
 
   nginx:
@@ -41,12 +38,29 @@ services:
     extra_hosts:
       - "host.docker.internal:10.7.7.1"
 
+  etherpad:
+    image: etherpad/etherpad:1.8.0
+    environment:
+      ETHERPAD_API_KEY: ${ETHERPAD_API_KEY}
+    volumes:
+      - ./mod/pad/settings.json:/opt/etherpad-lite/settings.json
+      - ./mod/pad/entrypoint.sh:/entrypoint.sh
+    entrypoint: /entrypoint.sh
+    networks:
+      bluenet:
+        ipv4_address: 10.7.7.4
 
-
+  redis:
+    image: redis:3.0-alpine
+    ports:
+      - "127.0.0.1:6379:6379"  # TODO: remove as soon as we updated all redis host references
+    networks:
+      bluenet:
+        ipv4_address: 10.7.7.5 
+  
 networks:
   bluenet:
-    driver: bridge
     ipam:
-     config:
-       - subnet: 10.7.7.0/24
-         gateway: 10.7.7.1
+      driver: default
+      config:
+        - subnet: "10.7.7.0/24"

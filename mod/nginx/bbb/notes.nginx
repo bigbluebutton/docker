@@ -2,7 +2,7 @@
 location ~ "^\/pad\/p\/(\w+)$" {
     rewrite                /pad/(.*) /$1 break;
     rewrite                ^/pad$ /pad/ permanent;
-    proxy_pass             http://host.docker.internal:9001;
+    proxy_pass             http://etherpad:9001;
     proxy_pass_header      Server;
     proxy_redirect         / /pad;
     proxy_set_header       Host $host;
@@ -15,7 +15,7 @@ location ~ "^\/pad\/p\/(\w+)$" {
 location /pad {
     rewrite                /pad/(.*) /$1 break;
     rewrite                ^/pad$ /pad/ permanent;
-    proxy_pass             http://host.docker.internal:9001/;
+    proxy_pass             http://etherpad:9001/;
     proxy_pass_header      Server;
     proxy_redirect         / /pad/;
     proxy_set_header       Host $host;
@@ -24,7 +24,7 @@ location /pad {
 
 location /pad/socket.io {
     rewrite /pad/socket.io/(.*) /socket.io/$1 break;
-    proxy_pass http://host.docker.internal:9001/;
+    proxy_pass http://etherpad:9001/;
     proxy_redirect         / /pad/;
     proxy_set_header Host $host;
     proxy_buffering off;
@@ -40,7 +40,7 @@ location /pad/socket.io {
 
 location /static {
     rewrite /static/(.*) /static/$1 break;
-    proxy_pass http://host.docker.internal:9001/;
+    proxy_pass http://etherpad:9001/;
     proxy_set_header Host $host;
     proxy_buffering off;
 }

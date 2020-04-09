@@ -22,7 +22,7 @@ video-transposing-ceiling: 50
 audio-transposing-ceiling: 100
 localIpAddress: 172.17.0.2
 acceptSelfSignedCertificate: false
-redisHost: 127.0.0.1
+redisHost: 10.7.7.5
 redisPort: "6379"
 # Uncomment to set a password if Redis requires auth.
 # redisPassword: foobared

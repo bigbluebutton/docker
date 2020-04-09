@@ -85,7 +85,7 @@
     /*
      * IP and port which etherpad should bind at
      */
-    "ip": "10.7.7.1",
+    "ip": "0.0.0.0",
     "port": 9001,
   
     /*
@@ -131,7 +131,7 @@
   
     "dbType": "redis",
     "dbSettings": {
-      "host": "localhost",
+      "host": "redis",
       "port": 6379
     },
   
@@ -432,7 +432,7 @@
      */
   
     "ep_redis_publisher": {
-      "host": "localhost",
+      "host": "redis",
       "port": 6379
     },
   
