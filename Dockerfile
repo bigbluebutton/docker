@@ -44,6 +44,9 @@ RUN equivs-control redis-server.control \
     && equivs-control bbb-etherpad.control \
     && sed -i 's/<package name; defaults to equivs-dummy>/bbb-etherpad/g' bbb-etherpad.control \
     && equivs-build bbb-etherpad.control \
+    && equivs-control kurento-media-server.control \
+    && sed -i 's/<package name; defaults to equivs-dummy>/kurento-media-server/g' kurento-media-server.control \
+    && equivs-build kurento-media-server.control \
     && dpkg -i /*.deb \
     && rm /*.deb
 
@@ -52,6 +55,7 @@ RUN rm -f /etc/systemd/system/nginx.service
 COPY dummy/dummy.service /etc/systemd/system/nginx.service
 COPY dummy/dummy.service /etc/systemd/system/redis.service
 COPY dummy/dummy.service /etc/systemd/system/redis-server.service
+COPY dummy/dummy.service /etc/systemd/system/kurento-media-server.service
 
 RUN apt-get install -y nodejs
 

@@ -22,7 +22,6 @@ services:
       - ./mod/html5/config.yml:/usr/share/meteor/bundle/programs/server/assets/app/config/settings.yml
       - ./mod/web/override.conf:/etc/systemd/system/bbb-web.service.d/override.conf
       - ./mod/web/bigbluebutton.properties:/usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties
-      - ./mod/kurento/WebRtcEndpoint.conf.ini:/etc/kurento/modules/kurento/WebRtcEndpoint.conf.ini
       - ./mod/bbb-webrtc-sfu/config.yml:/usr/local/bigbluebutton/bbb-webrtc-sfu/config/default.yml
     network_mode: host
 
@@ -57,6 +56,21 @@ services:
     networks:
       bluenet:
         ipv4_address: 10.7.7.5 
+
+  kurento:
+    image: kurento/kurento-media-server:6.13
+    # ports:
+    #   # - "127.0.0.1:8889:8888"
+    environment: 
+      KMS_STUN_IP: 64.233.177.127 # google stun server
+      KMS_STUN_PORT: 19302
+      KMS_MIN_PORT: 24577
+      KMS_MAX_PORT: 32768
+      KMS_EXTERNAL_ADDRESS: 
+      KMS_TURN_URL: 
+    networks:
+      bluenet:
+        ipv4_address: 10.7.7.6
   
 networks:
   bluenet:
