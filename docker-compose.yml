@@ -1,27 +1,30 @@
 version: '3.6'
 
 services:
-  base:
-    image: bbb-base
-    hostname: meet.livingutopia.org
+  core:
+    image: bbb-core
     cap_add:
       - SYS_NICE # for realtime scheduling
       - SYS_ADMIN # for systemd
     environment:
-      - container=docker
+      DOMAIN: ${DOMAIN}
+      EXTERNAL_IP: ${EXTERNAL_IP}
+      SHARED_SECRET: ${SHARED_SECRET}
+      WELCOME_MESSAGE: ${WELCOME_MESSAGE}
+      WELCOME_FOOTER: ${WELCOME_FOOTER}
+      container: docker
     tmpfs:
       - /run
       - /run/lock
       - /tmp:exec,mode=777
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro # for systemd
-      - ./mod/base/setup.sh:/opt/setup.sh
-      - ./mod/freeswitch/vars.xml:/opt/freeswitch/conf/vars.xml
+      - ./mod/core/entrypoint.sh:/entrypoint.sh
+      - ./mod/freeswitch/vars.xml:/opt/freeswitch/conf/vars.xml.tmpl
       - ./mod/freeswitch/external.xml:/opt/freeswitch/conf/sip_profiles/external.xml
-      - ./mod/web/override.conf:/etc/systemd/system/bbb-web.service.d/override.conf
-      - ./mod/web/bigbluebutton.properties:/usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties
-      - ./mod/base/bigbluebutton.yml:/usr/local/bigbluebutton/core/scripts/bigbluebutton.yml
-      - ./mod/bbb-apps-akka/application.conf:/usr/share/bbb-apps-akka/conf/application.conf
+      - ./mod/web/bigbluebutton.properties:/usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties.tmpl
+      - ./mod/core/bigbluebutton.yml:/usr/local/bigbluebutton/core/scripts/bigbluebutton.yml
+      - ./mod/bbb-apps-akka/application.conf:/usr/share/bbb-apps-akka/conf/application.conf.tmpl
     network_mode: host
 
   nginx:
@@ -84,7 +87,7 @@ services:
     depends_on:
       - redis
       - kurento
-      - base
+      - core
     environment:
       CLIENT_HOST: 0.0.0.0
       KURENTO_NAME: kurento
