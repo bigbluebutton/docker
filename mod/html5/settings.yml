@@ -7,7 +7,7 @@ public:
     listenOnlyMode: true
     forceListenOnly: false
     skipCheck: false
-    clientTitle: BigBlueButton
+    clientTitle: {{ .Env.CLIENT_TITLE }}
     appName: BigBlueButton HTML5 Client
     bbbServerVersion: 2.2-dev
     copyright: "©2019 BigBlueButton Inc."
@@ -85,9 +85,9 @@ public:
     enableNetworkMonitoring: false
     packetLostThreshold: 10
   kurento:
-    wsUrl: wss://meet.livingutopia.org/bbb-webrtc-sfu
-    chromeDefaultExtensionKey: akgoaoikmbmhcopjgakkcepdgdgkjfbc
-    chromeDefaultExtensionLink: https://chrome.google.com/webstore/detail/bigbluebutton-screenshare/akgoaoikmbmhcopjgakkcepdgdgkjfbc
+    wsUrl: wss://{{ .Env.DOMAIN }}/bbb-webrtc-sfu
+    chromeDefaultExtensionKey: {{ .Env.SCREENSHARE_EXTENSION_KEY }}
+    chromeDefaultExtensionLink: {{ .Env.SCREENSHARE_EXTENSION_LINK }}
     chromeExtensionKey: KEY
     chromeExtensionLink: LINK
     chromeScreenshareSources:
@@ -158,7 +158,7 @@ public:
       enabled: true
   note:
     enabled: true
-    url: https://meet.livingutopia.org/pad
+    url: https://{{ .Env.DOMAIN }}/pad
     config:
       showLineNumbers: false
       showChat: false
@@ -313,7 +313,7 @@ private:
     pencilChunkLength: 100
     loadSlidesFromHttpAlways: false
   etherpad:
-    apikey: 9xLdxQJ8XoTUy3q7W4ZgpvKYqX16yqirdESk9i54FVm6PiJ1paRd8JOI1MT4pywm
+    apikey: {{ .Env.ETHERPAD_API_KEY }}
     version: 1.2.13
     host: etherpad
     port: 9001

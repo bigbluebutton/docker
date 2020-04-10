@@ -7,4 +7,7 @@ export NODE_ENV=production
 export ENVIRONMENT_TYPE=production
 export PORT=3000
 
-node main.js
+rm /app/programs/server/assets/app/config/settings.yml
+dockerize \
+    -template /app/programs/server/assets/app/config/settings.yml.tmpl:/app/programs/server/assets/app/config/settings.yml \
+    node main.js

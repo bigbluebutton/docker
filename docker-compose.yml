@@ -74,8 +74,8 @@ services:
   kurento:
     image: kurento/kurento-media-server:6.13
     environment: 
-      KMS_STUN_IP: 64.233.177.127 # google stun server
-      KMS_STUN_PORT: 19302
+      KMS_STUN_IP: ${STUN_IP}
+      KMS_STUN_PORT: ${STUN_PORT}
       KMS_MIN_PORT: 24577
       KMS_MAX_PORT: 32768
       KMS_EXTERNAL_ADDRESS: 
@@ -93,10 +93,10 @@ services:
       KURENTO_NAME: kurento
       REDIS_HOST: redis
       FREESWITCH_IP: host.docker.internal
-      FREESWITCH_SIP_IP: 144.76.97.34
+      FREESWITCH_SIP_IP: ${EXTERNAL_IP}
       ESL_IP: host.docker.internal
       LOG_LEVEL: debug
-      NODE_CONFIG: '{"kurento":[{"ip":"144.76.97.34","url":"ws://kurento:8888/kurento"}]}'
+      NODE_CONFIG: '{"kurento":[{"ip":"${EXTERNAL_IP}","url":"ws://kurento:8888/kurento"}]}'
     ports:
       - "127.0.0.1:3008:3008"
     extra_hosts:
@@ -110,11 +110,17 @@ services:
     depends_on:
       - redis
       - etherpad
+    environment:
+      DOMAIN: ${DOMAIN}
+      CLIENT_TITLE: ${CLIENT_TITLE}
+      SCREENSHARE_EXTENSION_KEY: ${SCREENSHARE_EXTENSION_KEY}
+      SCREENSHARE_EXTENSION_LINK: ${SCREENSHARE_EXTENSION_LINK}
+      ETHERPAD_API_KEY: ${ETHERPAD_API_KEY}
     networks:
       - bluenet
     volumes:
        - ./mod/html5/entrypoint.sh:/entrypoint.sh
-       - ./mod/html5/settings.yml:/app/programs/server/assets/app/config/settings.yml
+       - ./mod/html5/settings.yml:/app/programs/server/assets/app/config/settings.yml.tmpl
 
 networks:
   bluenet:
