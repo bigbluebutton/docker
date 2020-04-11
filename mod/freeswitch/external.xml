@@ -78,7 +78,15 @@
     <param name="ext-rtp-ip" value="$${external_rtp_ip}"/>
     <param name="ext-sip-ip" value="$${external_sip_ip}"/>
 
-    <param name="rtp-timeout-sec" value="300"/>
+    <!--
+      Listen only clients somehow run into this timeout
+      causing 
+        Hangup sofia/external/GLOBAL_AUDIO_76116@10.7.7.1 [CS_EXECUTE] [MEDIA_TIMEOUT]
+        [mcs-freeswitch] Dispatching conference new video floor event released 
+        [mcs-freeswitch] Received CHANNEL_HANGUP for
+    -->
+    <param name="rtp-timeout-sec" value="86400"/>
+
     <param name="rtp-hold-timeout-sec" value="1800"/>
     <param name="enable-3pcc" value="proxy"/>
 
