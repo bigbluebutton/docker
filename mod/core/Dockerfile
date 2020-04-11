@@ -5,7 +5,6 @@ MAINTAINER ffdixon@bigbluebutton.org
 # - separate bbb-apps into an own container
 # - separate bbb-web
 # - remove systemd
-# - checkfor removeable dependencies and dummy services
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV container docker
@@ -19,7 +18,6 @@ RUN apt-get update && apt-get install -y software-properties-common language-pac
 RUN update-locale LANG=en_US.UTF-8
 RUN LC_CTYPE=C.UTF-8 add-apt-repository ppa:rmescandon/yq
 RUN apt-get install -y --no-install-recommends apt-utils
-RUN apt-get update
 
 # install dockerize
 RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
@@ -27,10 +25,10 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 # install dev helpers
-RUN apt-get install -y  tcpdump telnet htop vim
+# RUN apt-get install -y  tcpdump telnet htop vim
 
 # -- Install Dependencies
-RUN apt-get install -y systemd apt-transport-https equivs libreoffice 
+RUN apt-get install -y systemd apt-transport-https equivs libreoffice haveged ttf-liberation net-tools
 
 # bbb repo & packages
 RUN LC_CTYPE=C.UTF-8 add-apt-repository ppa:bigbluebutton/support
@@ -42,35 +40,30 @@ RUN sh -c 'wget https://ubuntu.bigbluebutton.org/repo/bigbluebutton.asc -O- | ap
 RUN equivs-control redis-server.control \
     && sed -i 's/<package name; defaults to equivs-dummy>/redis-server/g' redis-server.control \
     && equivs-build redis-server.control \
-    && equivs-control nginx.control \
-    && sed -i 's/<package name; defaults to equivs-dummy>/nginx/g' nginx.control \
-    && equivs-build nginx.control \
-    && equivs-control bbb-webrtc-sfu.control \
-    && sed -i 's/<package name; defaults to equivs-dummy>/bbb-webrtc-sfu/g' bbb-webrtc-sfu.control \
-    && equivs-build bbb-webrtc-sfu.control \
     && dpkg -i /*.deb \
     && rm /*.deb
 
-# -- create nginx service (in order to enable it - to avoid the "nginx.service is not active" error)
-RUN rm -f /etc/systemd/system/nginx.service
-COPY dummy.service /etc/systemd/system/nginx.service
-COPY dummy.service /etc/systemd/system/redis.service
+# -- create dummy service to avoid start up errors
 COPY dummy.service /etc/systemd/system/redis-server.service
-COPY dummy.service /etc/systemd/system/bbb-webrtc-sfu.service
 
-RUN touch /etc/init.d/nginx && chmod +x /etc/init.d/nginx
-RUN apt-get update && apt-get install -y bbb-web bbb-freeswitch-core \
-                    bbb-fsesl-akka bbb-apps-akka bbb-transcode-akka bbb-apps bbb-apps-sip \
+RUN apt-get install -y bbb-web bbb-freeswitch-core \
+                    bbb-fsesl-akka bbb-apps-akka bbb-transcode-akka bbb-apps \
                     bbb-apps-video bbb-apps-screenshare bbb-apps-video-broadcast
 
 # disable IPv6 support
 RUN rm -rf /opt/freeswitch/conf/sip_profiles/*-ipv6*
 
+# -- avoid blocking java 
+# https://github.com/bigbluebutton/bigbluebutton/issues/8959
+RUN sed -i 's|securerandom.source=file:/dev/random|securerandom.source=file:/dev/urandom|g'  /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/security/java.security
+
 # -- Disable unneeded services
 RUN find /etc/systemd/ | grep wants | xargs -r -n 1 basename | grep service | grep -v networking | grep -v tty   | xargs -r -n 1 -I __ systemctl disable __
-RUN systemctl disable systemd-journal-flush
-RUN systemctl disable systemd-update-utmp.service
+RUN systemctl disable systemd-journal-flush systemd-update-utmp.service
 RUN systemctl enable red5 freeswitch bbb-apps-akka bbb-transcode-akka bbb-fsesl-akka bbb-web # bbb-rap-caption-inbox
+
+# -- fix directory permissions
+RUN chown bigbluebutton:bigbluebutton /var/bigbluebutton
 
 COPY entrypoint.sh /entrypoint.sh
 
