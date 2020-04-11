@@ -20,6 +20,7 @@ services:
       - /run/lock
       - /tmp:exec,mode=777
     volumes:
+      - bigbluebutton:/var/bigbluebutton
       - /sys/fs/cgroup:/sys/fs/cgroup:ro # for systemd
       - ./mod/core/entrypoint.sh:/entrypoint.sh
       - ./mod/core/red5.properties:/usr/share/red5/conf/red5.properties
@@ -44,6 +45,7 @@ services:
     ports:
       - "80:80"
     volumes:
+      - bigbluebutton:/var/bigbluebutton
       - ./mod/nginx/bbb:/etc/nginx/bbb
       - ./mod/nginx/bigbluebutton:/etc/nginx/conf.d/default.conf
     networks:
@@ -130,6 +132,10 @@ services:
     volumes:
        - ./mod/html5/entrypoint.sh:/entrypoint.sh
        - ./mod/html5/settings.yml:/app/programs/server/assets/app/config/settings.yml.tmpl
+
+
+volumes:
+  bigbluebutton:
 
 networks:
   bluenet:
