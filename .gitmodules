@@ -1,0 +1,3 @@
+[submodule "bbb-webrtc-sfu"]
+	path = bbb-webrtc-sfu
+	url = https://github.com/bigbluebutton/bbb-webrtc-sfu.git
