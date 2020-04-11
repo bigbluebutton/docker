@@ -1,5 +1,5 @@
 location /ws {
-        proxy_pass https://144.76.97.34:7443;
+        proxy_pass https://host.docker.internal:7443;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "Upgrade";

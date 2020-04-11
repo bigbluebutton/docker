@@ -3,6 +3,8 @@ version: '3.6'
 services:
   core:
     image: bbb-core
+    depends_on:
+        - redis
     cap_add:
       - SYS_NICE # for realtime scheduling
       - SYS_ADMIN # for systemd
@@ -20,11 +22,17 @@ services:
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro # for systemd
       - ./mod/core/entrypoint.sh:/entrypoint.sh
+      - ./mod/core/red5.properties:/usr/share/red5/conf/red5.properties
+      - ./mod/core/bigbluebutton.properties:/usr/share/red5/webapps/bigbluebutton/WEB-INF/bigbluebutton.properties
+      - ./mod/core/bigbluebutton-sip.properties:/usr/share/red5/webapps/sip/WEB-INF/bigbluebutton-sip.properties
       - ./mod/freeswitch/vars.xml:/opt/freeswitch/conf/vars.xml.tmpl
       - ./mod/freeswitch/external.xml:/opt/freeswitch/conf/sip_profiles/external.xml
+      - ./mod/freeswitch/acl.conf.xml:/opt/freeswitch/conf/autoload_configs/acl.conf.xml
+      - ./mod/freeswitch/event_socket.conf.xml:/opt/freeswitch/conf/autoload_configs/event_socket.conf.xml
       - ./mod/web/bigbluebutton.properties:/usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties.tmpl
       - ./mod/core/bigbluebutton.yml:/usr/local/bigbluebutton/core/scripts/bigbluebutton.yml
       - ./mod/bbb-apps-akka/application.conf:/usr/share/bbb-apps-akka/conf/application.conf.tmpl
+      - ./mod/bbb-fsesl-akka/application.conf:/etc/bbb-fsesl-akka/application.conf
     network_mode: host
 
   nginx:
@@ -95,7 +103,7 @@ services:
       FREESWITCH_IP: host.docker.internal
       FREESWITCH_SIP_IP: ${EXTERNAL_IP}
       ESL_IP: host.docker.internal
-      LOG_LEVEL: debug
+      LOG_LEVEL: info
       NODE_CONFIG: '{"kurento":[{"ip":"${EXTERNAL_IP}","url":"ws://kurento:8888/kurento"}]}'
     ports:
       - "127.0.0.1:3008:3008"
@@ -109,6 +117,7 @@ services:
     image: bbb-html5
     depends_on:
       - redis
+      - mongodb
       - etherpad
     environment:
       DOMAIN: ${DOMAIN}

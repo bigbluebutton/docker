@@ -58,8 +58,8 @@
       affect the sip authentication.  Please review conf/directory/default.xml for more
       information on this topic.
   -->
-  <X-PRE-PROCESS cmd="set" data="local_ip_v4=0.0.0.0"/>
-
+  <X-PRE-PROCESS cmd="set" data="local_ip_v4=10.7.7.1"/>
+  <X-PRE-PROCESS cmd="set" data="local_ip_v6=::1"/>
   <X-PRE-PROCESS cmd="set" data="domain=meet.livingutopia.org"/>
   <X-PRE-PROCESS cmd="set" data="domain_name=$${domain}"/>
   <X-PRE-PROCESS cmd="set" data="hold_music=local_stream://moh"/>
