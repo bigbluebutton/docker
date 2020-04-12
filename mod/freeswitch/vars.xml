@@ -60,7 +60,7 @@
   -->
   <X-PRE-PROCESS cmd="set" data="local_ip_v4=10.7.7.1"/>
   <X-PRE-PROCESS cmd="set" data="local_ip_v6=::1"/>
-  <X-PRE-PROCESS cmd="set" data="domain=meet.livingutopia.org"/>
+  <X-PRE-PROCESS cmd="set" data="domain={{ .Env.DOMAIN }}"/>
   <X-PRE-PROCESS cmd="set" data="domain_name=$${domain}"/>
   <X-PRE-PROCESS cmd="set" data="hold_music=local_stream://moh"/>
   <X-PRE-PROCESS cmd="set" data="use_profile=external"/>
@@ -299,7 +299,7 @@
        If unspecified, the bind_server_ip value is used.
        Used by: sofia.conf.xml dingaling.conf.xml
   -->
-  <X-PRE-PROCESS cmd="set" data="external_rtp_ip=144.76.97.34"/>
+  <X-PRE-PROCESS cmd="set" data="external_rtp_ip={{ .Env.EXTERNAL_IP }}"/>
 
   <!-- external_sip_ip
       Used as the public IP address for SDP.
@@ -312,7 +312,7 @@
        If unspecified, the bind_server_ip value is used.
        Used by: sofia.conf.xml dingaling.conf.xml
   -->
-  <X-PRE-PROCESS cmd="set" data="external_sip_ip=144.76.97.34"/>
+  <X-PRE-PROCESS cmd="set" data="external_sip_ip={{ .Env.EXTERNAL_IP }}"/>
 
   <!-- unroll-loops
        Used to turn on sip loopback unrolling.
