@@ -2,7 +2,7 @@ version: '3.6'
 
 services:
   core:
-    image: bbb-core
+    build: mod/core
     depends_on:
         - redis
     cap_add:
@@ -47,7 +47,6 @@ services:
       - bigbluebutton:/var/bigbluebutton
       - ./mod/nginx/bbb:/etc/nginx/bbb
       - ./mod/nginx/bigbluebutton:/etc/nginx/conf.d/default.conf
-      - ./mod/nginx/503.html:/etc/nginx/conf.d/default.conf
     networks:
       - bbb-net
     extra_hosts:
@@ -116,7 +115,7 @@ services:
       - bbb-net
 
   html5:
-    image: bbb-html5
+    build: mod/html5
     depends_on:
       - redis
       - mongodb
