@@ -21,13 +21,13 @@
    ```
 6. Create `.env` with `$ cp sample.env .env`
 7. Adjust the values in `.env` (don't forget to change the `ETHERPAD_API_KEY`, `SHARED_SECRET` and `RAILS_SECRET`!)
-8. Start BigBlueButton `$ docker-compose -d up`
+8. Start BigBlueButton `$ docker-compose up -d` and wait ages until all images are built
 9. Optionally...
     - Start api demos
-        - `$ docker-compose -d -f docker-compose.demo.yml up`
+        - `$ docker-compose -f docker-compose.demo.yml up -d`
         - Access https://bbb.example.com/demo/
     - Start greenlight
-        - `$ docker-compose -d -f docker-compose.greenlight.yml up`
+        - `$ docker-compose -f docker-compose.greenlight.yml up -d`
         - Create an administrator account \
         `$ docker exec greenlight-v2 bundle exec rake admin:create`
         - Access https://bbb.example.com/b
