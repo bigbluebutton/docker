@@ -1,121 +1,53 @@
 # BigBlueButton Docker
 
-## 1. Install docker-ce
+## Please note
+- Not well tested, can be still really buggy. Don't use for production! 
+- Serves BBB on HTTP Port 8080. It is your responsibility to add a HTTPS reverse proxy
 
-This container depends on docker-ce.
+## Install
+1. Install docker-ce & docker-compose
+    1. follow instructions
+        * Debian: https://docs.docker.com/engine/install/debian/
+        * CentOS: https://docs.docker.com/engine/install/centos/
+        * Fedora: https://docs.docker.com/engine/install/fedora/
+        * Ubuntu: https://docs.docker.com/engine/install/ubuntu/
+    2. Ensure docker works with `$ docker run hello-world`
+    3. Install docker-compose: https://docs.docker.com/compose/install/
+    4. Ensure docker-compose works: `$ docker-compose --version`
+5. Clone this repository
+   ```sh
+   $ git clone --recurse-submodules https://github.com/alangecker/bigbluebutton-docker.git bbb-docker
+   $ cd bbb-docker
+   ```
+6. Create `.env` with `$ cp sample.env .env`
+7. Adjust the values in `.env` (don't forget to change the `ETHERPAD_API_KEY`, `SHARED_SECRET` and `RAILS_SECRET`!)
+8. Start BigBlueButton `$ docker-compose -d up`
+9. Optionally...
+    - Start api demos
+        - `$ docker-compose -d -f docker-compose.demo.yml up`
+        - Access https://bbb.example.com/demo/
+    - Start greenlight
+        - `$ docker-compose -d -f docker-compose.greenlight.yml up`
+        - Create an administrator account \
+        `$ docker exec greenlight-v2 bundle exec rake admin:create`
+        - Access https://bbb.example.com/b
 
-1 - Make sure you don't have docker installed:
-`sudo apt-get remove docker docker-engine docker.io`
+## Note if you use a Firewall / NAT
+Kurento binds somehow always to the external IP instead of the local one or `0.0.0.0`. For that reason you need to add your external IP to your interface.
 
-2 - Install docker-ce:
+##### Temporary  way (until next reboot)
 ```
-sudo apt-get update;
-sudo apt-get install \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    software-properties-common;
-
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-
-sudo add-apt-repository \
-   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-   $(lsb_release -cs) \
-   stable"
-
-sudo apt-get update
-
-sudo apt-get install docker-ce
-
-sudo addgroup `whoami` docker
-
-```
-
-## 2. Clone this repository
-```
-mkdir -p ~/bbb/src/
-cd ~/bbb/
-git clone https://github.com/bigbluebutton/docker.git
-cd docker
-git checkout v2.2.x
-```
-
-## 3. Clone BBB sources repository (optional)
-```
-cd ~/bbb/src/
-git clone https://github.com/bigbluebutton/bigbluebutton.git
+$ ip addr add 144.76.97.34/32 dev ens3
 ```
 
-## 4. Setup SSL certificate
-Generate a certificate to your container (using letsencrypt or other solution) and then copy your certificate to certs/ folder with the commands:
-```
-mkdir certs/
-cp fullchain.pem certs/
-cp privkey.pem certs/
-```
+##### Permanent way
+Specific to your linux distribution. Use a search engine of your choice. ;)
 
-## 5. Creating container
-In order to create the container you must specify the hostname of container and the domain name.
+### Ports
+Also don't forget to forward all necassary ports listed in http://docs.bigbluebutton.org/2.2/configure-firewall.html
 
-In this example your container will be acessible from https://bbb001.bbbvm.imdt.com.br :
+## Open Tasks
+- add optional https support via lets encrypt
+- add support for recording
+- further separate bbb-core into individual container
 
-```
-docker-compose build bbb22
-NAME=bbb001 DOMAIN=bbbvm.imdt.com.br sh -c 'docker-compose run --name $NAME bbb22'
-```
-## 6. Add an entry in your `/etc/hosts` file
-
-In order to access the container, you need to get the IP address of container by running the following command:
-
-```
-docker exec -it bbb001 ifconfig eth0
-```
-
-After that, add a line in your `/etc/hosts` file with the full domain name specified at previous step.
-
-In this example, the line added on hosts file is:
-```
-172.20.0.2      bbb001.bbbvm.imdt.com.br
-```
-
-## 7. Open the specified address in your browser:
-
-http://bbb001.bbbvm.imdt.com.br
-
-
-# Useful commands
-
-## Start container (after host reboot)
-```
-docker start bbb001
-docker attach bbb001
-```
-
-## Stop the container
-```
-docker stop bbb001
-```
-
-## Kill the container (force exit)
-```
-docker kill bbb001
-```
-
-# MAC users
-Docker for Mac OS doesn't allow direct access to container IP's.
-
-In order to access the BBB container from your MAC os host, you can use openvpn:
-
-1. Build containers:
-```
-docker-compose build mac_proxy mac_openvpn
-```
-
-2. Add `comp-lzo no` at bottom of `mac-vpn/docker-for-mac.ovpn`
-
-3. Install openvpn configuration generated on `mac-vpn/docker-for-mac.ovpn` (double click and open on Tunnelblick)
-
-4. Start containers
-```
-docker-compose start mac_proxy mac_openvpn
-```
