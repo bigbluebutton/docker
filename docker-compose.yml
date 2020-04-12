@@ -67,7 +67,7 @@ services:
         ipv4_address: 10.7.7.4
 
   redis:
-    image: redis:3.0-alpine
+    image: redis:5.0-alpine
     ports:
       - "127.0.0.1:6379:6379"  # TODO: remove as soon as we updated all redis host references
     networks:
@@ -75,7 +75,7 @@ services:
         ipv4_address: 10.7.7.5 
 
   mongodb:
-    image: mongo:3.4
+    image: mongo:4.2
     networks:
       bbb-net:
         ipv4_address: 10.7.7.6
@@ -94,7 +94,7 @@ services:
   webrtc-sfu:
     build: 
       context: ./bbb-webrtc-sfu
-      dockerfile: mod/webrtc-sfu/Dockerfile
+      dockerfile: ../mod/webrtc-sfu/Dockerfile
     depends_on:
       - redis
       - kurento
