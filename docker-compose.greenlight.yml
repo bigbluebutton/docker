@@ -1,0 +1,24 @@
+version: '3.6'
+
+services:
+  greenlight:
+    container_name: greenlight-v2
+    image: bigbluebutton/greenlight:v2
+    env_file: .env
+    environment:
+      DB_ADAPTER: postgresql
+      DB_HOST: postgres
+      DB_NAME: greenlight
+      DB_USERNAME: postgres
+      DB_PASSWORD: password
+      BIGBLUEBUTTON_ENDPOINT: https://${DOMAIN}/bigbluebutton/api/
+      BIGBLUEBUTTON_SECRET: ${SHARED_SECRET}
+      SECRET_KEY_BASE: ${RAILS_SECRET}
+    ports:
+      - 10.7.7.1:5000:80
+  postgres:
+    image: postgres:12
+    environment:
+      POSTGRES_DB: greenlight
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password

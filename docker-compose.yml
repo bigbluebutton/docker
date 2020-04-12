@@ -12,7 +12,6 @@ services:
       DOMAIN: ${DOMAIN}
       EXTERNAL_IP: ${EXTERNAL_IP}
       SHARED_SECRET: ${SHARED_SECRET}
-      WELCOME_MESSAGE: ${WELCOME_MESSAGE}
       WELCOME_FOOTER: ${WELCOME_FOOTER}
       container: docker
     tmpfs:
@@ -43,13 +42,14 @@ services:
       - webrtc-sfu
       - html5
     ports:
-      - "80:80"
+      - "8080:80"
     volumes:
       - bigbluebutton:/var/bigbluebutton
       - ./mod/nginx/bbb:/etc/nginx/bbb
       - ./mod/nginx/bigbluebutton:/etc/nginx/conf.d/default.conf
+      - ./mod/nginx/503.html:/etc/nginx/conf.d/default.conf
     networks:
-      - bluenet
+      - bbb-net
     extra_hosts:
       - "host.docker.internal:10.7.7.1"
 
@@ -64,7 +64,7 @@ services:
       - ./mod/pad/entrypoint.sh:/entrypoint.sh
     entrypoint: /entrypoint.sh
     networks:
-      bluenet:
+      bbb-net:
         ipv4_address: 10.7.7.4
 
   redis:
@@ -72,13 +72,13 @@ services:
     ports:
       - "127.0.0.1:6379:6379"  # TODO: remove as soon as we updated all redis host references
     networks:
-      bluenet:
+      bbb-net:
         ipv4_address: 10.7.7.5 
 
   mongodb:
     image: mongo:3.4
     networks:
-      bluenet:
+      bbb-net:
         ipv4_address: 10.7.7.6
 
   kurento:
@@ -88,7 +88,7 @@ services:
       KMS_STUN_PORT: ${STUN_PORT}
       KMS_MIN_PORT: 24577
       KMS_MAX_PORT: 32768
-      KMS_EXTERNAL_ADDRESS: 
+      KMS_EXTERNAL_ADDRESS: ${EXTERNAL_IP}
       KMS_TURN_URL: 
     network_mode: host
   
@@ -103,7 +103,7 @@ services:
       KURENTO_NAME: kurento
       REDIS_HOST: redis
       FREESWITCH_IP: host.docker.internal
-      FREESWITCH_SIP_IP: ${EXTERNAL_IP}
+      FREESWITCH_SIP_IP: 10.7.7.1
       ESL_IP: host.docker.internal
       LOG_LEVEL: info
       NODE_CONFIG: '{"kurento":[{"ip":"${EXTERNAL_IP}","url":"ws://kurento:8888/kurento"}]}'
@@ -113,7 +113,7 @@ services:
       - host.docker.internal:10.7.7.1
       - kurento:10.7.7.1
     networks:
-      - bluenet
+      - bbb-net
 
   html5:
     image: bbb-html5
@@ -128,7 +128,7 @@ services:
       SCREENSHARE_EXTENSION_LINK: ${SCREENSHARE_EXTENSION_LINK}
       ETHERPAD_API_KEY: ${ETHERPAD_API_KEY}
     networks:
-      - bluenet
+      - bbb-net
     volumes:
        - ./mod/html5/entrypoint.sh:/entrypoint.sh
        - ./mod/html5/settings.yml:/app/programs/server/assets/app/config/settings.yml.tmpl
@@ -138,7 +138,7 @@ volumes:
   bigbluebutton:
 
 networks:
-  bluenet:
+  bbb-net:
     ipam:
       driver: default
       config:

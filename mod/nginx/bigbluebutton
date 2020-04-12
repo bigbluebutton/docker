@@ -3,6 +3,11 @@ server {
   server_name _;
   access_log  /var/log/nginx/bigbluebutton.access.log;
 
+  # redirect to greenlight
+  location = / {
+      return 302 /b;
+  }
+
    # Handle RTMPT (RTMP Tunneling).  Forwards requests
    # to Red5 on port 5080
   location ~ (/open/|/close/|/idle/|/send/|/fcs/) {
@@ -39,22 +44,7 @@ server {
      include    fastcgi_params;
   }
 
-  # BigBlueButton landing page.
-  location / {
-    root   /var/www/bigbluebutton-default;
-    index  index.html index.htm;
-    expires 1m;
-  }
-
   # Include specific rules for record and playback
   include /etc/nginx/bbb/*.nginx;
 
-  #error_page  404  /404.html;
-
-  # Redirect server error pages to the static page /50x.html
-  #
-  error_page   500 502 503 504  /50x.html;
-  location = /50x.html {
-    root   /var/www/nginx-default;
-  }
 }
