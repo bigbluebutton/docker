@@ -10,10 +10,6 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV container docker
 ENV DOCKERIZE_VERSION v0.6.1
 
-# just to speed up development, TODO: remove
-COPY sources.list /etc/apt/sources.list 
-
-
 RUN apt-get update && apt-get install -y software-properties-common language-pack-en wget
 RUN update-locale LANG=en_US.UTF-8
 RUN LC_CTYPE=C.UTF-8 add-apt-repository ppa:rmescandon/yq
