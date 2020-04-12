@@ -92,7 +92,9 @@ services:
     network_mode: host
   
   webrtc-sfu:
-    build: ./bbb-webrtc-sfu
+    build: 
+      context: ./bbb-webrtc-sfu
+      dockerfile: mod/webrtc-sfu/Dockerfile
     depends_on:
       - redis
       - kurento
