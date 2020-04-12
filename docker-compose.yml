@@ -87,7 +87,7 @@ services:
       KMS_STUN_PORT: ${STUN_PORT}
       KMS_MIN_PORT: 24577
       KMS_MAX_PORT: 32768
-      KMS_EXTERNAL_ADDRESS: ${EXTERNAL_IP}
+      KMS_EXTERNAL_ADDRESS: 
       KMS_TURN_URL: 
     network_mode: host
   
@@ -104,7 +104,7 @@ services:
       KURENTO_NAME: kurento
       REDIS_HOST: redis
       FREESWITCH_IP: host.docker.internal
-      FREESWITCH_SIP_IP: 10.7.7.1
+      FREESWITCH_SIP_IP: ${EXTERNAL_IP}
       ESL_IP: host.docker.internal
       LOG_LEVEL: info
       NODE_CONFIG: '{"kurento":[{"ip":"${EXTERNAL_IP}","url":"ws://kurento:8888/kurento"}]}'
