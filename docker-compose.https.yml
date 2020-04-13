@@ -1,0 +1,16 @@
+version: '3.6'
+services:
+  https_proxy:
+    image: valian/docker-nginx-auto-ssl
+    restart: on-failure
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ssl_data:/etc/resty-auto-ssl
+    environment:
+      ALLOWED_DOMAINS: ${DOMAIN}
+      SITES: ${DOMAIN}=10.7.7.1:8080
+
+volumes:
+  ssl_data:
