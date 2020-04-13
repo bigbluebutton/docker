@@ -24,6 +24,7 @@
       <node type="allow" cidr="127.0.0.1/32"/>
       <node type="allow" cidr="10.0.0.0/8"/>
       <node type="allow" cidr="192.168.0.0/16"/>
+      <node type="allow" cidr="$${external_ip_v4}/32"/>
     </list>
 
     <list name="deny_private_v6" default="allow">
