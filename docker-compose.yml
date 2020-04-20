@@ -87,7 +87,7 @@ services:
       KMS_STUN_PORT: ${STUN_PORT}
       KMS_MIN_PORT: 24577
       KMS_MAX_PORT: 32768
-      KMS_EXTERNAL_ADDRESS: 
+      KMS_EXTERNAL_ADDRESS: ${EXTERNAL_IP} 
       KMS_TURN_URL: 
     network_mode: host
   
