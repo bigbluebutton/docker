@@ -28,5 +28,6 @@ RUN cd /app/programs/server && npm install && npm cache clear --force
 
 
 COPY entrypoint.sh /entrypoint.sh
+COPY settings.yml /app/programs/server/assets/app/config/settings.yml.tmpl
 
 ENTRYPOINT ["/entrypoint.sh"]

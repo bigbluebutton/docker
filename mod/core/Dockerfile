@@ -63,6 +63,23 @@ RUN chown bigbluebutton:bigbluebutton /var/bigbluebutton
 
 COPY entrypoint.sh /entrypoint.sh
 
+# -- copy configuration files
+COPY red5.properties /usr/share/red5/conf/red5.properties
+COPY bigbluebutton.properties /usr/share/red5/webapps/bigbluebutton/WEB-INF/bigbluebutton.properties
+COPY bigbluebutton-sip.properties /usr/share/red5/webapps/sip/WEB-INF/bigbluebutton-sip.properties
+COPY bigbluebutton.yml /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml
+
+COPY freeswitch/vars.xml /opt/freeswitch/conf/vars.xml.tmpl
+COPY freeswitch/external.xml /opt/freeswitch/conf/sip_profiles/external.xml
+COPY freeswitch/acl.conf.xml /opt/freeswitch/conf/autoload_configs/acl.conf.xml
+COPY freeswitch/event_socket.conf.xml /opt/freeswitch/conf/autoload_configs/event_socket.conf.xml
+COPY freeswitch/dialplan_public.xml /opt/freeswitch/conf/dialplan/public.xml
+
+COPY web/bigbluebutton.properties /usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties.tmpl
+COPY bbb-apps-akka/application.conf /usr/share/bbb-apps-akka/conf/application.conf.tmpl
+COPY bbb-fsesl-akka/application.conf /etc/bbb-fsesl-akka/application.conf
+
+
 ENTRYPOINT ["/entrypoint.sh"]
 CMD []
 

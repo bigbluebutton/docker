@@ -21,21 +21,8 @@ services:
     volumes:
       - bigbluebutton:/var/bigbluebutton
       - /sys/fs/cgroup:/sys/fs/cgroup:ro # for systemd
-      - ./mod/core/entrypoint.sh:/entrypoint.sh
-      - ./mod/core/red5.properties:/usr/share/red5/conf/red5.properties
-      - ./mod/core/bigbluebutton.properties:/usr/share/red5/webapps/bigbluebutton/WEB-INF/bigbluebutton.properties
-      - ./mod/core/bigbluebutton-sip.properties:/usr/share/red5/webapps/sip/WEB-INF/bigbluebutton-sip.properties
-      - ./mod/freeswitch/vars.xml:/opt/freeswitch/conf/vars.xml.tmpl
-      - ./mod/freeswitch/external.xml:/opt/freeswitch/conf/sip_profiles/external.xml
-      - ./mod/freeswitch/acl.conf.xml:/opt/freeswitch/conf/autoload_configs/acl.conf.xml
-      - ./mod/freeswitch/event_socket.conf.xml:/opt/freeswitch/conf/autoload_configs/event_socket.conf.xml
-      - ./mod/freeswitch/dialplan_public.xml:/opt/freeswitch/conf/dialplan/public.xml
       - ./conf/sip_profiles:/opt/freeswitch/conf/sip_profiles/external
       - ./conf/dialplan_public:/opt/freeswitch/conf/dialplan/public_docker
-      - ./mod/web/bigbluebutton.properties:/usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties.tmpl
-      - ./mod/core/bigbluebutton.yml:/usr/local/bigbluebutton/core/scripts/bigbluebutton.yml
-      - ./mod/bbb-apps-akka/application.conf:/usr/share/bbb-apps-akka/conf/application.conf.tmpl
-      - ./mod/bbb-fsesl-akka/application.conf:/etc/bbb-fsesl-akka/application.conf
     network_mode: host
 
   nginx:
@@ -133,10 +120,6 @@ services:
       ETHERPAD_API_KEY: ${ETHERPAD_API_KEY}
     networks:
       - bbb-net
-    volumes:
-       - ./mod/html5/entrypoint.sh:/entrypoint.sh
-       - ./mod/html5/settings.yml:/app/programs/server/assets/app/config/settings.yml.tmpl
-
 
 volumes:
   bigbluebutton:
