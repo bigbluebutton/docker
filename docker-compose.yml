@@ -29,6 +29,9 @@ services:
       - ./mod/freeswitch/external.xml:/opt/freeswitch/conf/sip_profiles/external.xml
       - ./mod/freeswitch/acl.conf.xml:/opt/freeswitch/conf/autoload_configs/acl.conf.xml
       - ./mod/freeswitch/event_socket.conf.xml:/opt/freeswitch/conf/autoload_configs/event_socket.conf.xml
+      - ./mod/freeswitch/dialplan_public.xml:/opt/freeswitch/conf/dialplan/public.xml
+      - ./conf/sip_profiles:/opt/freeswitch/conf/sip_profiles/external
+      - ./conf/dialplan_public:/opt/freeswitch/conf/dialplan/public_docker
       - ./mod/web/bigbluebutton.properties:/usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties.tmpl
       - ./mod/core/bigbluebutton.yml:/usr/local/bigbluebutton/core/scripts/bigbluebutton.yml
       - ./mod/bbb-apps-akka/application.conf:/usr/share/bbb-apps-akka/conf/application.conf.tmpl

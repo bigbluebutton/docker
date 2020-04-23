@@ -1,0 +1,17 @@
+<!--
+<extension name="from_my_provider">
+ <condition field="destination_number" expression="^EXTERNALDID">
+   <action application="answer"/>
+   <action application="sleep" data="500"/>
+   <action application="play_and_get_digits" data="5 5 3 7000 # conference/conf-pin.wav ivr/ivr-that_was_an_invalid_entry.wav pin \d+"/>
+   <action application="transfer" data="SEND_TO_CONFERENCE XML public"/>
+ </condition>
+</extension>
+<extension name="check_if_conference_active">
+ <condition field="${conference ${pin} list}" expression="/sofia/g" />
+ <condition field="destination_number" expression="^SEND_TO_CONFERENCE$">
+   <action application="set" data="bbb_authorized=true"/>
+   <action application="transfer" data="${pin} XML default"/>
+ </condition>
+</extension>
+-->
