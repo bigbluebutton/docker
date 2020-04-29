@@ -13,8 +13,8 @@ RUN apt-get update &&  apt-get install -y wget binutils
 RUN useradd -m meteor
 
 # download & install bbb-html5 package manually
-RUN PACKAGE_PATH=$(curl -s https://ubuntu.bigbluebutton.org/xenial-220/dists/bigbluebutton-xenial/main/binary-amd64/Packages | grep -E 'Filename.*html5' | awk '{print $2}') \
-    && wget https://ubuntu.bigbluebutton.org/xenial-220/$PACKAGE_PATH \
+RUN PACKAGE_PATH=$(curl -s https://packages-eu.bigbluebutton.org/xenial-22/dists/bigbluebutton-xenial/main/binary-amd64/Packages | grep -E 'Filename.*html5' | awk '{print $2}') \
+    && wget https://packages-eu.bigbluebutton.org/xenial-22/$PACKAGE_PATH \
     && ar x bbb-html5_*.deb \
     && tar -zxf data.tar.gz ./usr/share/meteor/bundle \
     && mv /usr/share/meteor/bundle /app \

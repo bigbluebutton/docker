@@ -29,7 +29,7 @@ RUN apt-get install -y systemd apt-transport-https equivs libreoffice haveged tt
 # bbb repo & packages
 RUN LC_CTYPE=C.UTF-8 add-apt-repository ppa:bigbluebutton/support
 RUN sh -c 'wget https://ubuntu.bigbluebutton.org/repo/bigbluebutton.asc -O- | apt-key add -' \
-    && sh -c 'echo "deb https://ubuntu.bigbluebutton.org/xenial-220 bigbluebutton-xenial main" > /etc/apt/sources.list.d/bigbluebutton.list'  \
+    && sh -c 'echo "deb https://packages-eu.bigbluebutton.org/xenial-22 bigbluebutton-xenial main" > /etc/apt/sources.list.d/bigbluebutton.list'  \
     && apt-get update
 
 # create dummy packages to satisfy dependencies
@@ -78,7 +78,7 @@ COPY freeswitch/dialplan_public.xml /opt/freeswitch/conf/dialplan/public.xml
 COPY web/bigbluebutton.properties /usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties.tmpl
 COPY bbb-apps-akka/application.conf /usr/share/bbb-apps-akka/conf/application.conf.tmpl
 COPY bbb-fsesl-akka/application.conf /etc/bbb-fsesl-akka/application.conf
-
+COPY web-run.sh /usr/share/bbb-web/run-prod.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD []
