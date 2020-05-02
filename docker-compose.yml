@@ -3,6 +3,7 @@ version: '3.6'
 services:
   core:
     build: mod/core
+    restart: unless-stopped
     depends_on:
         - redis
     cap_add:
@@ -27,6 +28,7 @@ services:
 
   nginx:
     image: nginx:1.17
+    restart: unless-stopped
     depends_on:
       - etherpad
       - webrtc-sfu
@@ -44,6 +46,7 @@ services:
 
   etherpad:
     image: etherpad/etherpad:1.8.0
+    restart: unless-stopped
     depends_on:
       - redis
     environment:
@@ -58,6 +61,7 @@ services:
 
   redis:
     image: redis:5.0-alpine
+    restart: unless-stopped
     ports:
       - "127.0.0.1:6379:6379"  # TODO: remove as soon as we updated all redis host references
     networks:
@@ -72,6 +76,7 @@ services:
 
   kurento:
     image: kurento/kurento-media-server:6.13
+    restart: unless-stopped
     environment: 
       KMS_STUN_IP: ${STUN_IP}
       KMS_STUN_PORT: ${STUN_PORT}
@@ -85,6 +90,7 @@ services:
     build: 
       context: ./bbb-webrtc-sfu
       dockerfile: ../mod/webrtc-sfu/Dockerfile
+    restart: unless-stopped
     depends_on:
       - redis
       - kurento
@@ -108,6 +114,7 @@ services:
 
   html5:
     build: mod/html5
+    restart: unless-stopped
     depends_on:
       - redis
       - mongodb
