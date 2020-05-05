@@ -62,7 +62,26 @@ Specific to your linux distribution. Use a search engine of your choice. ;)
 ### Ports
 Also don't forget to forward all necassary ports listed in http://docs.bigbluebutton.org/2.2/configure-firewall.html
 
+
+## Upgrading
+```bash
+cd bbb-docker
+
+# pull repo changes
+git pull 
+
+# update bbb-webrtc-sfu
+git submodule update --remote 
+
+# rebuild images
+docker-compose build --no-cache
+
+# restart services
+docker-compose restart
+```
+
 ## Open Tasks
 - add support for recording
+- add coturn support
 - further separate bbb-core into individual container
 
