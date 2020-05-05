@@ -19,7 +19,9 @@
    $ cd bbb-docker
    ```
 6. Create `.env` with `$ cp sample.env .env`
-7. Adjust the values in `.env` (don't forget to change the `ETHERPAD_API_KEY`, `SHARED_SECRET` and `RAILS_SECRET`!)
+7. Adjust the values in `.env`
+   - **Important:** don't forget to change `ETHERPAD_API_KEY`, `SHARED_SECRET` and `RAILS_SECRET` to any random values! For example generated with `pwgen 40 3`
+   - `DOMAIN` and `EXTERNAL_IP` are also required
 8. Start container. either...
     - **Most common setup**: BigBlueButton with automatic HTTPS certificate retrieval and Greenlight
         ```bash
