@@ -74,10 +74,13 @@ git pull
 git submodule update --remote 
 
 # rebuild images
-docker-compose build --no-cache
+docker-compose build --pull --no-cache 
 
-# restart services
-docker-compose restart
+# recreate updated services
+docker-compose up -d
+
+# Missing:
+# greenlight & https image updates
 ```
 
 ## Open Tasks
