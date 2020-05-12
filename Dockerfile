@@ -38,6 +38,8 @@ RUN apt-get install -y bigbluebutton bbb-demo
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6
 RUN echo "deb [ arch=amd64,arm64 ] http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.4.list
 RUN sudo apt-get update && sudo apt-get install -y mongodb-org curl
+# -- Mongo configuration
+RUN echo 'replication.replSetName: rs0' >> /etc/mongod.conf && sed -i 's/127.0.0.1/127.0.1.1/' /etc/mongod.conf
 
 # -- Install nodejs (for HTML5 client)
 RUN apt-get install -y apt-transport-https
