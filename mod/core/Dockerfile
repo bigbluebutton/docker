@@ -29,8 +29,7 @@ RUN apt-get install -y systemd apt-transport-https equivs libreoffice haveged tt
 # bbb repo & packages
 RUN LC_CTYPE=C.UTF-8 add-apt-repository ppa:bigbluebutton/support
 RUN sh -c 'wget https://ubuntu.bigbluebutton.org/repo/bigbluebutton.asc -O- | apt-key add -' \
-    && sh -c 'echo "deb https://packages-eu.bigbluebutton.org/xenial-22 bigbluebutton-xenial main" > /etc/apt/sources.list.d/bigbluebutton.list'  \
-    && apt-get update
+    && sh -c 'echo "deb https://packages-eu.bigbluebutton.org/xenial-22 bigbluebutton-xenial main" > /etc/apt/sources.list.d/bigbluebutton.list'
 
 # create dummy packages to satisfy dependencies
 RUN equivs-control redis-server.control \
@@ -42,12 +41,9 @@ RUN equivs-control redis-server.control \
 # -- create dummy service to avoid start up errors
 COPY dummy.service /etc/systemd/system/redis-server.service
 
-RUN apt-get install -y bbb-web bbb-freeswitch-core \
+RUN apt-get update && apt-get install -y bbb-web \
                     bbb-fsesl-akka bbb-apps-akka bbb-transcode-akka bbb-apps \
                     bbb-apps-video bbb-apps-screenshare bbb-apps-video-broadcast
-
-# disable IPv6 support
-RUN rm -rf /opt/freeswitch/conf/sip_profiles/*-ipv6*
 
 # -- avoid blocking java 
 # https://github.com/bigbluebutton/bigbluebutton/issues/8959
@@ -56,7 +52,7 @@ RUN sed -i 's|securerandom.source=file:/dev/random|securerandom.source=file:/dev
 # -- Disable unneeded services
 RUN find /etc/systemd/ | grep wants | xargs -r -n 1 basename | grep service | grep -v networking | grep -v tty   | xargs -r -n 1 -I __ systemctl disable __
 RUN systemctl disable systemd-journal-flush systemd-update-utmp.service
-RUN systemctl enable red5 freeswitch bbb-apps-akka bbb-transcode-akka bbb-fsesl-akka bbb-web # bbb-rap-caption-inbox
+RUN systemctl enable red5 bbb-apps-akka bbb-transcode-akka bbb-fsesl-akka bbb-web # bbb-rap-caption-inbox
 
 # -- fix directory permissions
 RUN chown bigbluebutton:bigbluebutton /var/bigbluebutton
@@ -68,12 +64,6 @@ COPY red5.properties /usr/share/red5/conf/red5.properties
 COPY bigbluebutton.properties /usr/share/red5/webapps/bigbluebutton/WEB-INF/bigbluebutton.properties
 COPY bigbluebutton-sip.properties /usr/share/red5/webapps/sip/WEB-INF/bigbluebutton-sip.properties
 COPY bigbluebutton.yml /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml
-
-COPY freeswitch/vars.xml /opt/freeswitch/conf/vars.xml.tmpl
-COPY freeswitch/external.xml /opt/freeswitch/conf/sip_profiles/external.xml
-COPY freeswitch/acl.conf.xml /opt/freeswitch/conf/autoload_configs/acl.conf.xml
-COPY freeswitch/event_socket.conf.xml /opt/freeswitch/conf/autoload_configs/event_socket.conf.xml
-COPY freeswitch/dialplan_public.xml /opt/freeswitch/conf/dialplan/public.xml
 
 COPY web/bigbluebutton.properties /usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties.tmpl
 COPY bbb-apps-akka/application.conf /usr/share/bbb-apps-akka/conf/application.conf.tmpl

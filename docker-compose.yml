@@ -26,6 +26,23 @@ services:
       - ./conf/dialplan_public:/opt/freeswitch/conf/dialplan/public_docker
     network_mode: host
 
+  freeswitch:
+    build: mod/freeswitch
+    cap_add:
+      - IPC_LOCK
+      - NET_ADMIN
+      - NET_RAW
+      - NET_BROADCAST
+      - SYS_NICE
+      - SYS_RESOURCE
+    environment:
+      DOMAIN: ${DOMAIN}
+      EXTERNAL_IP: ${EXTERNAL_IP}
+    volumes:
+      - ./conf/sip_profiles:/etc/freeswitch/sip_profiles/external
+      - ./conf/dialplan_public:/etc/freeswitch/dialplan/public_docker
+    network_mode: host
+  
   nginx:
     image: nginx:1.17
     restart: unless-stopped

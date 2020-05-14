@@ -17,7 +17,6 @@ mkdir -p /var/bigbluebutton/unpublished
 
 
 dockerize \
-    -template /opt/freeswitch/conf/vars.xml.tmpl:/opt/freeswitch/conf/vars.xml \
     -template /usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties.tmpl:/usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties \
     -template /usr/share/bbb-apps-akka/conf/application.conf.tmpl:/usr/share/bbb-apps-akka/conf/application.conf \
     /bin/systemd --system --unit=multi-user.target
