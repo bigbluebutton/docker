@@ -1,9 +1,0 @@
-[Unit]
-Description=dummy
-
-[Service]
-ExecStart=/bin/sleep 30d
-ExecReload=/bin/echo reload
-
-[Install]
-WantedBy=multi-user.target

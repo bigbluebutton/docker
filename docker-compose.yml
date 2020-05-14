@@ -6,24 +6,12 @@ services:
     restart: unless-stopped
     depends_on:
         - redis
-    cap_add:
-      - SYS_NICE # for realtime scheduling
-      - SYS_ADMIN # for systemd
     environment:
       DOMAIN: ${DOMAIN}
-      EXTERNAL_IP: ${EXTERNAL_IP}
       SHARED_SECRET: ${SHARED_SECRET}
       WELCOME_FOOTER: ${WELCOME_FOOTER}
-      container: docker
-    tmpfs:
-      - /run
-      - /run/lock
-      - /tmp:exec,mode=777
     volumes:
       - bigbluebutton:/var/bigbluebutton
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro # for systemd
-      - ./conf/sip_profiles:/opt/freeswitch/conf/sip_profiles/external
-      - ./conf/dialplan_public:/opt/freeswitch/conf/dialplan/public_docker
     network_mode: host
 
   freeswitch:
