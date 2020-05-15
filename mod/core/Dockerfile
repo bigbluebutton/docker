@@ -49,9 +49,16 @@ RUN sed -i 's|securerandom.source=file:/dev/random|securerandom.source=file:/dev
 RUN chown bigbluebutton:bigbluebutton /var/bigbluebutton
 
 # -- copy configuration files
-COPY red5.properties /usr/share/red5/conf/red5.properties
-COPY bigbluebutton.properties /usr/share/red5/webapps/bigbluebutton/WEB-INF/bigbluebutton.properties
-COPY bigbluebutton-sip.properties /usr/share/red5/webapps/sip/WEB-INF/bigbluebutton-sip.properties
+COPY red5-webapps/bigbluebutton/application.conf /usr/share/red5/webapps/bigbluebutton/WEB-INF/classes/application.conf
+COPY red5-webapps/bigbluebutton/bigbluebutton.properties /usr/share/red5/webapps/bigbluebutton/WEB-INF/bigbluebutton.properties
+COPY red5-webapps/bigbluebutton/redis.properties /usr/share/red5/webapps/bigbluebutton/WEB-INF/redis.properties
+COPY red5-webapps/sip/bigbluebutton-sip.properties /usr/share/red5/webapps/sip/WEB-INF/bigbluebutton-sip.properties
+COPY red5-webapps/screenshare/screenshare.properties /usr/share/red5/webapps/screenshare/WEB-INF/screenshare.properties
+COPY red5-webapps/screenshare/screenshare-app.conf /usr/share/red5/webapps/screenshare/WEB-INF/classes/screenshare-app.conf
+COPY red5-webapps/screenshare/application.conf /usr/share/red5/webapps/screenshare/WEB-INF/classes/application.conf
+COPY red5-webapps/video/bigbluebutton-video.properties /usr/share/red5/webapps/video/WEB-INF/bigbluebutton-video.properties
+COPY red5-webapps/video-broadcast/video-broadcast.properties /usr/share/red5/webapps/video-broadcast/WEB-INF/video-broadcast.properties
+
 COPY bigbluebutton.yml /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml
 
 COPY web/bigbluebutton.properties /usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties.tmpl
@@ -59,10 +66,6 @@ COPY bbb-apps-akka/application.conf /usr/share/bbb-apps-akka/conf/application.co
 COPY bbb-fsesl-akka/application.conf /etc/bbb-fsesl-akka/application.conf
 COPY bbb-transcode-akka/application.conf /etc/bbb-transcode-akka/application.conf
 COPY web-run.sh /usr/share/bbb-web/run-prod.sh
-
-COPY screenshare/screenshare.properties /usr/share/red5/webapps/screenshare/WEB-INF/screenshare.properties
-COPY screenshare/screenshare-app.conf /usr/share/red5/webapps/screenshare/WEB-INF/classes/screenshare-app.conf
-COPY screenshare/application.conf /usr/share/red5/webapps/screenshare/WEB-INF/classes/application.conf
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY entrypoint.sh /entrypoint.sh
