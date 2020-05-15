@@ -85,6 +85,5 @@ docker-compose up -d
 
 ## Open Tasks
 - add support for recording
-- add coturn support
 - further separate bbb-core into individual container
 

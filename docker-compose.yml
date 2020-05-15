@@ -10,6 +10,9 @@ services:
       DOMAIN: ${DOMAIN}
       SHARED_SECRET: ${SHARED_SECRET}
       WELCOME_FOOTER: ${WELCOME_FOOTER}
+      STUN_SERVER: stun:${STUN_IP}:${STUN_PORT}
+      TURN_SERVER: ${TURN_SERVER}
+      TURN_SECRET: ${TURN_SECRET}
     volumes:
       - bigbluebutton:/var/bigbluebutton
     networks:

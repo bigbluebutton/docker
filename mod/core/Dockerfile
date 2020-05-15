@@ -55,6 +55,8 @@ COPY bigbluebutton-sip.properties /usr/share/red5/webapps/sip/WEB-INF/bigbluebut
 COPY bigbluebutton.yml /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml
 
 COPY web/bigbluebutton.properties /usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties.tmpl
+COPY web/turn-stun-servers.xml /usr/share/bbb-web/WEB-INF/classes/spring/turn-stun-servers.xml.tmpl
+
 COPY bbb-apps-akka/application.conf /usr/share/bbb-apps-akka/conf/application.conf.tmpl
 COPY bbb-fsesl-akka/application.conf /etc/bbb-fsesl-akka/application.conf
 COPY bbb-transcode-akka/application.conf /etc/bbb-transcode-akka/application.conf
