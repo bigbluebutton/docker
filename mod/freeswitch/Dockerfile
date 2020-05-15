@@ -2,10 +2,9 @@ FROM debian:buster-slim
 
 # add freeswitch repo
 RUN apt-get update && \
-apt-get install -y --no-install-recommends curl wget ca-certificates gnupg gnupg2 lsb-release && \
+apt-get install -y --no-install-recommends subversion curl wget ca-certificates gnupg gnupg2 lsb-release && \
 curl -k https://files.freeswitch.org/repo/deb/debian-release/fsstretch-archive-keyring.asc | apt-key add - && \
-echo 'deb http://files.freeswitch.org/repo/deb/debian-release/ buster main' > /etc/apt/sources.list.d/freeswitch.list && \
-apt-get update
+echo 'deb http://files.freeswitch.org/repo/deb/debian-release/ buster main' > /etc/apt/sources.list.d/freeswitch.list
 
 # install dockerize
 ENV DOCKERIZE_VERSION v0.6.1
@@ -14,7 +13,7 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 # install freeswitch
-RUN apt-get install -y \
+RUN apt-get update && apt-get install -y \
         freeswitch \
         freeswitch-mod-amr \
         freeswitch-mod-b64 \
@@ -66,7 +65,19 @@ RUN apt-get install -y \
 # freeswitch-mod-xml-rpc
 # freeswitch-mod-xml-scgi
 
-COPY ./conf /etc/freeswitch
-COPY ./entrypoint.sh /entrypoint.sh
 
+# -- get official bbb freeswitch config
+# we use svn for retrieving the files since the repo is quite large,
+# git sparse-checkout is not yet available with buster and there
+# is no other sane way of downloading a single directory via git
+ENV GIT_TAG v2.2.9-freeswitch
+RUN cd /etc \
+    && svn checkout https://github.com/alangecker/bbb-packages/tags/$GIT_TAG/bbb-freeswitch-core/data/opt/freeswitch/etc/freeswitch \
+    && rm -rf /etc/freeswitch/.svn
+
+# add modifications
+COPY ./conf /etc/freeswitch/
+
+
+COPY ./entrypoint.sh /entrypoint.sh
 ENTRYPOINT /entrypoint.sh
