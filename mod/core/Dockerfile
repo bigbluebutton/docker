@@ -57,7 +57,12 @@ COPY bigbluebutton.yml /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml
 COPY web/bigbluebutton.properties /usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties.tmpl
 COPY bbb-apps-akka/application.conf /usr/share/bbb-apps-akka/conf/application.conf.tmpl
 COPY bbb-fsesl-akka/application.conf /etc/bbb-fsesl-akka/application.conf
+COPY bbb-transcode-akka/application.conf /etc/bbb-transcode-akka/application.conf
 COPY web-run.sh /usr/share/bbb-web/run-prod.sh
+
+COPY screenshare/screenshare.properties /usr/share/red5/webapps/screenshare/WEB-INF/screenshare.properties
+COPY screenshare/screenshare-app.conf /usr/share/red5/webapps/screenshare/WEB-INF/classes/screenshare-app.conf
+COPY screenshare/application.conf /usr/share/red5/webapps/screenshare/WEB-INF/classes/application.conf
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY entrypoint.sh /entrypoint.sh

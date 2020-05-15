@@ -1,7 +1,7 @@
          # Handle desktop sharing tunneling.  Forwards
          # requests to Red5 on port 5080.
        location /screenshare {
-           proxy_pass         http://host.docker.internal:5080;
+           proxy_pass         http://core:5080;
            proxy_redirect     default;
            proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
            client_max_body_size       10m;

@@ -12,7 +12,9 @@ services:
       WELCOME_FOOTER: ${WELCOME_FOOTER}
     volumes:
       - bigbluebutton:/var/bigbluebutton
-    network_mode: host
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.2
 
   freeswitch:
     build: mod/freeswitch
