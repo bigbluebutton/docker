@@ -15,6 +15,8 @@ mkdir -p /var/bigbluebutton/published
 mkdir -p /var/bigbluebutton/deleted
 mkdir -p /var/bigbluebutton/unpublished
 
+# -- fix directory permissions
+RUN chown bigbluebutton:bigbluebutton /var/bigbluebutton
 
 dockerize \
     -template /opt/freeswitch/conf/vars.xml.tmpl:/opt/freeswitch/conf/vars.xml \

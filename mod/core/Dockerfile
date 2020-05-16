@@ -58,8 +58,6 @@ RUN find /etc/systemd/ | grep wants | xargs -r -n 1 basename | grep service | gr
 RUN systemctl disable systemd-journal-flush systemd-update-utmp.service
 RUN systemctl enable red5 freeswitch bbb-apps-akka bbb-transcode-akka bbb-fsesl-akka bbb-web # bbb-rap-caption-inbox
 
-# -- fix directory permissions
-RUN chown bigbluebutton:bigbluebutton /var/bigbluebutton
 
 COPY entrypoint.sh /entrypoint.sh
 
