@@ -6,26 +6,33 @@ services:
     restart: unless-stopped
     depends_on:
         - redis
+    environment:
+      DOMAIN: ${DOMAIN}
+      SHARED_SECRET: ${SHARED_SECRET}
+      WELCOME_FOOTER: ${WELCOME_FOOTER}
+    volumes:
+      - bigbluebutton:/var/bigbluebutton
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.2
+
+  freeswitch:
+    build: mod/freeswitch
     cap_add:
-      - SYS_NICE # for realtime scheduling
-      - SYS_ADMIN # for systemd
+      - IPC_LOCK
+      - NET_ADMIN
+      - NET_RAW
+      - NET_BROADCAST
+      - SYS_NICE
+      - SYS_RESOURCE
     environment:
       DOMAIN: ${DOMAIN}
       EXTERNAL_IP: ${EXTERNAL_IP}
-      SHARED_SECRET: ${SHARED_SECRET}
-      WELCOME_FOOTER: ${WELCOME_FOOTER}
-      container: docker
-    tmpfs:
-      - /run
-      - /run/lock
-      - /tmp:exec,mode=777
     volumes:
-      - bigbluebutton:/var/bigbluebutton
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro # for systemd
-      - ./conf/sip_profiles:/opt/freeswitch/conf/sip_profiles/external
-      - ./conf/dialplan_public:/opt/freeswitch/conf/dialplan/public_docker
+      - ./conf/sip_profiles:/etc/freeswitch/sip_profiles/external
+      - ./conf/dialplan_public:/etc/freeswitch/dialplan/public_docker
     network_mode: host
-
+  
   nginx:
     image: nginx:1.17
     restart: unless-stopped

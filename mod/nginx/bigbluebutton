@@ -11,7 +11,7 @@ server {
    # Handle RTMPT (RTMP Tunneling).  Forwards requests
    # to Red5 on port 5080
   location ~ (/open/|/close/|/idle/|/send/|/fcs/) {
-    proxy_pass         http://10.7.7.1:5080;
+    proxy_pass         http://core:5080;
     proxy_redirect     off;
     proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
 
@@ -29,7 +29,7 @@ server {
   # Handle desktop sharing tunneling.  Forwards
   # requests to Red5 on port 5080.
   location /deskshare {
-     proxy_pass         http://10.7.7.1:5080;
+     proxy_pass         http://core:5080;
      proxy_redirect     default;
      proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
      client_max_body_size       10m;
