@@ -21,7 +21,7 @@
 6. Create `.env` with `$ cp sample.env .env`
 7. Adjust the values in `.env`
    - **Important:** don't forget to change `ETHERPAD_API_KEY`, `SHARED_SECRET` and `RAILS_SECRET` to any random values! For example generated with `pwgen 40 3`
-   - `DOMAIN` and `EXTERNAL_IP` are also required
+   - `DOMAIN` and `EXTERNAL_IP` are also required. For example, use `dig +short <DOMAIN>` to get your external ip address. 
 8. Start container. either...
     - **Most common setup**: BigBlueButton with automatic HTTPS certificate retrieval and Greenlight
         ```bash
@@ -83,8 +83,16 @@ docker-compose up -d
 # greenlight & https image updates
 ```
 
+## Special thanks to
+- @dkrenn, whos dockerized version (bigbluebutton#8858)(https://github.com/bigbluebutton/bigbluebutton/pull/8858) helped me a lot in understand and some configs.
+
 ## Open Tasks
 - add support for recording
 - add coturn support
 - further separate bbb-core into individual container
-
+- enable IPv6 support
+- fix captions (they don't appear, `readOnlyPadId` is missing)
+- switch to `node:12-buster-slim` for `html5`
+- switch to `node:12-buster-slim` for `webrtc-sfu` 
+- drop root privileges in `webrtc-sfu`
+- drop root privileges in `kurento`

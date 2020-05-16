@@ -45,9 +45,6 @@ RUN apt-get update && apt-get install -y bbb-web \
 # https://github.com/bigbluebutton/bigbluebutton/issues/8959
 RUN sed -i 's|securerandom.source=file:/dev/random|securerandom.source=file:/dev/urandom|g'  /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/security/java.security
 
-# -- fix directory permissions
-RUN chown bigbluebutton:bigbluebutton /var/bigbluebutton
-
 # -- copy configuration files
 COPY red5-webapps/bigbluebutton/application.conf /usr/share/red5/webapps/bigbluebutton/WEB-INF/classes/application.conf
 COPY red5-webapps/bigbluebutton/bigbluebutton.properties /usr/share/red5/webapps/bigbluebutton/WEB-INF/bigbluebutton.properties
