@@ -14,7 +14,7 @@ mkdir -p /var/bigbluebutton/deleted
 mkdir -p /var/bigbluebutton/unpublished
 
 # -- fix directory permissions
-RUN chown bigbluebutton:bigbluebutton /var/bigbluebutton
+RUN chown -R bigbluebutton:bigbluebutton /var/bigbluebutton
 
 dockerize \
     -template /usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties.tmpl:/usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties \
