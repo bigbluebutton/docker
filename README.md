@@ -83,7 +83,7 @@ docker-compose up -d
 ```
 
 ### Upgrade Greenlight
-**Important:** especially with a version before 2020-05-17 create a database backup before, since the data is not persitent between container recreations.
+**Important:** especially with a version before 2020-05-17 create a database backup first, otherwise the data will not be persistent between container recreations.
 ```bash
 cd bbb-docker
 
