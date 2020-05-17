@@ -46,6 +46,7 @@ services:
       - bigbluebutton:/var/bigbluebutton
       - ./mod/nginx/bbb:/etc/nginx/bbb
       - ./mod/nginx/bigbluebutton:/etc/nginx/conf.d/default.conf
+      - ${DEFAULT_PRESENTATION}:/etc/nginx/html/default.pdf
     networks:
       - bbb-net
     extra_hosts:
