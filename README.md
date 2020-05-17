@@ -64,6 +64,8 @@ Also don't forget to forward all necassary ports listed in http://docs.bigbluebu
 
 
 ## Upgrading
+
+### Upgrade BigBlueButton
 ```bash
 cd bbb-docker
 
@@ -78,10 +80,28 @@ docker-compose build --pull --no-cache
 
 # recreate updated services
 docker-compose up -d
-
-# Missing:
-# greenlight & https image updates
 ```
+
+### Upgrade Greenlight
+**Important:** especially with a version before 2020-05-17 create a database backup before, since the data is not persitent between container recreations.
+```bash
+cd bbb-docker
+
+# create a database backup
+docker exec -t docker_postgres_1 pg_dumpall -c -U postgres > /root/greenlight_`date +%d-%m-%Y"_"%H_%M_%S`.sql
+
+# pull repo changes
+git pull 
+
+# pull image updates
+docker-compose -f docker-compose.greenlight.yml pull
+
+# recreate & restart services if necessary
+docker-compose -f docker-compose.greenlight.yml up -d
+```
+
+### Upgrade HTTPS Proxy
+[to be written]
 
 ## Special thanks to
 - @dkrenn, whos dockerized version (bigbluebutton#8858)(https://github.com/bigbluebutton/bigbluebutton/pull/8858) helped me a lot in understand and some configs.
