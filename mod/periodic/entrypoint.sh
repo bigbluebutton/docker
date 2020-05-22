@@ -13,5 +13,5 @@ do
 	# delete presentations older than N days
 	find /var/bigbluebutton/ -maxdepth 1 -type d -name "*-*" -mtime +$history -exec rm -rf '{}' +
 
-	sleep 10s
+	sleep 30m
 done
