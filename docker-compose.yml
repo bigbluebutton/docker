@@ -34,7 +34,7 @@ services:
     network_mode: host
   
   nginx:
-    image: nginx:1.17
+    image: nginx:1.18-alpine
     restart: unless-stopped
     depends_on:
       - etherpad
@@ -52,7 +52,7 @@ services:
       - "host.docker.internal:10.7.7.1"
 
   etherpad:
-    image: etherpad/etherpad:1.8.0
+    image: etherpad/etherpad:1.8.4
     restart: unless-stopped
     depends_on:
       - redis
@@ -67,7 +67,7 @@ services:
         ipv4_address: 10.7.7.4
 
   redis:
-    image: redis:5.0-alpine
+    image: redis:6.0-alpine
     restart: unless-stopped
     ports:
       - "127.0.0.1:6379:6379"  # TODO: remove as soon as we updated all redis host references
