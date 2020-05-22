@@ -135,6 +135,17 @@ services:
     networks:
       - bbb-net
 
+  periodic:
+    build: mod/periodic
+    restart: unless-stopped
+    depends_on:
+      - mongodb
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - bigbluebutton:/var/bigbluebutton
+    networks:
+      - bbb-net
+
 volumes:
   bigbluebutton:
 
