@@ -108,7 +108,6 @@ docker-compose -f docker-compose.greenlight.yml up -d
 
 ## Open Tasks
 - add support for recording
-- add coturn support
 - further separate bbb-core into individual container
 - enable IPv6 support
 - fix captions (they don't appear, `readOnlyPadId` is missing)

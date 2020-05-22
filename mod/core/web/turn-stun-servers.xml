@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="stun1" class="org.bigbluebutton.web.services.turn.StunServer">
+        <constructor-arg index="0" value="{{ .Env.STUN_SERVER }}"/>
+    </bean>
+
+    {{if .Env.TURN_SERVER }}
+        <bean id="turn0" class="org.bigbluebutton.web.services.turn.TurnServer">
+            <constructor-arg index="0" value="{{ .Env.TURN_SECRET }}"/>
+            <constructor-arg index="1" value="{{ .Env.TURN_SERVER }}"/>
+            <constructor-arg index="2" value="86400"/>
+        </bean>
+    {{end}}
+
+    <bean id="stunTurnService" class="org.bigbluebutton.web.services.turn.StunTurnService">
+        <property name="stunServers">
+            <set>
+                <ref bean="stun1" />
+            </set>
+        </property>
+        <property name="turnServers">
+            <set>
+                {{if .Env.TURN_SERVER }}
+                <ref bean="turn0" />
+                {{end}}
+            </set>
+        </property>
+        <property name="remoteIceCandidates">
+            <set>
+            </set>
+        </property>
+    </bean>
+</beans>
