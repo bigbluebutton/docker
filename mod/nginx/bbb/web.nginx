@@ -47,7 +47,7 @@
 		}
 
 		location ~ "^/bigbluebutton/presentation/download\/[0-9a-f]+-[0-9]+/[0-9a-f]+-[0-9]+$" {
-			if ($arg_presFilename !~ "^[0-9a-zA-Z]+\.[0-9a-zA-Z]+$") {
+			if ($arg_presFilename !~ "^[0-9a-zA-Z]+-[0-9]+\.[0-9a-zA-Z]+$") {
 				return 404;
 			}
 			proxy_pass         http://core:8090$uri$is_args$args;
