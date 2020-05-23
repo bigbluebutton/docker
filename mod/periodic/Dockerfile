@@ -10,6 +10,6 @@ RUN apt-get update \
 # -- install docker cli
 COPY --from=library/docker:latest /usr/local/bin/docker /usr/bin/docker
 
-COPY bbb-restart-kms entrypoint.sh /
+COPY bbb-restart-kms bbb-resync-freeswitch entrypoint.sh /
 
 ENTRYPOINT ["/entrypoint.sh"]
