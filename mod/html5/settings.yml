@@ -9,9 +9,9 @@ public:
     skipCheck: false
     clientTitle: {{ .Env.CLIENT_TITLE }}
     appName: BigBlueButton HTML5 Client
-    bbbServerVersion: 2.2-dev
+    bbbServerVersion: 2.2
     copyright: "©2019 BigBlueButton Inc."
-    html5ClientBuild: 870
+    html5ClientBuild: 924
     helpLink: https://bigbluebutton.org/html5/
     lockOnJoin: true
     cdn: ""
@@ -68,17 +68,14 @@ public:
       openActions:
         accesskey: A
         descId: openActions
-      openStatus:
-        accesskey: S
-        descId: openStatus
     branding:
       displayBrandingArea: false
     connectionTimeout: 60000
     showHelpButton: true
     effectiveConnection:
-    - critical
-    - danger
-    - warning
+      - critical
+      - danger
+      - warning
   externalVideoPlayer:
     enabled: true
   networkMonitoring:
@@ -90,27 +87,38 @@ public:
     chromeDefaultExtensionLink: {{ .Env.SCREENSHARE_EXTENSION_LINK }}
     chromeExtensionKey: KEY
     chromeExtensionLink: LINK
-    chromeScreenshareSources:
-    - window
-    - screen
-    firefoxScreenshareSource: window
+    screenshare:
+      constraints:
+        video:
+          frameRate:
+            ideal: 5
+            max: 10
+          width:
+            max: 2560
+          height:
+            max: 1600
+        audio: false
+      chromeScreenshareSources:
+        - window
+        - screen
+      firefoxScreenshareSource: window
     cameraProfiles:
-    - id: low
-      name: Low quality
-      default: false
-      bitrate: 100
-    - id: medium
-      name: Medium quality
-      default: true
-      bitrate: 200
-    - id: high
-      name: High quality
-      default: false
-      bitrate: 500
-    - id: hd
-      name: High definition
-      default: false
-      bitrate: 800
+      - id: low
+        name: Low quality
+        default: false
+        bitrate: 100
+      - id: medium
+        name: Medium quality
+        default: true
+        bitrate: 200
+      - id: high
+        name: High quality
+        default: false
+        bitrate: 500
+      - id: hd
+        name: High definition
+        default: false
+        bitrate: 800
     enableScreensharing: true
     enableVideo: true
     enableVideoStats: false
@@ -170,6 +178,8 @@ public:
     hidePresentation: false
   media:
     stunTurnServersFetchAddress: "/bigbluebutton/api/stuns"
+    cacheStunTurnServers: true
+    fallbackStunServer:  ''
     mediaTag: "#remote-media"
     callTransferTimeout: 5000
     callHangupTimeout: 2000
@@ -214,6 +224,8 @@ public:
     - extension: .odi
       mime: application/vnd.oasis.opendocument.image
     - extension: .jpg
+      mime: image/jpeg
+    - extension: .jpeg
       mime: image/jpeg
     - extension: .png
       mime: image/png
@@ -301,10 +313,9 @@ public:
       - pencil
       - hand
   clientLog:
-    server: {enabled: true, level: info}
-    console: {enabled: true, level: debug}
-    external: {enabled: false, level: info, url: 'https://LOG_HOST/html5Log', method: POST,
-      throttleInterval: 400, flushOnClose: true, logTag: ""}
+    server: { enabled: true, level: info }
+    console: { enabled: true, level: debug }
+    external: { enabled: false, level: info, url: https://LOG_HOST/html5Log, method: POST, throttleInterval: 400, flushOnClose: true, logTag: "" }
 private:
   app:
     host: 0.0.0.0
@@ -347,23 +358,23 @@ private:
     heapdump:
       enabled: false
   minBrowserVersions:
-  - browser: chrome
-    version: 59
-  - browser: chromeMobileIOS
-    version: Infinity
-  - browser: firefox
-    version: 52
-  - browser: firefoxMobile
-    version: 52
-  - browser: edge
-    version: 17
-  - browser: ie
-    version: Infinity
-  - browser: safari
-    version: [11, 1]
-  - browser: mobileSafari
-    version: [11, 1]
-  - browser: opera
-    version: 46
-  - browser: electron
-    version: [0, 36]
+    - browser: chrome
+      version: 59
+    - browser: chromeMobileIOS
+      version: Infinity
+    - browser: firefox
+      version: 52
+    - browser: firefoxMobile
+      version: 52
+    - browser: edge
+      version: 17
+    - browser: ie
+      version: Infinity
+    - browser: safari
+      version: [11, 1]
+    - browser: mobileSafari
+      version: [11, 1]
+    - browser: opera
+      version: 46
+    - browser: electron
+      version: [0, 36]
