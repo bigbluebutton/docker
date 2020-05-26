@@ -83,8 +83,8 @@ public:
     packetLostThreshold: 10
   kurento:
     wsUrl: wss://{{ .Env.DOMAIN }}/bbb-webrtc-sfu
-    chromeDefaultExtensionKey: {{ .Env.SCREENSHARE_EXTENSION_KEY }}
-    chromeDefaultExtensionLink: {{ .Env.SCREENSHARE_EXTENSION_LINK }}
+    chromeDefaultExtensionKey: akgoaoikmbmhcopjgakkcepdgdgkjfbc
+    chromeDefaultExtensionLink: https://chrome.google.com/webstore/detail/bigbluebutton-screenshare/akgoaoikmbmhcopjgakkcepdgdgkjfbc
     chromeExtensionKey: KEY
     chromeExtensionLink: LINK
     screenshare:
