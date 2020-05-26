@@ -51,7 +51,8 @@ services:
       - ./mod/nginx/bigbluebutton:/etc/nginx/conf.d/default.conf
       - ${DEFAULT_PRESENTATION:-/dev/null}:/etc/nginx/html/default.pdf
     networks:
-      - bbb-net
+      bbb-net:
+        ipv4_address: 10.7.7.13
     extra_hosts:
       - "host.docker.internal:10.7.7.1"
 
@@ -122,7 +123,8 @@ services:
       - host.docker.internal:10.7.7.1
       - kurento:10.7.7.1
     networks:
-      - bbb-net
+      bbb-net:
+        ipv4_address: 10.7.7.10
 
   html5:
     build: mod/html5
@@ -138,7 +140,8 @@ services:
       SCREENSHARE_EXTENSION_LINK: ${SCREENSHARE_EXTENSION_LINK}
       ETHERPAD_API_KEY: ${ETHERPAD_API_KEY}
     networks:
-      - bbb-net
+      bbb-net:
+        ipv4_address: 10.7.7.11
 
   periodic:
     build: mod/periodic
@@ -149,7 +152,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - bigbluebutton:/var/bigbluebutton
     networks:
-      - bbb-net
+      bbb-net:
+        ipv4_address: 10.7.7.12
 
 volumes:
   bigbluebutton:
