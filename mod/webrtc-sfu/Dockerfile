@@ -1,4 +1,6 @@
-FROM node:12
+FROM node:12-alpine
+
+RUN apk update && apk add git
 
 ADD . app
 
