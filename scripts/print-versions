@@ -1,0 +1,72 @@
+#!/bin/bash
+set -e
+
+CORE_IMAGE=$(docker-compose images -q core)
+FREESWITCH_IMAGE=$(docker-compose images -q freeswitch)
+HTML5_IMAGE=$(docker-compose images -q html5)
+KURENTO_IMAGE=$(docker-compose images -q kurento)
+MONGO_IMAGE=$(docker-compose images -q mongodb)
+REDIS_IMAGE=$(docker-compose images -q redis)
+
+if [[ -z $CORE_IMAGE ]]
+then 
+    echo "this script only works if containers are created"
+    echo "either start BigBlueButton with"
+    echo "  $ docker-compose up -d"
+    echo "or at least create the containers with"
+    echo "  $ docker-compose create"
+    exit 1
+fi
+
+
+
+echo "bigbluebutton-docker"
+echo "    commit: $(git rev-parse --short HEAD) ($(git log -1 --pretty=%B | head -n 1))"
+echo "    branch: $(git rev-parse --abbrev-ref HEAD)"
+echo ""
+
+echo "core"
+docker run --rm --entrypoint /bin/sh $CORE_IMAGE -c "dpkg -l 'bbb-*' | grep ii | cut -c 5-42 | sed 's/bbb-/    bbb-/g'"
+echo ""
+
+echo "etherpad"
+ETHERPAD_VERSION=$(docker-compose images etherpad | grep etherpad | awk '{print $3}')
+echo "    version: $ETHERPAD_VERSION"
+echo ""
+
+echo "freeswitch"
+FREESWITCH_VERSION=$(docker run --rm --entrypoint freeswitch $FREESWITCH_IMAGE -version | cut -c 21-)
+FREESWTICH_CONFIG_VERSION=$(docker image inspect $FREESWITCH_IMAGE | grep GIT_TAG= | head -n 1 | xargs | cut -c 9-)
+echo "    build:  $FREESWITCH_VERSION"
+echo "    config: $FREESWTICH_CONFIG_VERSION"
+echo ""
+
+echo "html5"
+HTML5_VERSION=$(docker image inspect $HTML5_IMAGE | grep TAG= | head -n 1 | xargs | cut -c 5-)
+echo "    version: $HTML5_VERSION"
+echo ""
+
+echo "kurento"
+KURENTO_VERSION=$(docker run --rm --entrypoint kurento-media-server $KURENTO_IMAGE --version | grep Kurento | sed 's/Kurento Media Server version: //')
+echo "    version: $KURENTO_VERSION"
+echo ""
+
+echo "mongodb"
+MONGO_VERSION=$(docker image inspect $MONGO_IMAGE | grep MONGO_VERSION | head -n 1 | xargs | cut -c 15-)
+echo "    version: $MONGO_VERSION"
+echo ""
+
+# TODO:
+# - nginx
+# - periodic 
+
+echo "redis"
+REDIS_VERSION=$(docker image inspect $REDIS_IMAGE | grep REDIS_VERSION | head -n 1 | xargs | cut -c 15-)
+echo "    version: $REDIS_VERSION"
+echo ""
+
+echo "webrtc-sfu"
+SFU_VERSION=$(cd bbb-webrtc-sfu && cat package.json | grep version | awk -F\" '{print $4}')
+SFU_COMMIT=$(cd bbb-webrtc-sfu && git rev-parse --short HEAD)
+echo "    version: $SFU_VERSION"
+echo "    commit:  $SFU_COMMIT"

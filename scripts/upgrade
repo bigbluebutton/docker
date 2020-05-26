@@ -1,0 +1,48 @@
+#!/bin/bash
+
+set -e
+cd $(dirname $0)/..
+
+if [ -z $RESTARTED ]
+then
+
+    echo "# pull newest bigblugbutton-docker.git"
+    #git pull
+
+    # restart script, since it might have changed.
+    RESTARTED=1 ./scripts/upgrade
+
+else
+    echo ""
+    echo "# pull newest bbb-webrtc-sfu"
+    git submodule update --remote 
+
+
+    echo ""
+    echo "# pull newest images"
+    docker-compose pull
+    docker-compose -f docker-compose.greenlight.yml pull
+    docker-compose -f docker-compose.https.yml pull
+
+    echo ""
+    echo "# rebuild images"
+    docker-compose build --pull --no-cache 
+
+
+    COMMIT_HASH=$(git rev-parse --short HEAD)
+    BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+    
+    echo ""
+    echo "-------------------------------------"
+    echo "images successfully rebuilt!"
+    echo "we are on $COMMIT_HASH ($BRANCH_NAME)"
+    echo ""
+    echo "use following commands for restarting:"
+    echo "BigBlueButton:"
+    echo "    $ docker-compose up -d"
+    echo "HTTPS Proxy:"
+    echo "    $ docker-compose -f docker-compose.https.yml up -d"
+    echo "Greenlight:"
+    echo "    $ docker-compose -f docker-compose.greenlight.yml up -d"
+    echo "-------------------------------------"
+fi

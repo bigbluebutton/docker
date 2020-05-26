@@ -50,3 +50,6 @@ COPY entrypoint.sh /entrypoint.sh
 COPY settings.yml /app/programs/server/assets/app/config/settings.yml.tmpl
 USER meteor
 ENTRYPOINT ["/entrypoint.sh"]
+
+# lets set the tag again, so that it is include in the image for later version retrieval
+ENV TAG v2.2.14
