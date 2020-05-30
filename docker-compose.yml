@@ -94,7 +94,8 @@ services:
       KMS_MIN_PORT: 24577
       KMS_MAX_PORT: 32768
       KMS_EXTERNAL_ADDRESS: ${EXTERNAL_IP} 
-      KMS_TURN_URL: 
+      KMS_TURN_URL:
+      KMS_NETWORK_INTERFACES: ${NETWORK_INTERFACE:-}
     network_mode: host
   
   webrtc-sfu:
