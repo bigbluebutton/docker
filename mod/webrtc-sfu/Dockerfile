@@ -19,5 +19,10 @@ RUN cp config/default.example.yml config/production.yml \
 
 EXPOSE 3008
 
+# remove automatic IP detection (broken in alpine)
+# and use sh instead of bash
+RUN sed -i 's/CONTAINER_IP=.*/CONTAINER_IP=10.7.7.10/' /app/docker-entrypoint.sh \
+    && sed -i 's/bash/sh/' /app/docker-entrypoint.sh
+
 ENTRYPOINT [ "./docker-entrypoint.sh" ]
 CMD [ "npm", "start" ]
