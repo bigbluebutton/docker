@@ -1,4 +1,4 @@
-FROM node:12-buster-slim AS builder
+FROM node:8-buster-slim AS builder
 
 RUN apt-get update && apt-get install -y wget curl subversion python2 python3 build-essential
 RUN groupadd -g 2000 meteor && useradd -m -u 2001 -g meteor meteor
@@ -11,10 +11,10 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 USER meteor
-ENV METEOR_VERSION 1.9
+ENV METEOR_VERSION 1.8.1
 RUN curl -sL https://install.meteor.com?release=$METEOR_VERSION | sed s/--progress-bar/-sL/g | /bin/sh
 
-ENV TAG v2.2.14
+ENV TAG v2.2.15
 RUN cd ~ \
     && svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG/bigbluebutton-html5 \
     && mv ~/bigbluebutton-html5 ~/source \
@@ -25,13 +25,12 @@ RUN cd ~ \
 # - set meteor release to 1.9
 # - install newer fibers version (4.0.3) which supports node v12
 
-RUN sed -i -r 's/import (memwatch|heapdump).*//g' ~/source/imports/startup/server/index.js \
-    && sed -i -r 's/.*(memwatch|heapdump).*//g' ~/source/package.json \
-    && echo "METEOR@$METEOR_VERSION" > ~/source/.meteor/release \
-    && cat ~/source/.meteor/release
+# RUN sed -i -r 's/import (memwatch|heapdump).*//g' ~/source/imports/startup/server/index.js \
+#     && sed -i -r 's/.*(memwatch|heapdump).*//g' ~/source/package.json \
+#     && echo "METEOR@$METEOR_VERSION" > ~/source/.meteor/release \
+#     && cat ~/source/.meteor/release
 
 RUN cd ~/source \
-    && npm install fibers@4.0.3 --production --save \
     && ~/.meteor/meteor npm install --production \
     && ~/.meteor/meteor build --directory ~/app \
     && rm -r ~/source
@@ -41,7 +40,7 @@ RUN cd ~/app/bundle/programs/server \
     
 # ------------------------------
 
-FROM node:12-alpine
+FROM node:8-alpine
 
 RUN addgroup -g 2000 meteor && adduser -D -u 2001 -G meteor meteor
 COPY --from=builder /usr/local/bin/dockerize /usr/local/bin/dockerize
