@@ -3,7 +3,12 @@
 set -e
 cd $(dirname $0)/..
 
-EXTERNAL_IP=$(curl -s http://whatismyip.akamai.com)
+if ! [ -x "$(command -v curl)" ]; then
+  echo "Error: curl is not installed, but the setup script relies on it."
+  echo "on debian based operating systems try following command:"
+  echo "  $ sudo apt-get install curl"
+  exit 1
+fi
 
 # load .env
 if [ -f .env ]
@@ -13,12 +18,15 @@ then
   exit 1
 fi
 
-greenlight="n"
+
+EXTERNAL_IP=$(curl -s http://whatismyip.akamai.com)
+
+greenlight=""
 while [[ ! $greenlight =~ ^(y|n)$ ]]; do
     read -p "Should greenlight be included? (y/n): " greenlight
 done
 
-https_proxy="n"
+https_proxy=""
 while [[ ! $https_proxy =~ ^(y|n)$ ]]; do
     read -p "Should an automatic HTTPS Proxy be included? (y/n): " https_proxy
 done
@@ -59,9 +67,9 @@ then
 fi
 
 # change secrets
-RANDOM_1=$(pwgen -v 40 1)
-RANDOM_2=$(pwgen -v 40 1)
-RANDOM_3=$(pwgen -v 120 1)
+RANDOM_1=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
+RANDOM_2=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
+RANDOM_3=$(head /dev/urandom | tr -dc a-f0-9 | head -c 128)
 sed -i "s/SHARED_SECRET=.*/SHARED_SECRET=$RANDOM_1/" .env
 sed -i "s/ETHERPAD_API_KEY=.*/ETHERPAD_API_KEY=$RANDOM_2/" .env
 sed -i "s/RAILS_SECRET=.*/RAILS_SECRET=$RANDOM_3/" .env
