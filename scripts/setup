@@ -1,0 +1,84 @@
+#!/bin/bash
+
+set -e
+cd $(dirname $0)/..
+
+if ! [ -x "$(command -v curl)" ]; then
+  echo "Error: curl is not installed, but the setup script relies on it."
+  echo "on debian based operating systems try following command:"
+  echo "  $ sudo apt-get install curl"
+  exit 1
+fi
+
+# load .env
+if [ -f .env ]
+then
+  echo "Error: the configuration file .env already exists."
+  echo "either edit variables manually in there or remove the file and try this script again"
+  exit 1
+fi
+
+
+EXTERNAL_IP=$(curl -s http://whatismyip.akamai.com)
+
+greenlight=""
+while [[ ! $greenlight =~ ^(y|n)$ ]]; do
+    read -p "Should greenlight be included? (y/n): " greenlight
+done
+
+https_proxy=""
+while [[ ! $https_proxy =~ ^(y|n)$ ]]; do
+    read -p "Should an automatic HTTPS Proxy be included? (y/n): " https_proxy
+done
+
+DOMAIN=""
+while [[ -z "$DOMAIN" ]]; do
+    read -p "Please enter the domain name: " DOMAIN
+done
+
+ip_correct=""
+while [[ ! $ip_correct =~ ^(y|n)$ ]]; do
+    read -p "Is $EXTERNAL_IP your external IPv4 address? (y/n): " ip_correct
+done
+
+if [ ! "$ip_correct" == "y" ]
+then
+    EXTERNAL_IP=""
+    while [[ ! $EXTERNAL_IP =~ ^[1-9][0-9]{0,2}\.[1-9][0-9]{0,2}\.[1-9][0-9]{0,2}\.[1-9][0-9]{0,2}$ ]]; do
+        read -p "Please enter correct IPv4 address: " EXTERNAL_IP
+    done
+fi
+
+
+
+# write settings
+cp sample.env .env
+sed -i "s/EXTERNAL_IP=.*/EXTERNAL_IP=$EXTERNAL_IP/" .env
+sed -i "s/DOMAIN=.*/DOMAIN=$DOMAIN/" .env
+
+if [ ! "$greenlight" == "y" ]
+then
+    sed -i "s/ENABLE_GREENLIGHT.*/#ENABLE_GREENLIGHT=true/" .env
+fi
+
+if [ ! "$https_proxy" == "y" ]
+then
+    sed -i "s/ENABLE_HTTPS_PROXY.*/#ENABLE_HTTPS_PROXY=true/" .env
+fi
+
+# change secrets
+RANDOM_1=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
+RANDOM_2=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
+RANDOM_3=$(head /dev/urandom | tr -dc a-f0-9 | head -c 128)
+sed -i "s/SHARED_SECRET=.*/SHARED_SECRET=$RANDOM_1/" .env
+sed -i "s/ETHERPAD_API_KEY=.*/ETHERPAD_API_KEY=$RANDOM_2/" .env
+sed -i "s/RAILS_SECRET=.*/RAILS_SECRET=$RANDOM_3/" .env
+
+echo "--------------------------------------------------"
+echo "configuration file .env got successfully created!"
+echo ""
+echo "you can look through it for further adjusments"
+echo "  $ nano .env"
+echo ""
+echo "to start bigbluebutton run"
+echo "  $ ./scripts/compose up -d"
