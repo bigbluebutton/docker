@@ -83,7 +83,7 @@ services:
         ipv4_address: 10.7.7.6
 
   kurento:
-    image: kurento/kurento-media-server:6.13
+    image: kurento/kurento-media-server:6.13.2
     restart: unless-stopped
     environment: 
       KMS_STUN_IP: ${STUN_IP}
