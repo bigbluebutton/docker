@@ -2,7 +2,7 @@ version: '3.6'
 
 services:
   greenlight:
-    container_name: greenlight-v2
+    container_name: greenlight
     image: bigbluebutton/greenlight:v2
     env_file: .env
     environment:

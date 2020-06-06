@@ -5,6 +5,7 @@ CORE_IMAGE=$(docker-compose images -q core)
 FREESWITCH_IMAGE=$(docker-compose images -q freeswitch)
 HTML5_IMAGE=$(docker-compose images -q html5)
 KURENTO_IMAGE=$(docker-compose images -q kurento)
+ETHERPAD_IMAGE=$(docker-compose images -q etherpad)
 MONGO_IMAGE=$(docker-compose images -q mongodb)
 REDIS_IMAGE=$(docker-compose images -q redis)
 
@@ -30,7 +31,7 @@ docker run --rm --entrypoint /bin/sh $CORE_IMAGE -c "dpkg -l 'bbb-*' | grep ii |
 echo ""
 
 echo "etherpad"
-ETHERPAD_VERSION=$(docker-compose images etherpad | grep etherpad | awk '{print $3}')
+ETHERPAD_VERSION=$(docker run --rm --entrypoint cat $ETHERPAD_IMAGE /opt/etherpad-lite/src/package.json | grep version | awk -F'"' '{print $4}')
 echo "    version: $ETHERPAD_VERSION"
 echo ""
 

@@ -1,0 +1,22 @@
+#!/bin/bash
+set -e
+
+cd $(dirname $0)/..
+
+# load .env
+if [ -f .env ]
+then
+  # exclude WELCOME_FOOTER because it may contain invalid characters
+  export $(cat .env | sed 's/#.*//g' | grep -v "WELCOME_FOOTER" | xargs)
+fi
+
+# concatenate docker-compose file
+COMPOSE_FILES="-f docker-compose.yml"
+if [ "$ENABLE_HTTPS_PROXY" == true ]; then
+    COMPOSE_FILES="$COMPOSE_FILES -f docker-compose.https.yml"
+fi
+if [ "$ENABLE_GREENLIGHT" == true ]; then
+    COMPOSE_FILES="$COMPOSE_FILES -f docker-compose.greenlight.yml"
+fi
+
+docker-compose $COMPOSE_FILES $@
