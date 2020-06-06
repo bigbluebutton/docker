@@ -6,6 +6,7 @@ export MONGO_URL=mongodb://10.7.7.6/meteor
 export NODE_ENV=production
 export ENVIRONMENT_TYPE=production
 export PORT=3000
+export LANG=en_US.UTF-8
 
 rm -f /app/programs/server/assets/app/config/settings.yml
 dockerize \

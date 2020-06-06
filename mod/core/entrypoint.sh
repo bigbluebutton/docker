@@ -1,5 +1,6 @@
 #!/bin/bash
 
+export LANG=en_US.UTF-8
 
 # generate bbb folders
 mkdir -p /var/bigbluebutton/recording/raw
