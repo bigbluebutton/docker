@@ -2,7 +2,7 @@ version: '3.6'
 services:
   https_proxy:
     image: valian/docker-nginx-auto-ssl
-    restart: on-failure
+    restart: unless-stopped
     ports:
       - 80:80
       - 443:443

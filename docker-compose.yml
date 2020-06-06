@@ -21,6 +21,7 @@ services:
 
   freeswitch:
     build: mod/freeswitch
+    restart: unless-stopped
     cap_add:
       - IPC_LOCK
       - NET_ADMIN
@@ -78,6 +79,7 @@ services:
 
   mongodb:
     image: mongo:4.2
+    restart: unless-stopped
     networks:
       bbb-net:
         ipv4_address: 10.7.7.6

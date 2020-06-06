@@ -4,6 +4,7 @@ services:
   greenlight:
     container_name: greenlight
     image: bigbluebutton/greenlight:v2
+    restart: unless-stopped
     env_file: .env
     environment:
       DB_ADAPTER: postgresql
@@ -18,6 +19,7 @@ services:
       - 10.7.7.1:5000:80
   postgres:
     image: postgres:12
+    restart: unless-stopped
     environment:
       POSTGRES_DB: greenlight
       POSTGRES_USER: postgres
