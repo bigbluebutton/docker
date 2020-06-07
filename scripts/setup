@@ -31,6 +31,14 @@ while [[ ! $https_proxy =~ ^(y|n)$ ]]; do
     read -p "Should an automatic HTTPS Proxy be included? (y/n): " https_proxy
 done
 
+coturn=""
+if [ "$https_proxy" == "y" ]
+then
+    while [[ ! $coturn =~ ^(y|n)$ ]]; do
+        read -p "Should a coturn be included? (y/n): " coturn
+    done
+fi
+
 DOMAIN=""
 while [[ -z "$DOMAIN" ]]; do
     read -p "Please enter the domain name: " DOMAIN
@@ -64,6 +72,16 @@ fi
 if [ ! "$https_proxy" == "y" ]
 then
     sed -i "s/ENABLE_HTTPS_PROXY.*/#ENABLE_HTTPS_PROXY=true/" .env
+fi
+
+if [ "$coturn" == "y" ]
+then
+    sed -i "s/.*TURN_SERVER=.*/TURN_SERVER=turns:$DOMAIN:465?transport=tcp/" .env
+    TURN_SECRET=$(head /dev/urandom | tr -dc A-Za-f0-9 | head -c 32)
+    sed -i "s/.*TURN_SECRET=.*/TURN_SECRET=$TURN_SECRET/" .env
+    sed -i "s/.*STUN_IP=.*/STUN_IP=$EXTERNAL_IP/" .env
+else
+    sed -i "s/ENABLE_COTURN.*/#ENABLE_COTURN=true/" .env
 fi
 
 # change secrets

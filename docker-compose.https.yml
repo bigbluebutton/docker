@@ -14,3 +14,4 @@ services:
 
 volumes:
   ssl_data:
+    name: ssl_data

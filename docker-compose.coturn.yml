@@ -1,0 +1,17 @@
+version: '3.6'
+services:
+  coturn:
+    image: instrumentisto/coturn:4.5
+    restart: unless-stopped
+    command:
+      - "--external-ip=${EXTERNAL_IP}"
+      - "--static-auth-secret=${TURN_SECRET}"
+    volumes:
+      - ssl_data:/etc/resty-auto-ssl
+      - ./mod/coturn/entrypoint.sh:/usr/local/bin/docker-entrypoint.sh
+      - ./mod/coturn/turnserver.conf:/etc/coturn/turnserver.conf
+    network_mode: host
+
+volumes:
+  ssl_data:
+    name: ssl_data

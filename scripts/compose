@@ -15,6 +15,11 @@ COMPOSE_FILES="-f docker-compose.yml"
 if [ "$ENABLE_HTTPS_PROXY" == true ]; then
     COMPOSE_FILES="$COMPOSE_FILES -f docker-compose.https.yml"
 fi
+
+if [ "$ENABLE_COTURN" == true ]; then
+    COMPOSE_FILES="$COMPOSE_FILES -f docker-compose.coturn.yml"
+fi
+
 if [ "$ENABLE_GREENLIGHT" == true ]; then
     COMPOSE_FILES="$COMPOSE_FILES -f docker-compose.greenlight.yml"
 fi
