@@ -24,7 +24,12 @@ else
 
     echo ""
     echo "# rebuild images"
-    ./scripts/compose build --pull --no-cache
+
+    # rebuild core without caching, since the deb-packages might have changed
+    ./scripts/compose build --pull --no-cache core
+
+    # rebuild everything else only when modified
+    ./scripts/compose build --pull
 
 
     COMMIT_HASH=$(git rev-parse --short HEAD)
