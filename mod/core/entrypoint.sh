@@ -17,6 +17,9 @@ mkdir -p /var/bigbluebutton/unpublished
 # -- fix directory permissions
 chown -R bigbluebutton:bigbluebutton /var/bigbluebutton
 
+# add playback-presentation to /var/bigbluebutton volume
+cp -r /usr/src/bbb-src-playback /var/bigbluebutton/playback
+
 dockerize \
     -template /usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties.tmpl:/usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties \
     -template /usr/share/bbb-apps-akka/conf/application.conf.tmpl:/usr/share/bbb-apps-akka/conf/application.conf \

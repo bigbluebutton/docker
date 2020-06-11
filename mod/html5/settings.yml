@@ -105,11 +105,11 @@ public:
     cameraProfiles:
       - id: low
         name: Low quality
-        default: false
+        default: true
         bitrate: 100
       - id: medium
         name: Medium quality
-        default: true
+        default: false
         bitrate: 200
       - id: high
         name: High quality
@@ -130,7 +130,7 @@ public:
     clearUsersInSeconds: 180
     pongTimeInSeconds: 15
   allowOutsideCommands:
-    toggleRecording: false
+    toggleRecording: true
     toggleSelfVoice: false
   poll:
     enabled: true

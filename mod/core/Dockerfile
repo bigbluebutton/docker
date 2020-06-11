@@ -39,9 +39,10 @@ RUN equivs-control redis-server.control \
 
 RUN apt-get update && apt-get install -y bbb-web \
                     bbb-fsesl-akka bbb-apps-akka bbb-transcode-akka bbb-apps \
-                    bbb-apps-video bbb-apps-screenshare bbb-apps-video-broadcast
+                    bbb-apps-video bbb-apps-screenshare bbb-apps-video-broadcast \
+                    bbb-record-core bbb-playback-presentation
 
-# -- avoid blocking java 
+# -- avoid blocking java
 # https://github.com/bigbluebutton/bigbluebutton/issues/8959
 RUN sed -i 's|securerandom.source=file:/dev/random|securerandom.source=file:/dev/urandom|g'  /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/security/java.security
 
@@ -65,6 +66,8 @@ COPY bbb-apps-akka/application.conf /usr/share/bbb-apps-akka/conf/application.co
 COPY bbb-fsesl-akka/application.conf /etc/bbb-fsesl-akka/application.conf
 COPY bbb-transcode-akka/application.conf /etc/bbb-transcode-akka/application.conf
 COPY web-run.sh /usr/share/bbb-web/run-prod.sh
+COPY bbb-playback-presentation/presentation.yml /usr/local/bigbluebutton/core/scripts/
+RUN mkdir -p /usr/src/bbb-playback-presentation && cp -r /var/bigbluebutton/playback /usr/src/bbb-src-playback
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY entrypoint.sh /entrypoint.sh
@@ -74,4 +77,3 @@ RUN mkdir -p /var/log/supervisor
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD []
-
