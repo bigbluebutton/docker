@@ -11,6 +11,7 @@ def file_monitor(event_to_check):
     done_files = glob.glob(PATH_MONITOR + event_to_check + "/*.done") # List
     while len(done_files) == 0:
         time.sleep(5)
+        done_files = glob.glob(PATH_MONITOR + event_to_check + "/*.done") # List
     subprocess.Popen("/usr/local/bigbluebutton/scripts/rap-"+event_to_check+"-worker.rb", cwd="/usr/local/bigbluebutton/core/scripts")
 
 if __name__ == "__main__":
