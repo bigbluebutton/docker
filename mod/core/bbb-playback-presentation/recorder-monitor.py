@@ -15,6 +15,6 @@ def file_monitor(event_to_check):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--event", type=str, dest=event_to_check, help="Event to check (archive, events, process, publish, sanity)")
+    parser.add_argument("--event", type=str, dest="event_to_check", help="Event to check (archive, events, process, publish, sanity)")
     args = parser.parse_args()
     file_monitor(args.event_to_check)
