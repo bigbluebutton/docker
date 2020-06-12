@@ -13,12 +13,13 @@ mkdir -p /var/bigbluebutton/recording/status/sanity
 mkdir -p /var/bigbluebutton/published
 mkdir -p /var/bigbluebutton/deleted
 mkdir -p /var/bigbluebutton/unpublished
+mkdir -p /var/bigbluebutton/playback
+
+# add playback-presentation to /var/bigbluebutton volume
+cp -r /usr/src/bbb-src-playback/* /var/bigbluebutton/playback
 
 # -- fix directory permissions
 chown -R bigbluebutton:bigbluebutton /var/bigbluebutton
-
-# add playback-presentation to /var/bigbluebutton volume
-cp -r /usr/src/bbb-src-playback /var/bigbluebutton/playback
 
 dockerize \
     -template /usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties.tmpl:/usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties \
