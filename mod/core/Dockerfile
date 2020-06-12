@@ -72,6 +72,9 @@ RUN chmod +x /usr/local/bin/recorder-monitor.py && \
 mkdir -p /usr/src/bbb-playback-presentation && \
 cp -r /var/bigbluebutton/playback/* /usr/src/bbb-src-playback
 
+RUN wget -O /usr/local/bin/bbb-record https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/develop/bigbluebutton-config/bin/bbb-record \
+&& chmod +x /usr/local/bin/bbb-record
+
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY entrypoint.sh /entrypoint.sh
 
