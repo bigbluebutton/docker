@@ -67,6 +67,7 @@ COPY bbb-fsesl-akka/application.conf /etc/bbb-fsesl-akka/application.conf
 COPY bbb-transcode-akka/application.conf /etc/bbb-transcode-akka/application.conf
 COPY web-run.sh /usr/share/bbb-web/run-prod.sh
 COPY bbb-playback-presentation/presentation.yml /usr/local/bigbluebutton/core/scripts/
+COPY bbb-playback-presentation/recorder-monitor.py /usr/local/bin
 RUN mkdir -p /usr/src/bbb-playback-presentation && cp -r /var/bigbluebutton/playback /usr/src/bbb-src-playback
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
