@@ -57,7 +57,7 @@ COPY red5-webapps/screenshare/application.conf /usr/share/red5/webapps/screensha
 COPY red5-webapps/video/bigbluebutton-video.properties /usr/share/red5/webapps/video/WEB-INF/bigbluebutton-video.properties
 COPY red5-webapps/video-broadcast/video-broadcast.properties /usr/share/red5/webapps/video-broadcast/WEB-INF/video-broadcast.properties
 
-COPY bigbluebutton.yml /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml
+COPY bigbluebutton.yml /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml.tmpl
 
 COPY web/bigbluebutton.properties /usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties.tmpl
 COPY web/turn-stun-servers.xml /usr/share/bbb-web/WEB-INF/classes/spring/turn-stun-servers.xml.tmpl
