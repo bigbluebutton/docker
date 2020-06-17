@@ -12,7 +12,6 @@ PATH_TO_CHECK="/var/bigbluebutton/recording/status"
 CMD_DIR_PATH="/usr/local/bigbluebutton/core/scripts"
 
 function do_monitoring() {
-  check_done_files
   while ! compgen -G "$PATH_TO_CHECK" > /dev/null; do
     echo "$PATH_TO_CHECK returning 0 files, sleeping for 30s..."
     sleep 30
@@ -27,7 +26,7 @@ function do_monitoring() {
   do_monitoring
 }
 
-function check_done_files() {
+function initialize_variables() {
   echo "$FILES_TO_CHECK"
   if [[ ! -z $FILES_TO_CHECK ]]; then
     if [[ $FILES_TO_CHECK == "processed" ]]; then
@@ -55,4 +54,7 @@ function check_done_files() {
   fi
 }
 
+# first check variables
+initialize_variables
+# main execution
 do_monitoring
