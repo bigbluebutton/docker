@@ -38,7 +38,7 @@ services:
     network_mode: host
   
   nginx:
-    image: nginx:1.18-alpine
+    image: nginx:1.19-alpine
     restart: unless-stopped
     depends_on:
       - etherpad
@@ -85,7 +85,7 @@ services:
         ipv4_address: 10.7.7.6
 
   kurento:
-    image: kurento/kurento-media-server:6.13.2
+    image: kurento/kurento-media-server:6.14
     restart: unless-stopped
     environment: 
       KMS_STUN_IP: ${STUN_IP}
