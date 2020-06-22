@@ -1,5 +1,12 @@
 # BigBlueButton Docker
 
+## Features
+- Easy installation
+- Greenlight included
+- TURN server included
+- Fully automated HTTPS certificates
+- Runs on almost any major linux distributon (Debian, Ubuntu, CentOS,...)
+
 ## Install
 1. Install docker-ce & docker-compose
     1. follow instructions
@@ -72,7 +79,6 @@ A simple `$ git pull` resolves that, by fetching a newer version which includes 
 
 ## Open Tasks
 - add support for recording
-- add coturn
 - add prometheus exporter
 - further separate `bbb-core` into individual container
 - enable IPv6 support
