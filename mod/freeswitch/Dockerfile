@@ -49,7 +49,8 @@ RUN apt-get update && apt-get install -y \
         freeswitch-mod-spandsp \
         freeswitch-mod-tone-stream \
         freeswitch-mod-verto \
-        freeswitch-sounds-en-us-callie
+        freeswitch-sounds-en-us-callie \
+        iptables
 
 # Potentially missing
 # (included in bbb-freeswitch-core but not referenced in https://github.com/bigbluebutton/bigbluebutton/issues/9064)
