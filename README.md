@@ -76,11 +76,3 @@ A simple `$ git pull` resolves that, by fetching a newer version which includes 
 
 ## Special thanks to
 - @dkrenn, whos dockerized version (bigbluebutton#8858)(https://github.com/bigbluebutton/bigbluebutton/pull/8858) helped me a lot in understand and some configs.
-
-## Open Tasks
-- add support for recording
-- add prometheus exporter
-- further separate `bbb-core` into individual container
-- enable IPv6 support
-- switch `html5` to node v12
-- drop root privileges in `webrtc-sfu`
