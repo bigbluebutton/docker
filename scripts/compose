@@ -24,4 +24,8 @@ if [ "$ENABLE_GREENLIGHT" == true ]; then
     COMPOSE_FILES="$COMPOSE_FILES -f docker-compose.greenlight.yml"
 fi
 
+if [ "$ENABLE_WEBHOOKS" == true ]; then
+    COMPOSE_FILES="$COMPOSE_FILES -f docker-compose.webhooks.yml"
+fi
+
 docker-compose $COMPOSE_FILES $@
