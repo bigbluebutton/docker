@@ -1,0 +1,4 @@
+location = /client/guest-wait.html {
+    alias /etc/nginx/bbb/guest-wait.html;
+}
+
