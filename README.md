@@ -103,7 +103,7 @@ RewriteRule .* ws://127.0.0.1:8080%{REQUEST_URI} [P,QSA,L]
 	ProxyPassReverse http://127.0.0.1:8080/
 </Location>
 ```
-5. After restarting Apache, BigBlueButton should be publicly accessible on `https://bbb.example.com/`. If you chose to install Greenlight, then the previous URL should allow you to open its home page. The APIs will be accessible through `https://bbb.example.com/bigbluebutton`.
+5. After restarting Apache, BigBlueButton should be publicly accessible on `https://bbb.example.com/`. If you chose to install Greenlight, then the previous URL should allow you to open its home page. The APIs will be accessible through `https://bbb.example.com/bigbluebutton/`.
 
 ## Special thanks to
 - @dkrenn, whos dockerized version (bigbluebutton#8858)(https://github.com/bigbluebutton/bigbluebutton/pull/8858) helped me a lot in understand and some configs.
