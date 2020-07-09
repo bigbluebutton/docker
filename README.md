@@ -81,15 +81,14 @@ Since the non-dockerized version of BigBlueButton has [many requirements](https:
 You could dedicate a virtual host to BigBlueButton, allowing external access to it through a reverse proxy. If your server is running Apache, the following steps are an example of how to set up a working configuration.
 
 1. Install BigBlueButton Docker [as explained above](#install). While running the setup script, please choose `n` when you're asked the following question: `Should an automatic HTTPS Proxy be included? (y/n)`.
-> **Note.** The automatic HTTPS Proxy is not needed if you are going to run BigBlueButton behind a reverse proxy; in that case, you should be able to enable SSL for the virtual host you are going to dedicate to BigBlueButton using Apache features. Please notice that you will not be able to install and use the integrated TURN server, since it requires the automatic HTTPS Proxy to be installed; therefore, if a TURN server is required, you should install and configure it by yourself. You can set BigBlueButton to use a TURN server by uncommenting and adjusting `TURN_SERVER` and `TURN_SECRET` in the `.env` file which is created after completion of the setup script.
-2. Now all the Docker containers should be running. BigBlueButton listens to port 8080. Create a virtual host on Apache by which BigBlueButton will be publicly accessible (in this case, let's assume the following server name for the virtual host: `bbb.example.com`). Enable SSL for the _https_ virtual host. It is suggested to add some directives to the _http_ virtual host to redirect all requests to the _https_ one, for example:
+> **Note.** The automatic HTTPS Proxy is not needed if you are going to run BigBlueButton behind a reverse proxy; in that case, you should be able to enable SSL for the virtual host you are going to dedicate to BigBlueButton, using Apache features. Please notice that you will not be able to install and use the integrated TURN server, since it requires the automatic HTTPS Proxy to be installed; therefore, if a TURN server is required, you should install and configure it by yourself. You can set BigBlueButton to use a TURN server by uncommenting and adjusting `TURN_SERVER` and `TURN_SECRET` in the `.env` file, which is created after completion of the setup script.
+2. Now all the Docker containers should be running. BigBlueButton listens to port 8080. On Apache, create a virtual host by which BigBlueButton will be publicly accessible (in this case, let's assume the following server name for the virtual host: `bbb.example.com`). Enable SSL for the new _https_ virtual host. Make sure that the SSL certificate you will be using is signed by a CA (Certificate Authority). You could generate an SSL certificate for free using Let's Encrypt. It is suggested to add some directives to the _http_ virtual host `bbb.example.com` to redirect all requests to the _https_ one, for example:
 ```
 RewriteEngine On
 RewriteRule ^/(.*) https://%{HTTP_HOST}/$1 [R]
 ```
-Make sure that the SSL certificate you will be using is signed by a CA (Certificate Authority). You could generate an SSL certificate for free using Let's Encrypt.
-3. Make sure that the following Apache modules are in use: `proxy`, `rewrite`, `proxy_http`, `proxy_wstunnel`. On _apache2_, the following command activates these modules if they are not already enabled: `sudo a2enmod proxy rewrite proxy_http proxy_wstunnel`.
-4. Add the following directives to the _https_ virtual host named `bbb.example.com`:
+3. Make sure that the following Apache modules are in use: `proxy`, `rewrite`, `proxy_http`, `proxy_wstunnel`. On _apache2_, the following command activates these modules,  whenever they are not already enabled: `sudo a2enmod proxy rewrite proxy_http proxy_wstunnel`.
+4. Add the following directives to the _https_ virtual host `bbb.example.com`:
 ```
 ProxyPreserveHost On
 
@@ -104,7 +103,7 @@ RewriteRule .* ws://127.0.0.1:8080%{REQUEST_URI} [P,QSA,L]
 	ProxyPassReverse http://127.0.0.1:8080/
 </Location>
 ```
-5. After restarting Apache, BigBlueButton should be publicly accessible on `https://bbb.example.com/`. If you chose to install Greenlight, then the previous URL should allow you to access to it. The APIs will be accessible through `https://bbb.example.com/bigbluebutton`.
+5. After restarting Apache, BigBlueButton should be publicly accessible on `https://bbb.example.com/`. If you chose to install Greenlight, then the previous URL should allow you to open its home page. The APIs will be accessible through `https://bbb.example.com/bigbluebutton`.
 
 ## Special thanks to
 - @dkrenn, whos dockerized version (bigbluebutton#8858)(https://github.com/bigbluebutton/bigbluebutton/pull/8858) helped me a lot in understand and some configs.
