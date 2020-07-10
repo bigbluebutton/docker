@@ -16,7 +16,9 @@ Eventually, BigBlueButton should be publicly accessible on `https://bbb.example.
 
 ## Integration with Apache
 1. Make sure that the following Apache modules are in use: `proxy`, `rewrite`, `proxy_http`, `proxy_wstunnel`. On _apache2_, the following command activates these modules,  whenever they are not already enabled:
-```sudo a2enmod proxy rewrite proxy_http proxy_wstunnel```
+```
+sudo a2enmod proxy rewrite proxy_http proxy_wstunnel
+```
 2. Add the following directives to the _https_ virtual host `bbb.example.com`:
 ```
 ProxyPreserveHost On
@@ -33,4 +35,6 @@ RewriteRule .* ws://127.0.0.1:8080%{REQUEST_URI} [P,QSA,L]
 </Location>
 ```
 3. Restart Apache:
-```service apache2 restart```
+```
+service apache2 restart
+```
