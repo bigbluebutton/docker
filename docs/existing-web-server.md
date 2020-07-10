@@ -15,7 +15,8 @@ At this point, choose one of the following sections according to which Web serve
 Eventually, BigBlueButton should be publicly accessible on `https://bbb.example.com/`. If you chose to install Greenlight, then the previous URL should allow you to open its home page. The APIs will be accessible through `https://bbb.example.com/bigbluebutton/`.
 
 ## Integration with Apache
-1. Make sure that the following Apache modules are in use: `proxy`, `rewrite`, `proxy_http`, `proxy_wstunnel`. On _apache2_, the following command activates these modules,  whenever they are not already enabled: `sudo a2enmod proxy rewrite proxy_http proxy_wstunnel`.
+1. Make sure that the following Apache modules are in use: `proxy`, `rewrite`, `proxy_http`, `proxy_wstunnel`. On _apache2_, the following command activates these modules,  whenever they are not already enabled:
+```sudo a2enmod proxy rewrite proxy_http proxy_wstunnel```
 2. Add the following directives to the _https_ virtual host `bbb.example.com`:
 ```
 ProxyPreserveHost On
@@ -31,4 +32,5 @@ RewriteRule .* ws://127.0.0.1:8080%{REQUEST_URI} [P,QSA,L]
 	ProxyPassReverse http://127.0.0.1:8080/
 </Location>
 ```
-3. Restart Apache: `service apache2 restart`.
+3. Restart Apache:
+```service apache2 restart```
