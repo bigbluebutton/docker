@@ -47,6 +47,8 @@ hooks:
     - 60000
   # Reset permanent interval when exceeding maximum attemps
   permanentIntervalReset: 8
+  # Hook's request module timeout for socket conn establishment and/or responses (ms)
+  requestTimeout: 5000
 
 # Mappings of internal to external meeting IDs
 mappings:
@@ -64,4 +66,5 @@ redis:
     mappingPrefix: bigbluebutton:webhooks:mapping
     eventsPrefix: bigbluebutton:webhooks:events
     userMaps: bigbluebutton:webhooks:userMaps
+    userMapPrefix: bigbluebutton:webhooks:userMap
     userMapPrefix: bigbluebutton:webhooks:userMap
