@@ -159,6 +159,12 @@ services:
       bbb-net:
         ipv4_address: 10.7.7.11
 
+  fsesl-akka:
+    build: mod/fsesl-akka
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.14
+
   periodic:
     build: mod/periodic
     restart: unless-stopped

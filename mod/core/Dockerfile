@@ -36,7 +36,7 @@ RUN equivs-control redis-server.control \
 # rebuilding from here on if changed
 ENV VERSION v2.3-alpha-1
 
-RUN apt-get update && apt-get install -y bbb-web bbb-fsesl-akka bbb-apps-akka bbb-transcode-akka
+RUN apt-get update && apt-get install -y bbb-web bbb-apps-akka bbb-transcode-akka
 
 # add blank presentation files and allow conversation to pdf/svg
 RUN mkdir -p /usr/share/bigbluebutton/blank \
@@ -53,7 +53,6 @@ COPY web/bigbluebutton.properties /usr/share/bbb-web/WEB-INF/classes/bigbluebutt
 COPY web/turn-stun-servers.xml /usr/share/bbb-web/WEB-INF/classes/spring/turn-stun-servers.xml.tmpl
 
 COPY bbb-apps-akka/application.conf /usr/share/bbb-apps-akka/conf/application.conf.tmpl
-COPY bbb-fsesl-akka/application.conf /etc/bbb-fsesl-akka/application.conf
 COPY bbb-transcode-akka/application.conf /etc/bbb-transcode-akka/application.conf
 COPY web-run.sh /usr/share/bbb-web/run-prod.sh
 
