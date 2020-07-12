@@ -19,7 +19,7 @@ then
 fi
 
 
-EXTERNAL_IP=$(curl -s http://whatismyip.akamai.com)
+EXTERNAL_IPv4=$(curl -4 -s https://icanhazip.com)
 
 greenlight=""
 while [[ ! $greenlight =~ ^(y|n)$ ]]; do
@@ -46,8 +46,16 @@ done
 
 ip_correct=""
 while [[ ! $ip_correct =~ ^(y|n)$ ]]; do
-    read -p "Is $EXTERNAL_IP your external IPv4 address? (y/n): " ip_correct
+    read -p "Is $EXTERNAL_IPv4 your external IPv4 address? (y/n): " ip_correct
 done
+
+if [ ! "$ip_correct" == "y" ]
+then
+    EXTERNAL_IPv4=""
+    while [[ ! $EXTERNAL_IPv4 =~ ^[1-9][0-9]{0,2}\.[1-9][0-9]{0,2}\.[1-9][0-9]{0,2}\.[1-9][0-9]{0,2}$ ]]; do
+        read -p "Please enter correct IPv4 address: " EXTERNAL_IPv4
+    done
+fi
 
 if [ ! "$ip_correct" == "y" ]
 then
@@ -61,7 +69,7 @@ fi
 
 # write settings
 cp sample.env .env
-sed -i "s/EXTERNAL_IP=.*/EXTERNAL_IP=$EXTERNAL_IP/" .env
+sed -i "s/EXTERNAL_IPv4=.*/EXTERNAL_IPv4=$EXTERNAL_IPv4/" .env
 sed -i "s/DOMAIN=.*/DOMAIN=$DOMAIN/" .env
 
 if [ ! "$greenlight" == "y" ]
@@ -79,7 +87,7 @@ then
     sed -i "s/.*TURN_SERVER=.*/TURN_SERVER=turns:$DOMAIN:465?transport=tcp/" .env
     TURN_SECRET=$(head /dev/urandom | tr -dc A-Za-f0-9 | head -c 32)
     sed -i "s/.*TURN_SECRET=.*/TURN_SECRET=$TURN_SECRET/" .env
-    sed -i "s/.*STUN_IP=.*/STUN_IP=$EXTERNAL_IP/" .env
+    sed -i "s/.*STUN_IP=.*/STUN_IP=$EXTERNAL_IPv4/" .env
 else
     sed -i "s/ENABLE_COTURN.*/#ENABLE_COTURN=true/" .env
 fi

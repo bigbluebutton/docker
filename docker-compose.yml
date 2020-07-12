@@ -31,7 +31,7 @@ services:
       - SYS_RESOURCE
     environment:
       DOMAIN: ${DOMAIN}
-      EXTERNAL_IP: ${EXTERNAL_IP}
+      EXTERNAL_IPv4: ${EXTERNAL_IPv4}
       SIP_IP_ALLOWLIST: ${SIP_IP_ALLOWLIST}
       NETWORK_INTERFACE: ${NETWORK_INTERFACE:-}
     volumes:
@@ -53,11 +53,13 @@ services:
       - ./mod/nginx/bbb:/etc/nginx/bbb
       - ./mod/nginx/bigbluebutton:/etc/nginx/conf.d/default.conf
       - ${DEFAULT_PRESENTATION:-/dev/null}:/etc/nginx/html/default.pdf
-    networks:
-      bbb-net:
-        ipv4_address: 10.7.7.13
+    network_mode: host
     extra_hosts:
       - "host.docker.internal:10.7.7.1"
+      - "core:10.7.7.2"
+      - "etherpad:10.7.7.4"
+      - "webrtc-sfu:10.7.7.10"
+      - "html5:10.7.7.11"
 
   etherpad:
     build: mod/etherpad
@@ -94,7 +96,6 @@ services:
       KMS_STUN_PORT: ${STUN_PORT}
       KMS_MIN_PORT: 24577
       KMS_MAX_PORT: 32768
-      KMS_EXTERNAL_ADDRESS: ${EXTERNAL_IP} 
       KMS_TURN_URL:
       KMS_NETWORK_INTERFACES: ${NETWORK_INTERFACE:-}
     network_mode: host
@@ -113,10 +114,10 @@ services:
       KURENTO_NAME: kurento
       REDIS_HOST: redis
       FREESWITCH_IP: host.docker.internal
-      FREESWITCH_SIP_IP: ${EXTERNAL_IP}
+      FREESWITCH_SIP_IP: ${EXTERNAL_IPv4}
       ESL_IP: host.docker.internal
       LOG_LEVEL: info
-      NODE_CONFIG: '{"kurento":[{"ip":"${EXTERNAL_IP}","url":"ws://kurento:8888/kurento"}]}'
+      NODE_CONFIG: '{"kurento":[{"ip":"${EXTERNAL_IPv4}","url":"ws://kurento:8888/kurento"}]}'
     ports:
       - "127.0.0.1:3008:3008"
     extra_hosts:

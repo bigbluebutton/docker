@@ -4,7 +4,7 @@ services:
     image: instrumentisto/coturn:4.5
     restart: unless-stopped
     command:
-      - "--external-ip=${EXTERNAL_IP}"
+      - "--external-ip=${EXTERNAL_IPv4}"
       - "--static-auth-secret=${TURN_SECRET}"
     volumes:
       - ssl_data:/etc/resty-auto-ssl

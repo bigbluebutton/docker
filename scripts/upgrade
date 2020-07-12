@@ -31,6 +31,7 @@ else
     # rebuild everything else only when modified
     ./scripts/compose build --pull
 
+    sed -i 's/EXTERNAL_IP=/EXTERNAL_IPv4=/' .env
 
     COMMIT_HASH=$(git rev-parse --short HEAD)
     BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
