@@ -6,8 +6,8 @@ cd $(dirname $0)/..
 # load .env
 if [ -f .env ]
 then
-  # exclude WELCOME_FOOTER because it may contain invalid characters
-  export $(cat .env | sed 's/#.*//g' | grep -v "WELCOME_FOOTER" | xargs)
+  # exclude WELCOME_MESSAGE && WELCOME_FOOTER because it may contain invalid characters
+  export $(cat .env | sed 's/#.*//g' | grep -v "WELCOME_FOOTER" | grep -v "WELCOME_MESSAGE" | xargs)
 fi
 
 # concatenate docker-compose file
