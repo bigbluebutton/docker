@@ -38,7 +38,7 @@
 ## How-To's
 - [Upgrade](docs/upgrading.md)
 - [Behind NAT](docs/behind-nat.md)
-- [Integration into an existing Apache setup](docs/existing-apache.md)
+- [Integration into an existing web server](docs/existing-web-server.md)
 
 ## Special thanks to
 - @dkrenn, whos dockerized version (bigbluebutton#8858)(https://github.com/bigbluebutton/bigbluebutton/pull/8858) helped me a lot in understand and some configs.

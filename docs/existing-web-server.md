@@ -14,6 +14,9 @@ At this point, choose one of the following sections according to which Web serve
 
 Eventually, BigBlueButton should be publicly accessible on `https://bbb.example.com/`. If you chose to install Greenlight, then the previous URL should allow you to open its home page. The APIs will be accessible through `https://bbb.example.com/bigbluebutton/`.
 
+## Integration with nginx
+> *Not written yet. can you imagine writing down some instructions?*
+
 ## Integration with Apache
 1. Make sure that the following Apache modules are in use: `proxy`, `rewrite`, `proxy_http`, `proxy_wstunnel`. On _apache2_, the following command activates these modules,  whenever they are not already enabled:
 ```
