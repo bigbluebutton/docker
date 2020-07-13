@@ -20,6 +20,7 @@ fi
 
 
 EXTERNAL_IPv4=$(curl -4 -s https://icanhazip.com)
+EXTERNAL_IPv6=$(curl -6 -s https://icanhazip.com || true)
 
 greenlight=""
 while [[ ! $greenlight =~ ^(y|n)$ ]]; do
@@ -57,12 +58,20 @@ then
     done
 fi
 
-if [ ! "$ip_correct" == "y" ]
+if [ -n "$EXTERNAL_IPv6" ]
 then
-    EXTERNAL_IP=""
-    while [[ ! $EXTERNAL_IP =~ ^[1-9][0-9]{0,2}\.[1-9][0-9]{0,2}\.[1-9][0-9]{0,2}\.[1-9][0-9]{0,2}$ ]]; do
-        read -p "Please enter correct IPv4 address: " EXTERNAL_IP
+    ip_correct=""
+    while [[ ! $ip_correct =~ ^(y|n)$ ]]; do
+        read -p "Is $EXTERNAL_IPv6 your external IPv6 address? (y/n): " ip_correct
     done
+
+    if [ ! "$ip_correct" == "y" ]
+    then
+        EXTERNAL_IPv6=""
+        while [[ ! $EXTERNAL_IPv6 =~ ^[1-9][0-9]{0,2}\.[1-9][0-9]{0,2}\.[1-9][0-9]{0,2}\.[1-9][0-9]{0,2}$ ]]; do
+            read -p "Please enter correct IPv6 address: " EXTERNAL_IPv6
+        done
+    fi
 fi
 
 
@@ -70,6 +79,7 @@ fi
 # write settings
 cp sample.env .env
 sed -i "s/EXTERNAL_IPv4=.*/EXTERNAL_IPv4=$EXTERNAL_IPv4/" .env
+sed -i "s/EXTERNAL_IPv6=.*/EXTERNAL_IPv6=$EXTERNAL_IPv6/" .env
 sed -i "s/DOMAIN=.*/DOMAIN=$DOMAIN/" .env
 
 if [ ! "$greenlight" == "y" ]
