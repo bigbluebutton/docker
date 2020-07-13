@@ -32,6 +32,7 @@ services:
     environment:
       DOMAIN: ${DOMAIN}
       EXTERNAL_IPv4: ${EXTERNAL_IPv4}
+      EXTERNAL_IPv6: ${EXTERNAL_IPv6}
       SIP_IP_ALLOWLIST: ${SIP_IP_ALLOWLIST}
       NETWORK_INTERFACE: ${NETWORK_INTERFACE:-}
     volumes:
