@@ -6,7 +6,7 @@ public:
     autoJoin: true
     listenOnlyMode: {{ .Env.LISTEN_ONLY_MODE }}
     forceListenOnly: false
-    skipCheck: {{ .Env.SKIP_CHECK }}
+    skipCheck: {{ .Env.DISABLE_ECHO_TEST }}
     clientTitle: {{ .Env.CLIENT_TITLE }}
     appName: BigBlueButton HTML5 Client
     bbbServerVersion: 2.2
@@ -138,7 +138,7 @@ public:
     enableVideoMenu: true
     enableListenOnly: true
     autoShareWebcam: {{ .Env.AUTO_SHARE_WEBCAM }}
-    skipVideoPreview: {{ .Env.SKIP_VIDEO_PREVIEW }}
+    skipVideoPreview: {{ .Env.DISABLE_VIDEO_PREVIEW }}
   pingPong:
     clearUsersInSeconds: 180
     pongTimeInSeconds: 15
