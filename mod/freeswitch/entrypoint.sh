@@ -15,11 +15,7 @@ for IP in "${ADDR[@]}"; do
     iptables -I INPUT  -p udp --dport 5060 -s $IP -j ACCEPT
 done
 
-# remove English audio annoucements
-if [ "$REMOVE_ENGLISH_FREESWITCH_AUDIO_ANNOUNCEMENS" == 'true' ]; then
-  rm -rf /usr/share/freeswitch/sounds/en/us/callie/conference/
-fi
-
 dockerize \
     -template /etc/freeswitch/vars.xml.tmpl:/etc/freeswitch/vars.xml \
+    -template /etc/freeswitch/autoload_configs/conference.conf.xml.tmpl:/etc/freeswitch/autoload_configs/conference.conf.xml \
     /usr/bin/freeswitch -u freeswitch -g daemon -nonat -nf
