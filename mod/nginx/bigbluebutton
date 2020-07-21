@@ -1,6 +1,6 @@
 map $remote_addr $freeswitch_addr {
     "~:"    [::1];
-    default    127.0.0.1;
+    default    10.7.7.1;
 }
 
 server {
