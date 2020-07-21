@@ -17,4 +17,5 @@ done
 
 dockerize \
     -template /etc/freeswitch/vars.xml.tmpl:/etc/freeswitch/vars.xml \
+    -template /etc/freeswitch/autoload_configs/conference.conf.xml.tmpl:/etc/freeswitch/autoload_configs/conference.conf.xml \
     /usr/bin/freeswitch -u freeswitch -g daemon -nonat -nf

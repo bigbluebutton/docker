@@ -9,6 +9,7 @@ services:
     environment:
       DOMAIN: ${DOMAIN}
       SHARED_SECRET: ${SHARED_SECRET}
+      WELCOME_MESSAGE: ${WELCOME_MESSAGE:-}
       WELCOME_FOOTER: ${WELCOME_FOOTER}
       STUN_SERVER: stun:${STUN_IP}:${STUN_PORT}
       TURN_SERVER: ${TURN_SERVER:-}
@@ -34,6 +35,8 @@ services:
       EXTERNAL_IPv4: ${EXTERNAL_IPv4}
       EXTERNAL_IPv6: ${EXTERNAL_IPv6:-::1}
       SIP_IP_ALLOWLIST: ${SIP_IP_ALLOWLIST:-}
+      DISABLE_SOUND_MUTED: ${DISABLE_SOUND_MUTED:-false}
+      DISABLE_SOUND_ALONE: ${DISABLE_SOUND_ALONE:-false}
     volumes:
       - ./conf/sip_profiles:/etc/freeswitch/sip_profiles/external
       - ./conf/dialplan_public:/etc/freeswitch/dialplan/public_docker
@@ -138,6 +141,12 @@ services:
       DOMAIN: ${DOMAIN}
       CLIENT_TITLE: ${CLIENT_TITLE}
       ETHERPAD_API_KEY: ${ETHERPAD_API_KEY}
+      LISTEN_ONLY_MODE: ${LISTEN_ONLY_MODE:-true}
+      DISABLE_ECHO_TEST: ${DISABLE_ECHO_TEST:-false}
+      AUTO_SHARE_WEBCAM: ${AUTO_SHARE_WEBCAM:-false}
+      DISABLE_VIDEO_PREVIEW: ${DISABLE_VIDEO_PREVIEW:-false}
+      CHAT_ENABLED: ${CHAT_ENABLED:-true}
+      CHAT_START_CLOSED: ${CHAT_START_CLOSED:-false}
     networks:
       bbb-net:
         ipv4_address: 10.7.7.11
