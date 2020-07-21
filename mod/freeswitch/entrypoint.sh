@@ -4,8 +4,8 @@
 iptables -S INPUT | grep "\-\-dport 5060 " | cut -d " " -f 2- | xargs -rL1 iptables -D
 
 # block requests to 5060 (tcp/udp)
-iptables -A INPUT -i "$NETWORK_INTERFACE" -p tcp --dport 5060 -s 0.0.0.0/0 -j REJECT
-iptables -A INPUT -i "$NETWORK_INTERFACE" -p udp --dport 5060 -s 0.0.0.0/0 -j REJECT
+iptables -A INPUT -p tcp --dport 5060 -s 0.0.0.0/0 -j REJECT
+iptables -A INPUT -p udp --dport 5060 -s 0.0.0.0/0 -j REJECT
 
 # allow some IPs 
 IFS=',' read -ra ADDR <<< "$SIP_IP_ALLOWLIST"
