@@ -7,6 +7,7 @@ services:
     depends_on:
         - redis
     environment:
+      DEV_MODE: ${DEV_MODE:-}
       DOMAIN: ${DOMAIN}
       SHARED_SECRET: ${SHARED_SECRET}
       WELCOME_MESSAGE: ${WELCOME_MESSAGE:-}
@@ -147,6 +148,7 @@ services:
       DISABLE_VIDEO_PREVIEW: ${DISABLE_VIDEO_PREVIEW:-false}
       CHAT_ENABLED: ${CHAT_ENABLED:-true}
       CHAT_START_CLOSED: ${CHAT_START_CLOSED:-false}
+      DEV_MODE: ${DEV_MODE:-}
     networks:
       bbb-net:
         ipv4_address: 10.7.7.11
