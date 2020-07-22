@@ -7,7 +7,7 @@ services:
       - ssl_data:/etc/resty-auto-ssl
       - ./mod/https/site.conf:/etc/nginx/conf.d/bbb-docker.conf
     environment:
-      ALLOWED_DOMAINS: ${DOMAIN}
+      ALLOWED_DOMAINS: ${CERTIFICATE_DOMAINS}
     network_mode: host
 
 volumes:

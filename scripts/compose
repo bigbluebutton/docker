@@ -10,6 +10,11 @@ then
   export $(cat .env | sed 's/#.*//g' | grep -v "WELCOME_FOOTER" | grep -v "WELCOME_MESSAGE" | xargs)
 fi
 
+export CERTIFICATE_DOMAINS=$DOMAIN
+if [ "$DEV_MODE" == true ]; then
+    export CERTIFICATE_DOMAINS="invalid"
+fi
+
 # concatenate docker-compose file
 COMPOSE_FILES="-f docker-compose.yml"
 if [ "$ENABLE_HTTPS_PROXY" == true ]; then
