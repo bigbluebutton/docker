@@ -1,0 +1,4 @@
+location /bbb-exporter {
+        proxy_pass http://10.7.7.33:9688;
+        proxy_http_version 1.1;
+}

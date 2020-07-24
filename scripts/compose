@@ -33,4 +33,8 @@ if [ "$ENABLE_WEBHOOKS" == true ]; then
     COMPOSE_FILES="$COMPOSE_FILES -f docker-compose.webhooks.yml"
 fi
 
+if [ "$ENABLE_PROMETHEUS_EXPORTER" == true ]; then
+    COMPOSE_FILES="$COMPOSE_FILES -f docker-compose.prometheus.yml"
+fi
+
 docker-compose $COMPOSE_FILES $@
