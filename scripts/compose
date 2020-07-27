@@ -11,8 +11,10 @@ then
 fi
 
 export CERTIFICATE_DOMAINS=$DOMAIN
+export GREENLIGHT_ENDPOINT=https://$DOMAIN/bigbluebutton/api/
 if [ "$DEV_MODE" == true ]; then
     export CERTIFICATE_DOMAINS="invalid"
+    export GREENLIGHT_ENDPOINT=http://10.7.7.1:8080/bigbluebutton/api/
 fi
 
 # concatenate docker-compose file
