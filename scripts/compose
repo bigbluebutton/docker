@@ -22,11 +22,17 @@ if [ -z "$EXTERNAL_IPv4" ]; then
     exit 1
 fi
 
+# set conditional variables
 export CERTIFICATE_DOMAINS=$DOMAIN
 export GREENLIGHT_ENDPOINT=https://$DOMAIN/bigbluebutton/api/
 if [ "$DEV_MODE" == true ]; then
     export CERTIFICATE_DOMAINS="invalid"
     export GREENLIGHT_ENDPOINT=http://10.7.7.1:8080/bigbluebutton/api/
+fi
+if [ ! -z "$EXTERNAL_IPv6" ]; then
+    export HTTPS_SITE_FILE="site.conf"
+else
+    export HTTPS_SITE_FILE="site-ipv4only.conf"
 fi
 
 # concatenate docker-compose file

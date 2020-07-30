@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
     volumes:
       - ssl_data:/etc/resty-auto-ssl
-      - ./mod/https/site.conf:/etc/nginx/conf.d/bbb-docker.conf
+      - ./mod/https/${HTTPS_SITE_FILE}:/etc/nginx/conf.d/bbb-docker.conf
     environment:
       ALLOWED_DOMAINS: ${CERTIFICATE_DOMAINS}
     network_mode: host
