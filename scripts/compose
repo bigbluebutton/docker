@@ -10,6 +10,18 @@ then
   export $(cat .env | sed 's/#.*//g' | grep -v "WELCOME_FOOTER" | grep -v "WELCOME_MESSAGE" | xargs)
 fi
 
+# check for non-optional environment variables,
+# which got introduced later and may miss in existing
+# .env files during upgrades
+if [ -z "$EXTERNAL_IPv4" ]; then
+    echo "ERROR: EXTERNAL_IPv4 is not set in .env"
+    echo "BBB won't work without it."
+    echo "this can happen if you did an manual upgrade without executing"
+    echo "   ./scripts/upgrade"
+    echo "try to run it again"
+    exit 1
+fi
+
 export CERTIFICATE_DOMAINS=$DOMAIN
 export GREENLIGHT_ENDPOINT=https://$DOMAIN/bigbluebutton/api/
 if [ "$DEV_MODE" == true ]; then
