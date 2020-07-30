@@ -1,15 +1,21 @@
 # https://github.com/ether/etherpad-lite/wiki/How-to-put-Etherpad-Lite-behind-a-reverse-Proxy
-location ~ "^\/pad\/p\/(\w+)$" {
-    rewrite                /pad/(.*) /$1 break;
-    rewrite                ^/pad$ /pad/ permanent;
+location /pad/p/ {
+    rewrite /pad/p/(.*) /p/$1 break;
+    rewrite ^/pad/p$ /pad/p/ permanent;
     proxy_pass             http://etherpad:9001;
     proxy_pass_header      Server;
     proxy_redirect         / /pad;
     proxy_set_header       Host $host;
     proxy_buffering off;
 
-    auth_request /bigbluebutton/connection/checkAuthorization;
-    auth_request_set $auth_status $upstream_status;
+    # there is currently no viable source for building the
+    # bbb-etherpad including sesstiontokens which got introduced in v2.2.21
+    # https://github.com/bigbluebutton/bigbluebutton/issues/10159
+    #
+    # We disable the authentication for now.
+    
+    # auth_request /bigbluebutton/connection/checkAuthorization;
+    # auth_request_set $auth_status $upstream_status;
 }
 
 location /pad {
@@ -19,6 +25,13 @@ location /pad {
     proxy_pass_header      Server;
     proxy_redirect         / /pad/;
     proxy_set_header       Host $host;
+    proxy_buffering off;
+}
+
+location /pad/socket.io/socket.io.js {
+    rewrite /pad/socket.io/socket.io.js /socket.io/socket.io.js break;
+    proxy_pass http://etherpad:9001/;
+    proxy_set_header Host $host;
     proxy_buffering off;
 }
 
@@ -36,6 +49,9 @@ location /pad/socket.io {
     # WebSocket proxying - from http://nginx.org/en/docs/http/websocket.html
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection "Upgrade";
+
+    # auth_request /bigbluebutton/connection/checkAuthorization;
+    # auth_request_set $auth_status $upstream_status;
 }
 
 location /static {
