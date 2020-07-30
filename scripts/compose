@@ -6,8 +6,33 @@ cd $(dirname $0)/..
 # load .env
 if [ -f .env ]
 then
-  # exclude WELCOME_FOOTER because it may contain invalid characters
-  export $(cat .env | sed 's/#.*//g' | grep -v "WELCOME_FOOTER" | xargs)
+  # exclude WELCOME_MESSAGE && WELCOME_FOOTER because it may contain invalid characters
+  export $(cat .env | sed 's/#.*//g' | grep -v "WELCOME_FOOTER" | grep -v "WELCOME_MESSAGE" | xargs)
+fi
+
+# check for non-optional environment variables,
+# which got introduced later and may miss in existing
+# .env files during upgrades
+if [ -z "$EXTERNAL_IPv4" ]; then
+    echo "ERROR: EXTERNAL_IPv4 is not set in .env"
+    echo "BBB won't work without it."
+    echo "this can happen if you did an manual upgrade without executing"
+    echo "   ./scripts/upgrade"
+    echo "try to run it again"
+    exit 1
+fi
+
+# set conditional variables
+export CERTIFICATE_DOMAINS=$DOMAIN
+export GREENLIGHT_ENDPOINT=https://$DOMAIN/bigbluebutton/api/
+if [ "$DEV_MODE" == true ]; then
+    export CERTIFICATE_DOMAINS="invalid"
+    export GREENLIGHT_ENDPOINT=http://10.7.7.1:8080/bigbluebutton/api/
+fi
+if [ ! -z "$EXTERNAL_IPv6" ]; then
+    export HTTPS_SITE_FILE="site.conf"
+else
+    export HTTPS_SITE_FILE="site-ipv4only.conf"
 fi
 
 # concatenate docker-compose file
@@ -26,6 +51,10 @@ fi
 
 if [ "$ENABLE_WEBHOOKS" == true ]; then
     COMPOSE_FILES="$COMPOSE_FILES -f docker-compose.webhooks.yml"
+fi
+
+if [ "$ENABLE_PROMETHEUS_EXPORTER" == true ]; then
+    COMPOSE_FILES="$COMPOSE_FILES -f docker-compose.prometheus.yml"
 fi
 
 docker-compose $COMPOSE_FILES $@

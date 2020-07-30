@@ -7,8 +7,10 @@ services:
     depends_on:
         - redis
     environment:
+      DEV_MODE: ${DEV_MODE:-}
       DOMAIN: ${DOMAIN}
       SHARED_SECRET: ${SHARED_SECRET}
+      WELCOME_MESSAGE: ${WELCOME_MESSAGE:-}
       WELCOME_FOOTER: ${WELCOME_FOOTER}
       STUN_SERVER: stun:${STUN_IP}:${STUN_PORT}
       TURN_SERVER: ${TURN_SERVER:-}
@@ -31,9 +33,11 @@ services:
       - SYS_RESOURCE
     environment:
       DOMAIN: ${DOMAIN}
-      EXTERNAL_IP: ${EXTERNAL_IP}
-      SIP_IP_ALLOWLIST: ${SIP_IP_ALLOWLIST}
-      NETWORK_INTERFACE: ${NETWORK_INTERFACE:-}
+      EXTERNAL_IPv4: ${EXTERNAL_IPv4}
+      EXTERNAL_IPv6: ${EXTERNAL_IPv6:-::1}
+      SIP_IP_ALLOWLIST: ${SIP_IP_ALLOWLIST:-}
+      DISABLE_SOUND_MUTED: ${DISABLE_SOUND_MUTED:-false}
+      DISABLE_SOUND_ALONE: ${DISABLE_SOUND_ALONE:-false}
     volumes:
       - ./conf/sip_profiles:/etc/freeswitch/sip_profiles/external
       - ./conf/dialplan_public:/etc/freeswitch/dialplan/public_docker
@@ -53,11 +57,13 @@ services:
       - ./mod/nginx/bbb:/etc/nginx/bbb
       - ./mod/nginx/bigbluebutton:/etc/nginx/conf.d/default.conf
       - ${DEFAULT_PRESENTATION:-/dev/null}:/etc/nginx/html/default.pdf
-    networks:
-      bbb-net:
-        ipv4_address: 10.7.7.13
+    network_mode: host
     extra_hosts:
       - "host.docker.internal:10.7.7.1"
+      - "core:10.7.7.2"
+      - "etherpad:10.7.7.4"
+      - "webrtc-sfu:10.7.7.10"
+      - "html5:10.7.7.11"
 
   etherpad:
     build: mod/etherpad
@@ -94,7 +100,6 @@ services:
       KMS_STUN_PORT: ${STUN_PORT}
       KMS_MIN_PORT: 24577
       KMS_MAX_PORT: 32768
-      KMS_EXTERNAL_ADDRESS: ${EXTERNAL_IP} 
       KMS_TURN_URL:
       KMS_NETWORK_INTERFACES: ${NETWORK_INTERFACE:-}
     network_mode: host
@@ -113,10 +118,10 @@ services:
       KURENTO_NAME: kurento
       REDIS_HOST: redis
       FREESWITCH_IP: host.docker.internal
-      FREESWITCH_SIP_IP: ${EXTERNAL_IP}
+      FREESWITCH_SIP_IP: ${EXTERNAL_IPv4}
       ESL_IP: host.docker.internal
       LOG_LEVEL: info
-      NODE_CONFIG: '{"kurento":[{"ip":"${EXTERNAL_IP}","url":"ws://kurento:8888/kurento"}]}'
+      NODE_CONFIG: '{"kurento":[{"ip":"${EXTERNAL_IPv4}","url":"ws://kurento:8888/kurento"}]}'
     ports:
       - "127.0.0.1:3008:3008"
     extra_hosts:
@@ -137,6 +142,13 @@ services:
       DOMAIN: ${DOMAIN}
       CLIENT_TITLE: ${CLIENT_TITLE}
       ETHERPAD_API_KEY: ${ETHERPAD_API_KEY}
+      LISTEN_ONLY_MODE: ${LISTEN_ONLY_MODE:-true}
+      DISABLE_ECHO_TEST: ${DISABLE_ECHO_TEST:-false}
+      AUTO_SHARE_WEBCAM: ${AUTO_SHARE_WEBCAM:-false}
+      DISABLE_VIDEO_PREVIEW: ${DISABLE_VIDEO_PREVIEW:-false}
+      CHAT_ENABLED: ${CHAT_ENABLED:-true}
+      CHAT_START_CLOSED: ${CHAT_START_CLOSED:-false}
+      DEV_MODE: ${DEV_MODE:-}
     networks:
       bbb-net:
         ipv4_address: 10.7.7.11

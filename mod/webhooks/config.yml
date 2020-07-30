@@ -67,4 +67,3 @@ redis:
     eventsPrefix: bigbluebutton:webhooks:events
     userMaps: bigbluebutton:webhooks:userMaps
     userMapPrefix: bigbluebutton:webhooks:userMap
-    userMapPrefix: bigbluebutton:webhooks:userMap

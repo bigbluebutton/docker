@@ -12,7 +12,7 @@ services:
       DB_NAME: greenlight
       DB_USERNAME: postgres
       DB_PASSWORD: password
-      BIGBLUEBUTTON_ENDPOINT: https://${DOMAIN}/bigbluebutton/api/
+      BIGBLUEBUTTON_ENDPOINT: ${GREENLIGHT_ENDPOINT}
       BIGBLUEBUTTON_SECRET: ${SHARED_SECRET}
       SECRET_KEY_BASE: ${RAILS_SECRET}
     ports:

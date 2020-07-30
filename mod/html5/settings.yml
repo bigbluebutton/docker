@@ -4,14 +4,14 @@ public:
     desktopFontSize: 14px
     audioChatNotification: false
     autoJoin: true
-    listenOnlyMode: true
+    listenOnlyMode: {{ .Env.LISTEN_ONLY_MODE }}
     forceListenOnly: false
-    skipCheck: false
+    skipCheck: {{ .Env.DISABLE_ECHO_TEST }}
     clientTitle: {{ .Env.CLIENT_TITLE }}
     appName: BigBlueButton HTML5 Client
     bbbServerVersion: 2.2
     copyright: "©2020 BigBlueButton Inc."
-    html5ClientBuild: 968
+    html5ClientBuild: 980
     helpLink: https://bigbluebutton.org/html5/
     lockOnJoin: true
     cdn: ""
@@ -137,8 +137,8 @@ public:
     enableVideoStats: false
     enableVideoMenu: true
     enableListenOnly: true
-    autoShareWebcam: false
-    skipVideoPreview: false
+    autoShareWebcam: {{ .Env.AUTO_SHARE_WEBCAM }}
+    skipVideoPreview: {{ .Env.DISABLE_VIDEO_PREVIEW }}
   pingPong:
     clearUsersInSeconds: 180
     pongTimeInSeconds: 15
@@ -159,8 +159,8 @@ public:
     lines: 2
     time: 5000
   chat:
-    enabled: true
-    startClosed: false
+    enabled: {{ .Env.CHAT_ENABLED }}
+    startClosed: {{ .Env.CHAT_START_CLOSED }}
     min_message_length: 1
     max_message_length: 5000
     grouping_messages_window: 10000

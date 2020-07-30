@@ -28,7 +28,7 @@ RUN apt-get install -y supervisor apt-transport-https equivs libreoffice haveged
 # bbb repo & packages
 RUN LC_CTYPE=C.UTF-8 add-apt-repository ppa:bigbluebutton/support
 RUN sh -c 'wget https://ubuntu.bigbluebutton.org/repo/bigbluebutton.asc -O- | apt-key add -' \
-    && sh -c 'echo "deb https://packages-eu.bigbluebutton.org/xenial-22 bigbluebutton-xenial main" > /etc/apt/sources.list.d/bigbluebutton.list'
+    && sh -c 'echo "deb https://ubuntu.bigbluebutton.org/xenial-22 bigbluebutton-xenial main" > /etc/apt/sources.list.d/bigbluebutton.list'
 
 # create dummy packages to satisfy dependencies
 RUN equivs-control redis-server.control \
@@ -36,6 +36,10 @@ RUN equivs-control redis-server.control \
     && equivs-build redis-server.control \
     && dpkg -i /*.deb \
     && rm /*.deb
+
+# this variable is not used, but it triggers
+# rebuilding from here on if changed
+ENV VERSION v2.2.21
 
 RUN apt-get update && apt-get install -y bbb-web \
                     bbb-fsesl-akka bbb-apps-akka bbb-transcode-akka bbb-apps \
