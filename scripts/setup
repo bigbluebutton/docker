@@ -53,7 +53,7 @@ done
 if [ ! "$ip_correct" == "y" ]
 then
     EXTERNAL_IPv4=""
-    while [[ ! $EXTERNAL_IPv4 =~ ^[1-9][0-9]{0,2}\.[1-9][0-9]{0,2}\.[1-9][0-9]{0,2}\.[1-9][0-9]{0,2}$ ]]; do
+    while [[ ! $EXTERNAL_IPv4 =~ ^[1-9][0-9]{0,2}\.[0-9]{0,3}\.[0-9]{0,3}\.[1-9][0-9]{0,2}$ ]]; do
         read -p "Please enter correct IPv4 address: " EXTERNAL_IPv4
     done
 fi
@@ -68,7 +68,7 @@ then
     if [ ! "$ip_correct" == "y" ]
     then
         EXTERNAL_IPv6=""
-        while [[ ! $EXTERNAL_IPv6 =~ ^[1-9][0-9]{0,2}\.[1-9][0-9]{0,2}\.[1-9][0-9]{0,2}\.[1-9][0-9]{0,2}$ ]]; do
+        while [[ ! $EXTERNAL_IPv6 =~ ^[0-9a-z:]{3,39}$ ]]; do
             read -p "Please enter correct IPv6 address: " EXTERNAL_IPv6
         done
     fi
