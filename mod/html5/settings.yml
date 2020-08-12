@@ -11,7 +11,7 @@ public:
     appName: BigBlueButton HTML5 Client
     bbbServerVersion: 2.2
     copyright: "©2020 BigBlueButton Inc."
-    html5ClientBuild: 980
+    html5ClientBuild: 992
     helpLink: https://bigbluebutton.org/html5/
     lockOnJoin: true
     cdn: ""
@@ -20,6 +20,7 @@ public:
     allowUserLookup: false
     enableNetworkInformation: false
     enableLimitOfViewersInWebcam: false
+    enableMultipleCameras: false
     enableTalkingIndicator: true
     mirrorOwnWebcam: false
     viewersInWebcam: 8
@@ -115,7 +116,49 @@ public:
         - window
         - screen
       firefoxScreenshareSource: window
+    # cameraProfiles is an array of:
+    # - id: profile identifier
+    #   name: human-readable profile name
+    #   bitrate
+    #   hidden: whether this profile will be hidden in the video preview dropdown
+    #   constraints: a video media constraints dictionary (without the video key)
     cameraProfiles:
+      - id: low-u30
+        name: low-u30
+        bitrate: 30
+        hidden: true
+        constraints:
+          frameRate: 3
+      - id: low-u25
+        name: low-u25
+        bitrate: 40
+        hidden: true
+        constraints:
+          frameRate: 3
+      - id: low-u20
+        name: low-u20
+        bitrate: 50
+        hidden: true
+        constraints:
+          frameRate: 5
+      - id: low-u15
+        name: low-u15
+        bitrate: 70
+        hidden: true
+        constraints:
+          frameRate: 8
+      - id: low-u12
+        name: low-u12
+        bitrate: 90
+        hidden: true
+        constraints:
+          frameRate: 10
+      - id: low-u8
+        name: low-u8
+        bitrate: 100
+        hidden: true
+        constraints:
+          frameRate: 10
       - id: low
         name: Low quality
         default: false
@@ -134,7 +177,6 @@ public:
         bitrate: 800
     enableScreensharing: true
     enableVideo: true
-    enableVideoStats: false
     enableVideoMenu: true
     enableListenOnly: true
     autoShareWebcam: {{ .Env.AUTO_SHARE_WEBCAM }}
@@ -184,7 +226,7 @@ public:
     config:
       showLineNumbers: false
       showChat: false
-      noColors: false
+      noColors: true
       showControls: true
       rtl: false
   layout:
