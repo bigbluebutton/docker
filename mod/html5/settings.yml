@@ -181,6 +181,25 @@ public:
     enableListenOnly: true
     autoShareWebcam: {{ .Env.AUTO_SHARE_WEBCAM }}
     skipVideoPreview: {{ .Env.DISABLE_VIDEO_PREVIEW }}
+    # Entry `thresholds` is an array of:
+    # - threshold: minimum number of cameras being shared for profile to applied
+    #   profile: a camera profile id from the cameraProfiles configuration array
+    #            that will be applied to all cameras when threshold is hit
+    cameraQualityThresholds:
+      enabled: false
+      thresholds:
+        - threshold: 8
+          profile: low-u8
+        - threshold: 12
+          profile: low-u12
+        - threshold: 15
+          profile: low-u15
+        - threshold: 20
+          profile: low-u20
+        - threshold: 25
+          profile: low-u25
+        - threshold: 30
+          profile: low-u30
   pingPong:
     clearUsersInSeconds: 180
     pongTimeInSeconds: 15
