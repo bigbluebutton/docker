@@ -35,7 +35,6 @@ RUN apt-get update && apt-get install -y \
         freeswitch-mod-hash \
         freeswitch-mod-httapi \
         freeswitch-mod-local-stream \
-        freeswitch-mod-logfile \
         freeswitch-mod-loopback \
         freeswitch-mod-lua \
         freeswitch-mod-native-file \
