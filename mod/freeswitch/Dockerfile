@@ -35,7 +35,6 @@ RUN apt-get update && apt-get install -y \
         freeswitch-mod-hash \
         freeswitch-mod-httapi \
         freeswitch-mod-local-stream \
-        freeswitch-mod-logfile \
         freeswitch-mod-loopback \
         freeswitch-mod-lua \
         freeswitch-mod-native-file \
@@ -49,7 +48,8 @@ RUN apt-get update && apt-get install -y \
         freeswitch-mod-spandsp \
         freeswitch-mod-tone-stream \
         freeswitch-mod-verto \
-        freeswitch-sounds-en-us-callie
+        freeswitch-sounds-en-us-callie \
+        iptables
 
 # Potentially missing
 # (included in bbb-freeswitch-core but not referenced in https://github.com/bigbluebutton/bigbluebutton/issues/9064)

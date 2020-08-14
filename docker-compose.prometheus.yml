@@ -1,0 +1,15 @@
+version: '3.6'
+
+services:
+  prometheus-exporter:
+    image: greenstatic/bigbluebutton-exporter:v0.5.1
+    restart: unless-stopped
+    environment: 
+      API_BASE_URL: http://10.7.7.1:8080/bigbluebutton/api/
+      API_SECRET: ${SHARED_SECRET}
+      RECORDINGS_METRICS_READ_FROM_DISK: "false"
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.33
+    # volumes:
+    #   - bigbluebutton:/var/bigbluebutton

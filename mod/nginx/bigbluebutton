@@ -1,8 +1,15 @@
-server {
-  listen 80 default_server;
-  server_name _;
-  access_log  /var/log/nginx/bigbluebutton.access.log;
+map $remote_addr $freeswitch_addr {
+    "~:"    [::1];
+    default    10.7.7.1;
+}
 
+server {
+  listen 8080 default_server;
+  listen [::]:8080 default_server;
+  server_name _;
+  access_log /dev/stdout;
+  absolute_redirect off;
+  
   # redirect to greenlight
   location = / {
       return 302 /b;

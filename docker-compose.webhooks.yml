@@ -1,0 +1,13 @@
+version: '3.6'
+services:
+  webhooks:
+    build: mod/webhooks
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN}
+      SHARED_SECRET: ${SHARED_SECRET}
+    extra_hosts:
+      - "redis:10.7.7.5"
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.15

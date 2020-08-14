@@ -3,14 +3,12 @@ services:
   https_proxy:
     image: valian/docker-nginx-auto-ssl
     restart: unless-stopped
-    ports:
-      - 80:80
-      - 443:443
     volumes:
       - ssl_data:/etc/resty-auto-ssl
+      - ./mod/https/${HTTPS_SITE_FILE}:/etc/nginx/conf.d/bbb-docker.conf
     environment:
-      ALLOWED_DOMAINS: ${DOMAIN}
-      SITES: ${DOMAIN}=10.7.7.1:8080
+      ALLOWED_DOMAINS: ${CERTIFICATE_DOMAINS}
+    network_mode: host
 
 volumes:
   ssl_data:

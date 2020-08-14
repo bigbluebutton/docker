@@ -13,6 +13,9 @@ then
     RESTARTED=1 ./scripts/upgrade
 
 else
+    # update changed environment variable
+    sed -i 's/EXTERNAL_IP=/EXTERNAL_IPv4=/' .env
+
     echo ""
     echo "# pull newest bbb-webrtc-sfu"
     git submodule update --remote 
@@ -25,12 +28,8 @@ else
     echo ""
     echo "# rebuild images"
 
-    # rebuild core without caching, since the deb-packages might have changed
-    ./scripts/compose build --pull --no-cache core
-
-    # rebuild everything else only when modified
-    ./scripts/compose build --pull
-
+    # rebuild everything which got modified
+    ./scripts/compose build --pull    
 
     COMMIT_HASH=$(git rev-parse --short HEAD)
     BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
