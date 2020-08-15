@@ -4,7 +4,6 @@ MAINTAINER ffdixon@bigbluebutton.org
 # TODO:
 # - separate bbb-apps into an own container
 # - separate bbb-web
-# - remove systemd
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV container docker
@@ -43,8 +42,7 @@ ENV VERSION v2.2.22
 
 RUN apt-get update && apt-get install -y bbb-web \
                     bbb-fsesl-akka bbb-apps-akka bbb-transcode-akka bbb-apps \
-                    bbb-apps-video bbb-apps-screenshare bbb-apps-video-broadcast \
-                    bbb-record-core bbb-playback-presentation
+                    bbb-apps-video bbb-apps-screenshare bbb-apps-video-broadcast
 
 # -- avoid blocking java
 # https://github.com/bigbluebutton/bigbluebutton/issues/8959
@@ -61,8 +59,6 @@ COPY red5-webapps/screenshare/application.conf /usr/share/red5/webapps/screensha
 COPY red5-webapps/video/bigbluebutton-video.properties /usr/share/red5/webapps/video/WEB-INF/bigbluebutton-video.properties
 COPY red5-webapps/video-broadcast/video-broadcast.properties /usr/share/red5/webapps/video-broadcast/WEB-INF/video-broadcast.properties
 
-COPY bigbluebutton.yml /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml.tmpl
-
 COPY web/bigbluebutton.properties /usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties.tmpl
 COPY web/turn-stun-servers.xml /usr/share/bbb-web/WEB-INF/classes/spring/turn-stun-servers.xml.tmpl
 
@@ -70,14 +66,10 @@ COPY bbb-apps-akka/application.conf /usr/share/bbb-apps-akka/conf/application.co
 COPY bbb-fsesl-akka/application.conf /etc/bbb-fsesl-akka/application.conf
 COPY bbb-transcode-akka/application.conf /etc/bbb-transcode-akka/application.conf
 COPY web-run.sh /usr/share/bbb-web/run-prod.sh
-COPY bbb-playback-presentation/presentation.yml /usr/local/bigbluebutton/core/scripts/
-COPY bbb-playback-presentation/record-monitor.sh /usr/local/bin
-RUN chmod +x /usr/local/bin/record-monitor.sh && \
-mkdir -p /usr/src/bbb-playback-presentation && \
-cp -r /var/bigbluebutton/playback/* /usr/src/bbb-src-playback
 
-RUN wget -O /usr/local/bin/bbb-record https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/develop/bigbluebutton-config/bin/bbb-record \
-&& chmod +x /usr/local/bin/bbb-record
+# add default presentation thumbnail
+RUN mkdir -p /usr/share/bigbluebutton/blank \
+    && wget -O /usr/share/bigbluebutton/blank/blank-thumb.png https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/v2.2.20/bigbluebutton-config/slides/blank-thumb.png
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY entrypoint.sh /entrypoint.sh

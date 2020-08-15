@@ -1,0 +1,13 @@
+version: '3.6'
+services:
+  recordings-process:
+    build: mod/recordings-process
+    environment:
+      DOMAIN: ${DOMAIN}
+    volumes:
+      - /var/bigbluebutton:/var/bigbluebutton
+      - vol-freeswitch:/var/freeswitch/meetings
+      - vol-kurento:/var/kurento
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.16
