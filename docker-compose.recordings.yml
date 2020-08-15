@@ -1,7 +1,7 @@
 version: '3.6'
 services:
-  recordings-process:
-    build: mod/recordings-process
+  recordings:
+    build: mod/recordings
     environment:
       DOMAIN: ${DOMAIN}
     volumes:

@@ -45,6 +45,11 @@ while [[ -z "$DOMAIN" ]]; do
     read -p "Please enter the domain name: " DOMAIN
 done
 
+recording=""
+while [[ ! $recording =~ ^(y|n)$ ]]; do
+    read -p "Should recording feature be included? (y/n): " recording
+done
+
 ip_correct=""
 while [[ ! $ip_correct =~ ^(y|n)$ ]]; do
     read -p "Is $EXTERNAL_IPv4 your external IPv4 address? (y/n): " ip_correct
@@ -90,6 +95,11 @@ fi
 if [ ! "$https_proxy" == "y" ]
 then
     sed -i "s/ENABLE_HTTPS_PROXY.*/#ENABLE_HTTPS_PROXY=true/" .env
+fi
+
+if [ ! "$recording" == "y" ]
+then
+    sed -i "s/ENABLE_RECORDING.*/#ENABLE_RECORDING=true/" .env
 fi
 
 if [ "$coturn" == "y" ]
