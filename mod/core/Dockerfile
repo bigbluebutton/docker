@@ -49,6 +49,15 @@ RUN apt-get update && apt-get install -y bbb-web \
 # https://github.com/bigbluebutton/bigbluebutton/issues/8959
 RUN sed -i 's|securerandom.source=file:/dev/random|securerandom.source=file:/dev/urandom|g'  /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/security/java.security
 
+# add blank presentation files and allow conversation to pdf/svg
+RUN mkdir -p /usr/share/bigbluebutton/blank \
+    && wget -O /usr/share/bigbluebutton/blank/blank-svg.svg https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/$VERSION/bigbluebutton-config/slides/blank-svg.svg \
+    && wget -O /usr/share/bigbluebutton/blank/blank-thumb.png https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/$VERSION/bigbluebutton-config/slides/blank-thumb.png \
+    && wget -O /usr/share/bigbluebutton/blank/blank-presentation.pdf https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/$VERSION/bigbluebutton-config/slides/blank-presentation.pdf \
+    && wget -O /usr/share/bigbluebutton/blank/blank-png.png https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/$VERSION/bigbluebutton-config/slides/blank-png.png \
+    && sed -i 's/<policy domain="coder" rights="none" pattern="PDF" \/>/<policy domain="coder" rights="write" pattern="PDF" \/>/g' /etc/ImageMagick-6/policy.xml
+
+
 # -- copy configuration files
 COPY red5-webapps/bigbluebutton/application.conf /usr/share/red5/webapps/bigbluebutton/WEB-INF/classes/application.conf
 COPY red5-webapps/bigbluebutton/bigbluebutton.properties /usr/share/red5/webapps/bigbluebutton/WEB-INF/bigbluebutton.properties
