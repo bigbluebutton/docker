@@ -17,7 +17,7 @@ services:
       TURN_SERVER: ${TURN_SERVER:-}
       TURN_SECRET: ${TURN_SECRET:-}
     volumes:
-      - /var/bigbluebutton:/var/bigbluebutton
+      - bigbluebutton:/var/bigbluebutton
       - vol-freeswitch:/var/freeswitch/meetings
       - vol-kurento:/var/kurento
     networks:
@@ -57,7 +57,7 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - /var/bigbluebutton:/var/bigbluebutton
+      - bigbluebutton:/var/bigbluebutton
       - ${DEFAULT_PRESENTATION:-/dev/null}:/etc/nginx/html/default.pdf
     network_mode: host
     extra_hosts:
@@ -81,8 +81,8 @@ services:
   redis:
     image: redis:6.0-alpine
     restart: unless-stopped
-    ports:
-      - "127.0.0.1:6379:6379"  # TODO: remove as soon as we updated all redis host references
+    volumes:
+      - ./redis-data:/data
     networks:
       bbb-net:
         ipv4_address: 10.7.7.5 
@@ -90,6 +90,8 @@ services:
   mongodb:
     image: mongo:4.2
     restart: unless-stopped
+    volumes:
+      - ./mongo-data:/data/db
     networks:
       bbb-net:
         ipv4_address: 10.7.7.6
@@ -164,7 +166,7 @@ services:
       - mongodb
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /var/bigbluebutton:/var/bigbluebutton
+      - bigbluebutton:/var/bigbluebutton
     networks:
       bbb-net:
         ipv4_address: 10.7.7.12
