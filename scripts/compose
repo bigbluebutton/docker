@@ -58,7 +58,7 @@ if [ "$ENABLE_PROMETHEUS_EXPORTER" == true ]; then
 fi
 
 if [ "$ENABLE_RECORDING" == true ]; then
-    COMPOSE_FILES="$COMPOSE_FILES -f docker-compose.recording.yml"
+    COMPOSE_FILES="$COMPOSE_FILES -f docker-compose.recordings.yml"
 fi
 
 docker-compose $COMPOSE_FILES $@
