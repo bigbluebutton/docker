@@ -97,9 +97,9 @@ then
     sed -i "s/ENABLE_HTTPS_PROXY.*/#ENABLE_HTTPS_PROXY=true/" .env
 fi
 
-if [ ! "$recording" == "y" ]
+if [ "$recording" == "y" ]
 then
-    sed -i "s/ENABLE_RECORDING.*/#ENABLE_RECORDING=true/" .env
+    sed -i "s/#ENABLE_RECORDING.*/ENABLE_RECORDING=true/" .env
 fi
 
 if [ "$coturn" == "y" ]
