@@ -8,22 +8,20 @@ services:
     environment:
       DB_ADAPTER: postgresql
       DB_HOST: postgres
-      DB_NAME: ${POSTGRES_DB}
-      DB_USERNAME: ${POSTGRES_USER}
-      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_NAME: greenlight
+      DB_USERNAME: postgres
+      DB_PASSWORD: password
       BIGBLUEBUTTON_ENDPOINT: ${GREENLIGHT_ENDPOINT}
       BIGBLUEBUTTON_SECRET: ${SHARED_SECRET}
       SECRET_KEY_BASE: ${RAILS_SECRET}
-    depends_on:
-      - redis
     ports:
       - 10.7.7.1:5000:80
   postgres:
     image: postgres:12
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: greenlight
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
