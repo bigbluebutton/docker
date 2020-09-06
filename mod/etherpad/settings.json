@@ -310,7 +310,12 @@
      * instead of the reverse proxy's IP.
      */
     "trustProxy": true,
-  
+
+    /*
+    * When embedding the pads in an iframe set this to true.
+    */
+    "forceSameSiteNone": false,
+
     /*
      * Privacy: disable IP logging
      */
