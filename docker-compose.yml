@@ -6,6 +6,7 @@ services:
     restart: unless-stopped
     depends_on:
         - redis
+        - libreoffice
     environment:
       DEV_MODE: ${DEV_MODE:-}
       DOMAIN: ${DOMAIN}
@@ -20,6 +21,7 @@ services:
       - bigbluebutton:/var/bigbluebutton
       - vol-freeswitch:/var/freeswitch/meetings
       - vol-kurento:/var/kurento
+      - vol-libreoffice:/var/tmp/soffice
     networks:
       bbb-net:
         ipv4_address: 10.7.7.2
@@ -165,6 +167,17 @@ services:
       bbb-net:
         ipv4_address: 10.7.7.14
 
+  libreoffice:
+    build: mod/libreoffice
+    restart: unless-stopped
+    volumes:
+      - vol-libreoffice:/var/tmp/soffice
+    tmpfs:
+      - /tmp
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.7
+  
   periodic:
     build: mod/periodic
     restart: unless-stopped
@@ -181,7 +194,11 @@ volumes:
   bigbluebutton:
   vol-freeswitch:
   vol-kurento:
+<<<<<<< HEAD
   html5-static:
+=======
+  vol-libreoffice:
+>>>>>>> b6193c1 (v2.3: dockerized libreoffice)
 
 networks:
   bbb-net:

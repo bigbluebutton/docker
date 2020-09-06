@@ -17,7 +17,10 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
 # RUN apt-get install -y  tcpdump telnet htop vim
 
 # -- Install Dependencies
-RUN apt-get install -y supervisor apt-transport-https equivs haveged fonts-crosextra-carlito fonts-crosextra-caladea fonts-noto net-tools 
+RUN apt-get install -y supervisor apt-transport-https equivs haveged fonts-crosextra-carlito fonts-crosextra-caladea fonts-noto net-tools socat
+
+# add bigbluebutton user manually so the ID is constant
+RUN groupadd -g 998 bigbluebutton && useradd -m -u 998 -g bigbluebutton bigbluebutton
 
 # bbb repo & packages
 RUN LC_CTYPE=C.UTF-8 add-apt-repository ppa:bigbluebutton/support
@@ -43,7 +46,6 @@ RUN echo '#!/bin/bash\necho "mocking: systemctl $@"' > /usr/bin/systemctl && chm
 # rebuilding from here on if changed
 ENV VERSION v2.3-alpha-2
 
-RUN apt-get update && apt-get install -y openjdk-8-jre-headless poppler-utils imagemagick
 RUN apt-get update && apt-get install -y bbb-web bbb-apps-akka
 
 # add blank presentation files and allow conversation to pdf/svg
