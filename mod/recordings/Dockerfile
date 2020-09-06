@@ -40,7 +40,7 @@ RUN mkdir -p \
     /var/log/bigbluebutton \
     /var/log/bigbluebutton/presentation
 
-ENV TAG v2.2.31
+ENV TAG v2.3-alpha-2
 
 # add bbb-record-core (lib, scripts and Gemfile)
 RUN cd /usr/local/bigbluebutton/core \

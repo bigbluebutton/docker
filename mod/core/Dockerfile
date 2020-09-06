@@ -17,8 +17,7 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
 # RUN apt-get install -y  tcpdump telnet htop vim
 
 # -- Install Dependencies
-RUN (echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections) \
-    && apt-get install -y supervisor apt-transport-https equivs libreoffice haveged ttf-mscorefonts-installer fonts-crosextra-carlito fonts-crosextra-caladea fonts-noto net-tools 
+RUN apt-get install -y supervisor apt-transport-https equivs haveged fonts-crosextra-carlito fonts-crosextra-caladea fonts-noto net-tools 
 
 # bbb repo & packages
 RUN LC_CTYPE=C.UTF-8 add-apt-repository ppa:bigbluebutton/support
@@ -32,11 +31,20 @@ RUN equivs-control redis-server.control \
     && dpkg -i /*.deb \
     && rm /*.deb
 
+RUN equivs-control bbb-libreoffice-docker.control \
+    && sed -i 's/<package name; defaults to equivs-dummy>/bbb-libreoffice-docker/g' bbb-libreoffice-docker.control \
+    && equivs-build bbb-libreoffice-docker.control \
+    && dpkg -i /*.deb \
+    && rm /*.deb
+
+RUN echo '#!/bin/bash\necho "mocking: systemctl $@"' > /usr/bin/systemctl && chmod +x /usr/bin/systemctl
+
 # this variable is not used, but it triggers
 # rebuilding from here on if changed
-ENV VERSION v2.3-alpha-1
+ENV VERSION v2.3-alpha-2
 
-RUN apt-get update && apt-get install -y bbb-web bbb-apps-akka bbb-transcode-akka
+RUN apt-get update && apt-get install -y openjdk-8-jre-headless poppler-utils imagemagick
+RUN apt-get update && apt-get install -y bbb-web bbb-apps-akka
 
 # add blank presentation files and allow conversation to pdf/svg
 RUN mkdir -p /usr/share/bigbluebutton/blank \
@@ -53,7 +61,6 @@ COPY web/bigbluebutton.properties /usr/share/bbb-web/WEB-INF/classes/bigbluebutt
 COPY web/turn-stun-servers.xml /usr/share/bbb-web/WEB-INF/classes/spring/turn-stun-servers.xml.tmpl
 
 COPY bbb-apps-akka/application.conf /usr/share/bbb-apps-akka/conf/application.conf.tmpl
-COPY bbb-transcode-akka/application.conf /etc/bbb-transcode-akka/application.conf
 COPY web-run.sh /usr/share/bbb-web/run-prod.sh
 
 # add default presentation thumbnail

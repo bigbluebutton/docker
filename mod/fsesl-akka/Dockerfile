@@ -2,7 +2,7 @@ FROM openjdk:8u252-jdk-slim-buster
 
 RUN apt update && apt-get install -y subversion 
 
-ENV TAG v2.3-alpha-1
+ENV TAG v2.3-alpha-2
 
 
 RUN cd / \
