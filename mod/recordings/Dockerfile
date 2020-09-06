@@ -77,9 +77,8 @@ RUN cd /usr/bin \
 RUN groupadd -g 998 bigbluebutton && useradd -m -u 998 -g bigbluebutton bigbluebutton
 
 COPY bigbluebutton.yml /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml.tmpl
-COPY log-collector.py /log-collector.py
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /log-collector.py /entrypoint.sh
+ADD log-collector.py /log-collector.py
+ADD entrypoint.sh /entrypoint.sh
 ENTRYPOINT dockerize \
     -template /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml.tmpl:/usr/local/bigbluebutton/core/scripts/bigbluebutton.yml \
     /entrypoint.sh
