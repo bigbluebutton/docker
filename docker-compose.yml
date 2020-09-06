@@ -81,8 +81,6 @@ services:
   redis:
     image: redis:6.0-alpine
     restart: unless-stopped
-    volumes:
-      - ./redis-data:/data
     networks:
       bbb-net:
         ipv4_address: 10.7.7.5 
@@ -90,8 +88,6 @@ services:
   mongodb:
     image: mongo:4.2
     restart: unless-stopped
-    volumes:
-      - ./mongo-data:/data/db
     networks:
       bbb-net:
         ipv4_address: 10.7.7.6
