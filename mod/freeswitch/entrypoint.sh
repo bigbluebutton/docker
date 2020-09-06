@@ -15,6 +15,9 @@ for IP in "${ADDR[@]}"; do
     iptables -I INPUT  -p udp --dport 5060 -s $IP -j ACCEPT
 done
 
+chown -R freeswitch:daemon /var/freeswitch/meetings
+chmod 777 /var/freeswitch/meetings
+
 dockerize \
     -template /etc/freeswitch/vars.xml.tmpl:/etc/freeswitch/vars.xml \
     -template /etc/freeswitch/autoload_configs/conference.conf.xml.tmpl:/etc/freeswitch/autoload_configs/conference.conf.xml \

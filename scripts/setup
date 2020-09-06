@@ -45,6 +45,11 @@ while [[ -z "$DOMAIN" ]]; do
     read -p "Please enter the domain name: " DOMAIN
 done
 
+recording=""
+while [[ ! $recording =~ ^(y|n)$ ]]; do
+    read -p "Should recording feature be included? (y/n): " recording
+done
+
 ip_correct=""
 while [[ ! $ip_correct =~ ^(y|n)$ ]]; do
     read -p "Is $EXTERNAL_IPv4 your external IPv4 address? (y/n): " ip_correct
@@ -92,6 +97,11 @@ then
     sed -i "s/ENABLE_HTTPS_PROXY.*/#ENABLE_HTTPS_PROXY=true/" .env
 fi
 
+if [ "$recording" == "y" ]
+then
+    sed -i "s/#ENABLE_RECORDING.*/ENABLE_RECORDING=true/" .env
+fi
+
 if [ "$coturn" == "y" ]
 then
     sed -i "s/.*TURN_SERVER=.*/TURN_SERVER=turns:$DOMAIN:465?transport=tcp/" .env
@@ -106,9 +116,11 @@ fi
 RANDOM_1=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
 RANDOM_2=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
 RANDOM_3=$(head /dev/urandom | tr -dc a-f0-9 | head -c 128)
+RANDOM_4=$(head /dev/urandom | tr -dc A-Za-z0-9_@ | head -c 24)
 sed -i "s/SHARED_SECRET=.*/SHARED_SECRET=$RANDOM_1/" .env
 sed -i "s/ETHERPAD_API_KEY=.*/ETHERPAD_API_KEY=$RANDOM_2/" .env
 sed -i "s/RAILS_SECRET=.*/RAILS_SECRET=$RANDOM_3/" .env
+sed -i "s/POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$RANDOM_4/" .env
 
 echo "--------------------------------------------------"
 echo "configuration file .env got successfully created!"

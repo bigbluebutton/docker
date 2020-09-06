@@ -1,0 +1,18 @@
+version: '3.2'
+services:
+  node_exporter:
+    container_name: node_exporter
+    # Always check if there is a newer stable release:
+    # https://hub.docker.com/r/prom/node-exporter/tags
+    image: prom/node-exporter:v0.18.1
+    command:
+    - "--path.rootfs=/host"
+    - "--web.listen-address=127.0.0.1:9100"
+    network_mode: "host"
+    pid: "host"
+    volumes:
+    - type: "bind"
+      source: "/"
+      target: "/host"
+      read_only: true
+    restart: unless-stopped
