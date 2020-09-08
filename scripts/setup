@@ -45,6 +45,18 @@ while [[ -z "$DOMAIN" ]]; do
     read -p "Please enter the domain name: " DOMAIN
 done
 
+recording=""
+echo "Should the recording feature be included?"
+echo "   IMPORTANT: this is currently a big privacy issues, because it will "
+echo "   record everything which happens in the conference, even when the button"
+echo "   suggets, that it does not."
+echo "   make sure that you awalys get peoples consent, before they join a room!"
+echo "   https://github.com/bigbluebutton/bigbluebutton/issues/9202"
+while [[ ! $recording =~ ^(y|n)$ ]]; do
+
+    read -p "Choice (y/n): " recording
+done
+
 ip_correct=""
 while [[ ! $ip_correct =~ ^(y|n)$ ]]; do
     read -p "Is $EXTERNAL_IPv4 your external IPv4 address? (y/n): " ip_correct
@@ -90,6 +102,11 @@ fi
 if [ ! "$https_proxy" == "y" ]
 then
     sed -i "s/ENABLE_HTTPS_PROXY.*/#ENABLE_HTTPS_PROXY=true/" .env
+fi
+
+if [ "$recording" == "y" ]
+then
+    sed -i "s/#ENABLE_RECORDING.*/ENABLE_RECORDING=true/" .env
 fi
 
 if [ "$coturn" == "y" ]

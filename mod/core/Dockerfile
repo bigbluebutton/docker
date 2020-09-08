@@ -4,7 +4,6 @@ MAINTAINER ffdixon@bigbluebutton.org
 # TODO:
 # - separate bbb-apps into an own container
 # - separate bbb-web
-# - remove systemd
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV container docker
@@ -45,7 +44,7 @@ RUN apt-get update && apt-get install -y bbb-web \
                     bbb-fsesl-akka bbb-apps-akka bbb-transcode-akka bbb-apps \
                     bbb-apps-video bbb-apps-screenshare bbb-apps-video-broadcast
 
-# -- avoid blocking java 
+# -- avoid blocking java
 # https://github.com/bigbluebutton/bigbluebutton/issues/8959
 RUN sed -i 's|securerandom.source=file:/dev/random|securerandom.source=file:/dev/urandom|g'  /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/security/java.security
 
@@ -69,8 +68,6 @@ COPY red5-webapps/screenshare/application.conf /usr/share/red5/webapps/screensha
 COPY red5-webapps/video/bigbluebutton-video.properties /usr/share/red5/webapps/video/WEB-INF/bigbluebutton-video.properties
 COPY red5-webapps/video-broadcast/video-broadcast.properties /usr/share/red5/webapps/video-broadcast/WEB-INF/video-broadcast.properties
 
-COPY bigbluebutton.yml /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml
-
 COPY web/bigbluebutton.properties /usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties.tmpl
 COPY web/turn-stun-servers.xml /usr/share/bbb-web/WEB-INF/classes/spring/turn-stun-servers.xml.tmpl
 
@@ -78,6 +75,10 @@ COPY bbb-apps-akka/application.conf /usr/share/bbb-apps-akka/conf/application.co
 COPY bbb-fsesl-akka/application.conf /etc/bbb-fsesl-akka/application.conf
 COPY bbb-transcode-akka/application.conf /etc/bbb-transcode-akka/application.conf
 COPY web-run.sh /usr/share/bbb-web/run-prod.sh
+
+# add default presentation thumbnail
+RUN mkdir -p /usr/share/bigbluebutton/blank \
+    && wget -O /usr/share/bigbluebutton/blank/blank-thumb.png https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/v2.2.20/bigbluebutton-config/slides/blank-thumb.png
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY entrypoint.sh /entrypoint.sh
@@ -87,4 +88,3 @@ RUN mkdir -p /var/log/supervisor
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD []
-

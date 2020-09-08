@@ -9,6 +9,7 @@ services:
     environment:
       DEV_MODE: ${DEV_MODE:-}
       DOMAIN: ${DOMAIN}
+      ENABLE_RECORDING: ${ENABLE_RECORDING:-false}
       SHARED_SECRET: ${SHARED_SECRET}
       WELCOME_MESSAGE: ${WELCOME_MESSAGE:-}
       WELCOME_FOOTER: ${WELCOME_FOOTER}
@@ -17,6 +18,8 @@ services:
       TURN_SECRET: ${TURN_SECRET:-}
     volumes:
       - bigbluebutton:/var/bigbluebutton
+      - vol-freeswitch:/var/freeswitch/meetings
+      - vol-kurento:/var/kurento
     networks:
       bbb-net:
         ipv4_address: 10.7.7.2
@@ -41,10 +44,11 @@ services:
     volumes:
       - ./conf/sip_profiles:/etc/freeswitch/sip_profiles/external
       - ./conf/dialplan_public:/etc/freeswitch/dialplan/public_docker
+      - vol-freeswitch:/var/freeswitch/meetings
     network_mode: host
   
   nginx:
-    image: nginx:1.19-alpine
+    build: mod/nginx
     restart: unless-stopped
     depends_on:
       - etherpad
@@ -54,8 +58,6 @@ services:
       - "8080:80"
     volumes:
       - bigbluebutton:/var/bigbluebutton
-      - ./mod/nginx/bbb:/etc/nginx/bbb
-      - ./mod/nginx/bigbluebutton:/etc/nginx/conf.d/default.conf
       - ${DEFAULT_PRESENTATION:-/dev/null}:/etc/nginx/html/default.pdf
     network_mode: host
     extra_hosts:
@@ -79,8 +81,6 @@ services:
   redis:
     image: redis:6.0-alpine
     restart: unless-stopped
-    ports:
-      - "127.0.0.1:6379:6379"  # TODO: remove as soon as we updated all redis host references
     networks:
       bbb-net:
         ipv4_address: 10.7.7.5 
@@ -103,6 +103,8 @@ services:
       KMS_TURN_URL:
       KMS_NETWORK_INTERFACES: ${NETWORK_INTERFACE:-}
     network_mode: host
+    volumes:
+      - vol-kurento:/var/kurento
   
   webrtc-sfu:
     build: 
@@ -167,6 +169,8 @@ services:
 
 volumes:
   bigbluebutton:
+  vol-freeswitch:
+  vol-kurento:
 
 networks:
   bbb-net:
