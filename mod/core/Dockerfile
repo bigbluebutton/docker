@@ -38,7 +38,7 @@ RUN equivs-control redis-server.control \
 
 # this variable is not used, but it triggers
 # rebuilding from here on if changed
-ENV VERSION v2.2.22
+ENV VERSION v2.2.24
 
 RUN apt-get update && apt-get install -y bbb-web \
                     bbb-fsesl-akka bbb-apps-akka bbb-transcode-akka bbb-apps \

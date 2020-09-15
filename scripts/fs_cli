@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e
+
+cd $(dirname $0)/..
+
+./scripts/compose exec freeswitch fs_cli -H 10.7.7.1
