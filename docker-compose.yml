@@ -102,6 +102,7 @@ services:
       KMS_MAX_PORT: 32768
       KMS_TURN_URL:
       KMS_NETWORK_INTERFACES: ${NETWORK_INTERFACE:-}
+      GST_DEBUG: 3,Kurento*:4,kms*:4,KurentoWebSocketTransport:5
     network_mode: host
     volumes:
       - vol-kurento:/var/kurento
