@@ -2,7 +2,7 @@ version: '3.6'
 
 services:
   prometheus-exporter:
-    image: greenstatic/bigbluebutton-exporter:v0.5.1
+    image: greenstatic/bigbluebutton-exporter:v0.5.2
     restart: unless-stopped
     environment: 
       API_BASE_URL: http://10.7.7.1:8080/bigbluebutton/api/
