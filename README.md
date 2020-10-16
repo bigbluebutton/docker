@@ -1,5 +1,7 @@
 # BigBlueButton Docker
 
+[Changelog](CHANGELOG.md) | [Issues](https://github.com/alangecker/bigbluebutton-docker/issues)
+
 ## Features
 - Easy installation
 - Greenlight included
