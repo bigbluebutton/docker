@@ -10,9 +10,11 @@ ENABLE_HTTPS_PROXY=true
 #ENABLE_COTURN=true
 #ENABLE_GREENLIGHT=true
 #ENABLE_WEBHOOKS=true
+#ENABLE_PROMETHEUS_EXPORTER=true
+#ENABLE_RECORDING=true
 
 DOMAIN=10.7.7.1
-EXTERNAL_IP=10.7.7.1
+EXTERNAL_IPv4=10.7.7.1
 STUN_IP=216.93.246.18
 STUN_PORT=3478
 TURN_SERVER=turns:localhost:465?transport=tcp
@@ -36,6 +38,9 @@ RAILS_SECRET=SuperRailsSecret
 - and access the API via \
   https://mconf.github.io/api-mate/#server=https://10.7.7.1/bigbluebutton/api&sharedSecret=SuperSecret
     * At some point your browser will warn you about an invalid certificate, but you can press _"Accept the Risk and Continue" / "Proceed to 10.7.7.1 (unsafe)"_
+
+## Notes
+- Joining a room via Greenlight currently leads to a "401 session not found" error (see https://github.com/alangecker/bigbluebutton-docker/issues/66). Use the API Mate instead
 
 ## Changes
 - After doing some changes you usually must...

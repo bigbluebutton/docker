@@ -2,6 +2,7 @@
 
 ## Unreleased
 - Applied v2.2.28 changes @alangecker
+- Updated `development.md` docs (example config & note about issue #66) @alangecker
 
 ## Release v2.2.27-2 (2020-10-16)
 - Increase proxy timeout to avoid aborting websocket connections @alangecker
