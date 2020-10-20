@@ -1,7 +1,7 @@
 # Changelog
 
 ## Unreleased
-
+- Applied v2.2.28 changes @alangecker
 
 ## Release v2.2.27-2 (2020-10-16)
 - Increase proxy timeout to avoid aborting websocket connections @alangecker
