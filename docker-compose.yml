@@ -151,6 +151,7 @@ services:
       DISABLE_VIDEO_PREVIEW: ${DISABLE_VIDEO_PREVIEW:-false}
       CHAT_ENABLED: ${CHAT_ENABLED:-true}
       CHAT_START_CLOSED: ${CHAT_START_CLOSED:-false}
+      BREAKOUTROOM_LIMIT: ${BREAKOUTROOM_LIMIT:-8}
       DEV_MODE: ${DEV_MODE:-}
     networks:
       bbb-net:
