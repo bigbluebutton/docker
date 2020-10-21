@@ -17,8 +17,9 @@ else
     sed -i 's/EXTERNAL_IP=/EXTERNAL_IPv4=/' .env
 
     echo ""
-    echo "# pull newest bbb-webrtc-sfu"
-    git submodule update --remote 
+    echo "# pull newest git submodules"
+    git submodule init
+    git submodule update
 
 
     echo ""
