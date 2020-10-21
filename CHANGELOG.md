@@ -2,6 +2,7 @@
 
 ## Unreleased
 - Applied v2.2.28 changes @alangecker
+- Etherpad skin & plugin #69 @alangecker
 - Updated `development.md` docs (example config & note about issue #66) @alangecker
 - Allow setting the breakout room limit @alangecker
 
