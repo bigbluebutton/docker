@@ -76,10 +76,11 @@ RUN cd /etc \
     && rm -rf /etc/freeswitch/.svn
 
 # the current available freeswitch-mod-opusfile is broken,
-# it can't write any .opus files.
-# there is already a fix, but it is not included yet.
+# it can't write any .opus files. The fix provided in
 # https://github.com/signalwire/freeswitch/pull/719/files
-# we rather switch to the binary built by bigbluebutton and add its dependencies
+# is not sufficient as the module still comes without opus
+# write support, so we rather switch to the binary built
+# by bigbluebutton and add its dependencies
 RUN wget -O /usr/lib/freeswitch/mod/mod_opusfile.so https://github.com/bbb-pkg/bbb-freeswitch-core/raw/43f3a47af1fcf5ea559e16bb28b900c925a7f2c3/opt/freeswitch/lib/freeswitch/mod/mod_opusfile.so \
     && wget -O /tmp/libopusenc0_0.2.1-1bbb1_amd64.deb https://launchpad.net/~bigbluebutton/+archive/ubuntu/support/+files/libopusenc0_0.2.1-1bbb1_amd64.deb \
     && dpkg -i /tmp/libopusenc0_0.2.1-1bbb1_amd64.deb \
