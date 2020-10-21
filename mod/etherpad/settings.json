@@ -80,7 +80,7 @@
      * - "colibris": the new experimental skin (since Etherpad 1.8), candidate to
      *               become the default in Etherpad 2.0
      */
-    "skinName": "no-skin",
+    "skinName": "bigbluebutton",
   
     /*
      * IP and port which etherpad should bind at
@@ -312,14 +312,26 @@
     "trustProxy": true,
 
     /*
-    * When embedding the pads in an iframe set this to true.
-    */
-    "forceSameSiteNone": false,
-
+     * Settings controlling the session cookie issued by Etherpad.
+     */
+     "cookie": {
+      /*
+       * Value of the SameSite cookie property. "Lax" is recommended unless
+       * Etherpad will be embedded in an iframe from another site, in which case
+       * this must be set to "None". Note: "None" will not work (the browser will
+       * not send the cookie to Etherpad) unless https is used to access Etherpad
+       * (either directly or via a reverse proxy with "trustProxy" set to true).
+       *
+       * "Strict" is not recommended because it has few security benefits but
+       * significant usability drawbacks vs. "Lax". See
+       * https://stackoverflow.com/q/41841880 for discussion.
+       */
+      "sameSite": "None"
+    },
     /*
      * Privacy: disable IP logging
      */
-    "disableIPlogging": false,
+    "disableIPlogging": true,
   
     /*
      * Time (in seconds) to automatically reconnect pad when a "Force reconnect"
@@ -527,6 +539,8 @@
         */
   
         ]
-      } // logconfig
+      }, // logconfig
+      /* Override any strings found in locale directories */
+    "customLocaleStrings": {}
   }
   
