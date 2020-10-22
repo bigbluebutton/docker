@@ -1,7 +1,13 @@
 # Changelog
 
 ## Unreleased
+- 
 
+## Release v2.2.28-1 (2020-10-22) #67
+- Applied v2.2.28 changes @alangecker
+- Etherpad skin & plugin #69 @alangecker
+- Updated `development.md` docs (example config & note about issue #66) @alangecker
+- Allow setting the breakout room limit @alangecker
 
 ## Release v2.2.27-2 (2020-10-16)
 - Increase proxy timeout to avoid aborting websocket connections @alangecker
