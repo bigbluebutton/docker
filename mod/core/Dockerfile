@@ -46,7 +46,7 @@ RUN echo '#!/bin/bash\necho "mocking: systemctl $@"' > /usr/bin/systemctl && chm
 # rebuilding from here on if changed
 ENV VERSION v2.3-alpha-2
 
-RUN apt-get update && apt-get install -y bbb-web bbb-apps-akka
+RUN apt-get update && apt-get install -y bbb-web openjdk-8-jre-headless
 
 # add blank presentation files and allow conversation to pdf/svg
 RUN mkdir -p /usr/share/bigbluebutton/blank \
@@ -62,7 +62,6 @@ RUN mkdir -p /usr/share/bigbluebutton/blank \
 COPY web/bigbluebutton.properties /usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties.tmpl
 COPY web/turn-stun-servers.xml /usr/share/bbb-web/WEB-INF/classes/spring/turn-stun-servers.xml.tmpl
 
-COPY bbb-apps-akka/application.conf /usr/share/bbb-apps-akka/conf/application.conf.tmpl
 COPY web-run.sh /usr/share/bbb-web/run-prod.sh
 
 # add default presentation thumbnail

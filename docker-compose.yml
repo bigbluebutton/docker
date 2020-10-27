@@ -167,6 +167,18 @@ services:
       bbb-net:
         ipv4_address: 10.7.7.14
 
+  apps-akka:
+    build: mod/apps-akka
+    environment:
+      DOMAIN: ${DOMAIN}
+      SHARED_SECRET: ${SHARED_SECRET}
+    volumes:
+      - vol-freeswitch:/var/freeswitch/meetings
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.15
+
+
   libreoffice:
     build: mod/libreoffice
     restart: unless-stopped

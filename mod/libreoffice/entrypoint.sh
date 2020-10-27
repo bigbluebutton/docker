@@ -8,7 +8,7 @@ for i in `seq 1 4` ; do
     chown bigbluebutton:bigbluebutton $SOFFICE_WORK_DIR
 
     # Initialize environment
-    su-exec bigbluebutton /usr/lib/libreoffice/program/soffice.bin -env:UserInstallation="file:///tmp/office_${i}/"
+    su-exec bigbluebutton /usr/lib/libreoffice/program/soffice.bin -env:UserInstallation="file:///tmp/office_${i}/" || true
 done
 
 
