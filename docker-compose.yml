@@ -1,8 +1,8 @@
 version: '3.6'
 
 services:
-  core:
-    build: mod/core
+  bbb-web:
+    build: mod/bbb-web
     restart: unless-stopped
     depends_on:
         - redis
@@ -117,7 +117,6 @@ services:
     depends_on:
       - redis
       - kurento
-      - core
     environment:
       CLIENT_HOST: 0.0.0.0
       KURENTO_NAME: kurento
