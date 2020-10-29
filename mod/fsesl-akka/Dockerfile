@@ -1,21 +1,56 @@
-FROM openjdk:8u252-jdk-slim-buster
+FROM mozilla/sbt:8u181_1.2.7 AS builder
 
-RUN apt update && apt-get install -y subversion 
+RUN apt-get update && apt-get install -y subversion
+
+# download bbb-common-message
+ENV TAG_COMMON_MESSAGE v2.3-alpha-2
+RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_COMMON_MESSAGE/bbb-common-message /bbb-common-message \
+    && rm -rf /bbb-common-message/.svn
+
+# compile bbb-common-message
+RUN cd /bbb-common-message \
+ && ./deploy.sh 
+
+
+# ===================================================
+ENV TAG_FSESL v2.3-alpha-2
+RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_FSESL/bbb-fsesl-client /bbb-fsesl-client \
+    && rm -rf /bbb-fsesl-client/.svn
+
+RUN cd /bbb-fsesl-client \
+    && ./deploy.sh
+
 
 ENV TAG v2.3-alpha-2
+RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG/akka-bbb-fsesl /source \
+    && rm -rf /source/.svn
+
+# compile and unzip bin
+RUN cd /source \
+    && sbt universal:packageBin
+RUN unzip /source/target/universal/bbb-fsesl-akka-0.0.2.zip -d /
+
+# # ===================================================
+
+FROM openjdk:8-jre-slim-buster
+
+RUN apt update && apt-get install -y wget gosu
+
+# install dockerize
+ENV DOCKERIZE_VERSION v0.6.1
+RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 
-RUN cd / \
-    && svn checkout https://github.com/alangecker/bbb-packages/tags/$TAG/bbb-fsesl-akka/data/usr/share/bbb-fsesl-akka \
-    && rm -r /bbb-fsesl-akka/.svn \
-    && groupadd -g 2003 fsesl \
-    && useradd -m -u 2003 -g fsesl fsesl \
-    && rm /bbb-fsesl-akka/logs \
-    && mkdir /bbb-fsesl-akka/logs \
-    && ln -s /dev/null /bbb-fsesl-akka/logs/bbb-fsesl-akka.log
+RUN groupadd -g 1007 fsesl-akka \
+    && useradd -m -u 1007 -g fsesl-akka fsesl-akka
 
-COPY application.conf /bbb-fsesl-akka/conf/application.conf
+COPY --from=builder /bbb-fsesl-akka-0.0.2 /bbb-fsesl-akka
+COPY application.conf /bbb-fsesl-akka/conf/application.conf.tmpl
+COPY logback.xml /bbb-fsesl-akka/conf/logback.xml
 
-USER fsesl
 WORKDIR /bbb-fsesl-akka
-CMD /bbb-fsesl-akka/bin/bbb-fsesl-akka
+CMD dockerize \
+    -template /bbb-fsesl-akka/conf/application.conf.tmpl:/bbb-fsesl-akka/conf/application.conf \
+    gosu fsesl-akka /bbb-fsesl-akka/bin/bbb-fsesl-akka
