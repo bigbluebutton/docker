@@ -45,6 +45,8 @@ RUN cd /bbb-web && grails assemble
 # compile pres-checker
 RUN cd /bbb-web/pres-checker && gradle resolveDeps
 
+# extract .war
+RUN unzip -q /bbb-web/build/libs/bigbluebutton-0.10.0.war -d /dist
 
 
 # ===================================================
@@ -81,11 +83,8 @@ RUN mkdir -p /usr/share/bigbluebutton/blank \
         https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/v2.3-alpha-2/bigbluebutton-config/slides/blank-png.png \
     && sed -i 's/<policy domain="coder" rights="none" pattern="PDF" \/>/<policy domain="coder" rights="write" pattern="PDF" \/>/g' /etc/ImageMagick-6/policy.xml
 
-# get and extract bbb-web
-COPY --from=builder /bbb-web/build/libs/bigbluebutton-0.10.0.war /bigbluebutton-0.10.0.war
-RUN mkdir -p /usr/share/bbb-web \
-    && cd /usr/share/bbb-web \
-    && unzip -q /bigbluebutton-0.10.0.war -d /usr/share/bbb-web
+# get bbb-web
+COPY --from=builder /dist /usr/share/bbb-web
 
 # get pres-checker
 COPY --from=builder /bbb-web/pres-checker/lib /usr/share/prescheck/lib
