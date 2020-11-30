@@ -54,8 +54,6 @@ services:
       - etherpad
       - webrtc-sfu
       - html5
-    ports:
-      - "8080:80"
     volumes:
       - bigbluebutton:/var/bigbluebutton
       - ${DEFAULT_PRESENTATION:-/dev/null}:/etc/nginx/html/default.pdf
