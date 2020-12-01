@@ -1,7 +1,11 @@
 # Changelog
 
 ## Unreleased
-- 
+
+## Release v2.2.30-1 (2020-12-01) #79
+- Applied v2.2.30 changes @alangecker
+- Applied v2.2.29 changes @alangecker
+- Fix bug due to unnecessary port forward #81 @trickert76 @alangecker
 
 ## Release v2.2.28-1 (2020-10-22) #67
 - Applied v2.2.28 changes @alangecker

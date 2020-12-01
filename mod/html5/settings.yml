@@ -11,7 +11,7 @@ public:
     appName: BigBlueButton HTML5 Client
     bbbServerVersion: 2.2
     copyright: "©2020 BigBlueButton Inc."
-    html5ClientBuild: 1058
+    html5ClientBuild: 1095
     helpLink: https://bigbluebutton.org/html5/
     lockOnJoin: true
     cdn: ""
@@ -36,6 +36,7 @@ public:
     # can generate excessive overhead to the server. We recommend
     # this value to be kept under 12.
     breakoutRoomLimit: {{ .Env.BREAKOUTROOM_LIMIT }}
+    customHeartbeat: false
     defaultSettings:
       application:
         animations: true
@@ -277,6 +278,7 @@ public:
     stunTurnServersFetchAddress: "/bigbluebutton/api/stuns"
     cacheStunTurnServers: true
     fallbackStunServer:  ''
+    recvonlyIceGatheringCheck: true
     mediaTag: "#remote-media"
     callTransferTimeout: 5000
     callHangupTimeout: 2000
@@ -284,6 +286,12 @@ public:
     echoTestNumber: 'echo'
     relayOnlyOnReconnect: false
     listenOnlyCallTimeout: 25000
+    #Timeout (ms) for gathering ICE candidates. When this timeout expires
+    #the SDP is sent to the server with the candidates the browser gathered
+    #so far. Increasing this value might help avoiding 1004 error when
+    #user activates microphone.
+    iceGatheringTimeout: 5000
+    sipjsHackViaWs: false
   presentation:
     defaultPresentationFile: default.pdf
     panZoomThrottle: 32
@@ -412,7 +420,7 @@ public:
       - pencil
       - hand
   clientLog:
-    server: { enabled: true, level: info }
+    server: { enabled: false, level: info }
     console: { enabled: true, level: debug }
     external: { enabled: false, level: info, url: https://LOG_HOST/html5Log, method: POST, throttleInterval: 400, flushOnClose: true, logTag: "" }
 private:
