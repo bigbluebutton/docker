@@ -73,7 +73,7 @@ RUN cd /usr/bin \
     && touch /var/log/bigbluebutton/bbb-web.log
 
 # create user
-# the ID should matcht the one creating the files in `core`
+# the ID should match the one creating the files in `core`
 RUN groupadd -g 998 bigbluebutton && useradd -m -u 998 -g bigbluebutton bigbluebutton
 
 COPY bigbluebutton.yml /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml.tmpl
