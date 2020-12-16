@@ -84,6 +84,7 @@ ADD log-collector.py /log-collector.py
 ADD entrypoint.sh /entrypoint.sh
 
 # change user before entrypoint
+# to set user rights for all generated videos
 USER bigbluebutton
 
 ENTRYPOINT dockerize \
