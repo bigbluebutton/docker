@@ -195,7 +195,7 @@ public:
     #   profile: a camera profile id from the cameraProfiles configuration array
     #            that will be applied to all cameras when threshold is hit
     cameraQualityThresholds:
-      enabled: false
+      enabled: true
       thresholds:
         - threshold: 8
           profile: low-u8
