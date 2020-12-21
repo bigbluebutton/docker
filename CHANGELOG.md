@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- Applied v2.2.31 changes @alangecker
 
 ## Release v2.2.30-1 (2020-12-01) #79
 - Applied v2.2.30 changes @alangecker

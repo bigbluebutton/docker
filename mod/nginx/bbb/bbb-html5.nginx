@@ -1,8 +1,26 @@
-location /html5client {
+location @html5client {
   proxy_pass http://html5:3000;
   proxy_http_version 1.1;
   proxy_set_header Upgrade $http_upgrade;
   proxy_set_header Connection "Upgrade";
+}
+
+location /html5client/compatibility {
+  alias /html5-static/app/compatibility;
+}
+location /html5client/fonts {
+  alias /html5-static/app/fonts;
+}
+location /html5client/resources {
+  alias /html5-static/app/resources;
+}
+location /html5client/svgs {
+  alias /html5-static/app/svgs;
+}
+
+location /html5client {
+  alias /html5-static;
+  try_files $uri @html5client;
 }
 
 location /_timesync {
