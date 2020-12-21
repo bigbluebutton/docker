@@ -73,12 +73,20 @@ RUN cd /usr/bin \
     && touch /var/log/bigbluebutton/bbb-web.log
 
 # create user
-# the ID should matcht the one creating the files in `core`
+# the ID should match the one creating the files in `core`
 RUN groupadd -g 998 bigbluebutton && useradd -m -u 998 -g bigbluebutton bigbluebutton
+# change owner
+# https://github.com/alangecker/bigbluebutton-docker/issues/63
+RUN chown -R 998:998 /usr/local/bigbluebutton /var/log/bigbluebutton
 
 COPY bigbluebutton.yml /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml.tmpl
 ADD log-collector.py /log-collector.py
 ADD entrypoint.sh /entrypoint.sh
+
+# change user before entrypoint
+# to set user rights for all generated videos
+USER bigbluebutton
+
 ENTRYPOINT dockerize \
     -template /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml.tmpl:/usr/local/bigbluebutton/core/scripts/bigbluebutton.yml \
     /entrypoint.sh
