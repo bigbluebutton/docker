@@ -319,7 +319,7 @@ public:
     #so far. Increasing this value might help avoiding 1004 error when
     #user activates microphone.
     iceGatheringTimeout: 5000
-    sipjsHackViaWs: true
+    sipjsHackViaWs: false
     #Websocket keepAlive interval (seconds). You may set this to prevent
     #websocket disconnection in some environments. When set, BBB will send
     #'\r\n\r\n' string through SIP.js's websocket. If not set, default value
