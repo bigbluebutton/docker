@@ -1,7 +1,11 @@
 # Changelog
 
 ## Unreleased
+
+## Release v2.2.31-1 (2020-12-23) #84
 - Applied v2.2.31 changes @alangecker
+- Fix when presentation after recording unable to delete and change access rights #82 #63 @cardinalit
+- Enable cameraQualityThresholds by default
 
 ## Release v2.2.30-1 (2020-12-01) #79
 - Applied v2.2.30 changes @alangecker
