@@ -1,2 +1,14 @@
+# IDEA generated
+.idea
+
+# OS generated
+.DS_Store
+.AppleDouble
+
+# Tmp files
+*.swp
+*.log
+
+# App generated
 .env
 postgres-data

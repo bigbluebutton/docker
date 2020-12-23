@@ -56,6 +56,7 @@ services:
       - html5
     volumes:
       - bigbluebutton:/var/bigbluebutton
+      - html5-static:/html5-static:ro
       - ${DEFAULT_PRESENTATION:-/dev/null}:/etc/nginx/html/default.pdf
     network_mode: host
     extra_hosts:
@@ -139,6 +140,8 @@ services:
       - redis
       - mongodb
       - etherpad
+    volumes:
+      - html5-static:/html5-static:rw
     environment:
       DOMAIN: ${DOMAIN}
       CLIENT_TITLE: ${CLIENT_TITLE}
@@ -171,6 +174,7 @@ volumes:
   bigbluebutton:
   vol-freeswitch:
   vol-kurento:
+  html5-static:
 
 networks:
   bbb-net:
