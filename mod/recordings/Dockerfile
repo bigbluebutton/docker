@@ -14,7 +14,8 @@ RUN apt-get update && apt-get install -y \
     python3-icu \
     ffmpeg \
     poppler-utils \
-    imagemagick
+    imagemagick \
+    supervisor
 
 # compile and install mkclean
 RUN cd /tmp \
@@ -25,7 +26,7 @@ RUN cd /tmp \
     && ./mkclean/configure.compiled \
     && make -C mkclean \
     && cp ./release/gcc_linux_x64/mkclean /usr/bin/mkclean \
-    && rm -r /tmp/mkclean-0.8.10
+    && rm -r /tmp/mkclean-*
 
 # add dockerize
 ENV DOCKERIZE_VERSION v0.6.1
@@ -36,11 +37,9 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
 RUN mkdir -p \
     /usr/local/bigbluebutton \
     /usr/local/bigbluebutton/core \
-    /etc/bigbluebutton \
-    /var/log/bigbluebutton \
-    /var/log/bigbluebutton/presentation
+    /etc/bigbluebutton
 
-ENV TAG v2.3-alpha-2
+ENV TAG v2.3-alpha-3
 
 # add bbb-record-core (lib, scripts and Gemfile)
 RUN cd /usr/local/bigbluebutton/core \
@@ -48,8 +47,8 @@ RUN cd /usr/local/bigbluebutton/core \
     && svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG/record-and-playback/core/scripts \
     && rm -rf /usr/local/bigbluebutton/core/*/.svn \
     && wget https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/$TAG/record-and-playback/core/Gemfile.lock \
-    && wget https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/$TAG/record-and-playback/core/Gemfile
-
+    && wget https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/$TAG/record-and-playback/core/Gemfile \
+    && wget https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/$TAG/record-and-playback/core/Rakefile
 
 # add bbb-playback-presentation scripts
 RUN cd /tmp \
@@ -60,8 +59,17 @@ RUN cd /tmp \
 # install ruby dependencies
 RUN cd /usr/local/bigbluebutton/core \
     && gem install builder \
-    && gem install bundler \
+    && gem install bundler -v 2.1.4 \
     && /usr/local/bin/bundle
+
+# log to file instead of journald
+RUN sed -i 's|Journald::Logger\.new.*|Logger.new("/var/log/bigbluebutton/recording.log")|g' /usr/local/bigbluebutton/core/lib/recordandplayback.rb && \
+    sed -i 's|Journald::Logger\.new.*|Logger.new("/var/log/bigbluebutton/recording.log")|g' /usr/local/bigbluebutton/core/scripts/rap-caption-inbox.rb && \
+    sed -i 's|Logger\.new.*|Logger.new("/var/log/bigbluebutton/recording.log")|g' /usr/local/bigbluebutton/core/scripts/rap-process-worker.rb
+
+# fix syntax error in v2.3-alpha-3
+# https://github.com/bigbluebutton/bigbluebutton/pull/11060
+RUN sed -i 's|File\.exist(|File.exist?(|' /usr/local/bigbluebutton/core/lib/recordandplayback/workers/events_worker.rb
 
 # add bbb-record with some adjustments so bbb-record works in this environment
 RUN cd /usr/bin \
@@ -69,24 +77,18 @@ RUN cd /usr/bin \
     && chmod +x /usr/bin/bbb-record \
     && sed -i 's/^BBB_WEB.*/BBB_WEB=""/' /usr/bin/bbb-record \
     && sed -i 's/systemctl.*//' /usr/bin/bbb-record \
-    && echo "BIGBLUEBUTTON_RELEASE=$TAG" > /etc/bigbluebutton/bigbluebutton-release \
-    && touch /var/log/bigbluebutton/bbb-web.log
+    && echo "BIGBLUEBUTTON_RELEASE=$TAG" > /etc/bigbluebutton/bigbluebutton-release
 
 # create user
 # the ID should match the one creating the files in `core`
 RUN groupadd -g 998 bigbluebutton && useradd -m -u 998 -g bigbluebutton bigbluebutton
+
 # change owner
 # https://github.com/alangecker/bigbluebutton-docker/issues/63
-RUN chown -R 998:998 /usr/local/bigbluebutton /var/log/bigbluebutton
+RUN chown -R 998:998 /usr/local/bigbluebutton
 
 COPY bigbluebutton.yml /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml.tmpl
-ADD log-collector.py /log-collector.py
-ADD entrypoint.sh /entrypoint.sh
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY entrypoint.sh /entrypoint.sh
 
-# change user before entrypoint
-# to set user rights for all generated videos
-USER bigbluebutton
-
-ENTRYPOINT dockerize \
-    -template /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml.tmpl:/usr/local/bigbluebutton/core/scripts/bigbluebutton.yml \
-    /entrypoint.sh
+ENTRYPOINT /entrypoint.sh

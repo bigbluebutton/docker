@@ -88,7 +88,7 @@ services:
         ipv4_address: 10.7.7.5 
 
   mongodb:
-    image: mongo:4.2
+    image: mongo:4.4
     restart: unless-stopped
     networks:
       bbb-net:
@@ -162,12 +162,16 @@ services:
 
   fsesl-akka:
     build: mod/fsesl-akka
+    depends_on:
+      - redis
     networks:
       bbb-net:
         ipv4_address: 10.7.7.14
 
   apps-akka:
     build: mod/apps-akka
+    depends_on:
+      - redis
     environment:
       DOMAIN: ${DOMAIN}
       SHARED_SECRET: ${SHARED_SECRET}

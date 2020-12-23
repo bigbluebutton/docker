@@ -8,6 +8,22 @@ for i in `seq 1 4` ; do
     socat TCP-LISTEN:$PORT,fork TCP:10.7.7.7:$PORT &
 done
 
+# create recording directory structure if it doesn't exist yet
+mkdir -p /var/bigbluebutton/recording/raw
+mkdir -p /var/bigbluebutton/recording/process
+mkdir -p /var/bigbluebutton/recording/publish
+mkdir -p /var/bigbluebutton/recording/status/recorded
+mkdir -p /var/bigbluebutton/recording/status/archived
+mkdir -p /var/bigbluebutton/recording/status/processed
+mkdir -p /var/bigbluebutton/recording/status/sanity
+mkdir -p /var/bigbluebutton/recording/status/ended
+mkdir -p /var/bigbluebutton/recording/status/published
+mkdir -p /var/bigbluebutton/captions/inbox
+mkdir -p /var/bigbluebutton/published
+mkdir -p /var/bigbluebutton/deleted
+mkdir -p /var/bigbluebutton/unpublished
+chown -R bigbluebutton:bigbluebutton /var/bigbluebutton
+
 cd /usr/share/bbb-web/
 dockerize \
     -template /usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties.tmpl:/usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties \

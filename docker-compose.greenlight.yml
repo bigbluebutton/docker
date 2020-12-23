@@ -17,7 +17,7 @@ services:
     ports:
       - 10.7.7.1:5000:80
   postgres:
-    image: postgres:12
+    image: postgres:12-alpine
     restart: unless-stopped
     environment:
       POSTGRES_DB: greenlight

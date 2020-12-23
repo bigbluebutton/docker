@@ -3,7 +3,7 @@ FROM mozilla/sbt:8u181_1.2.7 AS builder
 RUN apt-get update && apt-get install -y subversion
 
 # download bbb-common-message
-ENV TAG_COMMON_MESSAGE v2.3-alpha-2
+ENV TAG_COMMON_MESSAGE v2.3-alpha-3
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_COMMON_MESSAGE/bbb-common-message /bbb-common-message \
     && rm -rf /bbb-common-message/.svn
 
@@ -26,7 +26,7 @@ RUN cd /opt \
 ENV PATH="/opt/gradle-6.7/bin:${PATH}"
 
 # download bbb-common-web
-ENV TAG_COMMON_WEB v2.3-alpha-2
+ENV TAG_COMMON_WEB v2.3-alpha-3
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_COMMON_WEB/bbb-common-web /bbb-common-web \
     && rm -rf /bbb-common-message/.svn
 
@@ -35,7 +35,7 @@ RUN cd /bbb-common-web \
  && ./deploy.sh
 
 # download bbb-web
-ENV TAG_WEB v2.3-alpha-2
+ENV TAG_WEB v2.3-alpha-3
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_WEB/bigbluebutton-web /bbb-web \
     && rm -rf /bbb-web/.svn
 
@@ -89,6 +89,8 @@ COPY --from=builder /dist /usr/share/bbb-web
 # get pres-checker
 COPY --from=builder /bbb-web/pres-checker/lib /usr/share/prescheck/lib
 COPY --from=builder /bbb-web/pres-checker/run.sh /usr/share/prescheck/prescheck.sh
+
+COPY mocked-ps /usr/bin/ps
 
 # add entrypoint and templates
 COPY entrypoint.sh /entrypoint.sh

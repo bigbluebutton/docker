@@ -2,7 +2,7 @@ FROM nginx:1.19-alpine
 
 RUN apk add subversion
 
-ENV TAG v2.3-alpha-2
+ENV TAG v2.3-alpha-3
 
 # get bbb-playback-presentation web files
 RUN mkdir /www \
