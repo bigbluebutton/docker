@@ -205,11 +205,8 @@ volumes:
   bigbluebutton:
   vol-freeswitch:
   vol-kurento:
-<<<<<<< HEAD
   html5-static:
-=======
   vol-libreoffice:
->>>>>>> b6193c1 (v2.3: dockerized libreoffice)
 
 networks:
   bbb-net:
