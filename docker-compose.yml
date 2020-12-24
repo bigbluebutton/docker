@@ -41,6 +41,7 @@ services:
       SIP_IP_ALLOWLIST: ${SIP_IP_ALLOWLIST:-}
       DISABLE_SOUND_MUTED: ${DISABLE_SOUND_MUTED:-false}
       DISABLE_SOUND_ALONE: ${DISABLE_SOUND_ALONE:-false}
+      SOUNDS_LANGUAGE: ${SOUNDS_LANGUAGE:-en-us-callie}
     volumes:
       - ./conf/sip_profiles:/etc/freeswitch/sip_profiles/external
       - ./conf/dialplan_public:/etc/freeswitch/dialplan/public_docker

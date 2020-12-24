@@ -2,7 +2,7 @@ FROM debian:buster-slim
 
 # add freeswitch repo
 RUN apt-get update && \
-apt-get install -y --no-install-recommends subversion curl wget ca-certificates gnupg gnupg2 lsb-release && \
+apt-get install -y --no-install-recommends subversion curl wget ca-certificates gnupg gnupg2 lsb-release unzip && \
 curl -k https://files.freeswitch.org/repo/deb/debian-release/fsstretch-archive-keyring.asc | apt-key add - && \
 echo 'deb http://files.freeswitch.org/repo/deb/debian-release/ buster main' > /etc/apt/sources.list.d/freeswitch.list
 
