@@ -115,9 +115,7 @@ services:
       - vol-kurento:/var/kurento
   
   webrtc-sfu:
-    build: 
-      context: ./bbb-webrtc-sfu
-      dockerfile: ../mod/webrtc-sfu/Dockerfile
+    build:  mod/webrtc-sfu
     restart: unless-stopped
     depends_on:
       - redis

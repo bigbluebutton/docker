@@ -3,7 +3,7 @@ FROM node:14-alpine
 RUN apk add git \
     && adduser -D -u 2004 -g webrtc-sfu webrtc-sfu
 
-ADD . app
+ADD ./bbb-webrtc-sfu app
 
 WORKDIR app
 
@@ -19,11 +19,7 @@ RUN cp config/default.example.yml config/production.yml \
  && npm install --unsafe-perm \
  && npm cache clear --force
 
-
-# remove automatic IP detection (broken in alpine)
-# and use sh instead of bash
-RUN sed -i 's/CONTAINER_IP=.*/CONTAINER_IP=10.7.7.10/' /app/docker-entrypoint.sh \
-    && sed -i 's/bash/sh/' /app/docker-entrypoint.sh
+COPY docker-entrypoint.sh /app/docker-entrypoint.sh
 
 USER webrtc-sfu
 ENTRYPOINT [ "./docker-entrypoint.sh" ]
