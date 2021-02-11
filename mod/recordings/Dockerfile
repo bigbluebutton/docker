@@ -39,7 +39,7 @@ RUN mkdir -p \
     /usr/local/bigbluebutton/core \
     /etc/bigbluebutton
 
-ENV TAG v2.3-alpha-3
+ENV TAG v2.3-alpha-6
 
 # add bbb-record-core (lib, scripts and Gemfile)
 RUN cd /usr/local/bigbluebutton/core \
@@ -59,17 +59,13 @@ RUN cd /tmp \
 # install ruby dependencies
 RUN cd /usr/local/bigbluebutton/core \
     && gem install builder \
-    && gem install bundler -v 2.1.4 \
+    && gem install bundler --no-document \
     && /usr/local/bin/bundle
 
 # log to file instead of journald
 RUN sed -i 's|Journald::Logger\.new.*|Logger.new("/var/log/bigbluebutton/recording.log")|g' /usr/local/bigbluebutton/core/lib/recordandplayback.rb && \
     sed -i 's|Journald::Logger\.new.*|Logger.new("/var/log/bigbluebutton/recording.log")|g' /usr/local/bigbluebutton/core/scripts/rap-caption-inbox.rb && \
     sed -i 's|Logger\.new.*|Logger.new("/var/log/bigbluebutton/recording.log")|g' /usr/local/bigbluebutton/core/scripts/rap-process-worker.rb
-
-# fix syntax error in v2.3-alpha-3
-# https://github.com/bigbluebutton/bigbluebutton/pull/11060
-RUN sed -i 's|File\.exist(|File.exist?(|' /usr/local/bigbluebutton/core/lib/recordandplayback/workers/events_worker.rb
 
 # add bbb-record with some adjustments so bbb-record works in this environment
 RUN cd /usr/bin \

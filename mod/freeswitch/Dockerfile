@@ -70,7 +70,11 @@ RUN apt-get update && apt-get install -y \
 # we use svn for retrieving the files since the repo is quite large,
 # git sparse-checkout is not yet available with buster and there
 # is no other sane way of downloading a single directory via git
-ENV GIT_TAG v2.2.9-freeswitch
+
+# TODO:
+# switch to official source
+# https://github.com/bigbluebutton/bigbluebutton/pull/11361
+ENV GIT_TAG v2.3-alpha-6
 RUN cd /etc \
     && svn checkout https://github.com/alangecker/bbb-packages/tags/$GIT_TAG/bbb-freeswitch-core/data/opt/freeswitch/etc/freeswitch \
     && rm -rf /etc/freeswitch/.svn

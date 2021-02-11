@@ -142,6 +142,8 @@ services:
       - redis
       - mongodb
       - etherpad
+    cap_add:
+      - SYS_NICE
     volumes:
       - html5-static:/html5-static:rw
     environment:

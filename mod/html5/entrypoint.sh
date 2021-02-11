@@ -9,6 +9,8 @@ export SERVER_WEBSOCKET_COMPRESSION=0
 export BIND_IP=0.0.0.0
 export LANG=en_US.UTF-8
 export INSTANCE_MAX=1
+export ENVIRONMENT_TYPE=production
+export NODE_VERSION=node-v12.16.1-linux-x64
 
 if [ "$DEV_MODE" == true ]; then
     echo "DEV_MODE=true, disable TLS certificate rejecting"
@@ -33,4 +35,6 @@ export PORT=4000
 rm -f /app/programs/server/assets/app/config/settings.yml
 dockerize \
     -template /app/programs/server/assets/app/config/settings.yml.tmpl:/app/programs/server/assets/app/config/settings.yml \
-    su-exec meteor node main.js
+    nice -n-2 \
+        su-exec meteor \
+            node --max-old-space-size=2048 --max_semi_space_size=128 main.js

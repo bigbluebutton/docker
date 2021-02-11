@@ -10,4 +10,4 @@ services:
       - redis
     networks:
       bbb-net:
-        ipv4_address: 10.7.7.15
+        ipv4_address: 10.7.7.17
