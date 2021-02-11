@@ -16,5 +16,5 @@ if [ ! "$ENABLE_RECORDING" == true ]; then
   exit 1
 fi
 
-./scripts/compose exec recordings bbb-record $@
-./scripts/compose logs --tail=15 recordings
+docker-compose exec recordings bbb-record $@
+docker-compose logs --tail=15 recordings

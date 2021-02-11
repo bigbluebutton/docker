@@ -11,26 +11,28 @@ then
 
     # restart script, since it might have changed.
     RESTARTED=1 ./scripts/upgrade
+    exit
 
 else
-    # update changed environment variable
-    sed -i 's/EXTERNAL_IP=/EXTERNAL_IPv4=/' .env
 
     echo ""
     echo "# pull newest git submodules"
     git submodule init
     git submodule update
 
+    echo ""
+    echo "# recreate docker-compose.yml"
+    ./scripts/generate-compose
 
     echo ""
     echo "# pull newest images"
-    ./scripts/compose pull
+    docker-compose pull
 
     echo ""
     echo "# rebuild images"
 
     # rebuild everything which got modified
-    ./scripts/compose build --pull    
+    docker-compose build --pull
 
     COMMIT_HASH=$(git rev-parse --short HEAD)
     BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
@@ -40,7 +42,7 @@ else
     echo "images successfully rebuilt!"
     echo "we are on $COMMIT_HASH ($BRANCH_NAME)"
     echo ""
-    echo "use following command for restarting:"
-    echo "    $ ./scripts/compose up -d"
+    echo "use following command for restarting bbb:"
+    echo "    $ docker-compose up -d"
     echo "-------------------------------------"
 fi

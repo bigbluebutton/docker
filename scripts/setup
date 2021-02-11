@@ -127,11 +127,16 @@ sed -i "s/SHARED_SECRET=.*/SHARED_SECRET=$RANDOM_1/" .env
 sed -i "s/ETHERPAD_API_KEY=.*/ETHERPAD_API_KEY=$RANDOM_2/" .env
 sed -i "s/RAILS_SECRET=.*/RAILS_SECRET=$RANDOM_3/" .env
 
+./scripts/generate-compose
+
 echo "--------------------------------------------------"
 echo "configuration file .env got successfully created!"
 echo ""
 echo "you can look through it for further adjusments"
 echo "  $ nano .env"
 echo ""
+echo "make sure to recreate the docker-compose.yml after each change"
+echo "  $ ./scripts/generate-compose"
+echo ""
 echo "to start bigbluebutton run"
-echo "  $ ./scripts/compose up -d"
+echo "  $ docker-compose up -d"

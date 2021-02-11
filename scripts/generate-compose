@@ -1,0 +1,49 @@
+#!/bin/bash
+set -e
+
+cd $(dirname $0)/..
+
+# load .env
+if [ -f .env ]
+then
+  # exclude WELCOME_MESSAGE && WELCOME_FOOTER because it may contain invalid characters
+  export $(cat .env | sed 's/#.*//g' | grep -v "WELCOME_FOOTER" | grep -v "WELCOME_MESSAGE" | xargs)
+fi
+
+# check for non-optional environment variables,
+# which got introduced later and may miss in existing
+# .env files during upgrades
+if [ -z "$EXTERNAL_IPv4" ]; then
+    echo "ERROR: EXTERNAL_IPv4 is not set in .env"
+    echo "BBB won't work without it."
+    exit 1
+fi
+
+if [ "$ENABLE_COTURN" == true ]; then
+  if [ -z "$ENABLE_HTTPS_PROXY" ]; then
+    echo "ERROR: coturn requires the https proxy for certificate retrival."
+    echo "you must also set ENABLE_HTTPS_PROXY=true"
+    exit 1
+  fi
+  if [ "$DEV_MODE" == true ]; then
+    echo "ERROR: the https proxy can't get a certificate if ran locally and therefor coturn will never start"
+    echo "you should disable coturn in .env"
+    exit 1
+  fi
+fi
+
+
+
+
+docker run  \
+    --rm  \
+    -v $(pwd)/docker-compose.tmpl.yml:/docker-compose.tmpl.yml \
+    -e DEV_MODE=${DEV_MODE:-false} \
+    -e ENABLE_RECORDING=${ENABLE_RECORDING:-false} \
+    -e ENABLE_HTTPS_PROXY=${ENABLE_HTTPS_PROXY:-false} \
+    -e ENABLE_WEBHOOKS=${ENABLE_WEBHOOKS:-false} \
+    -e ENABLE_COTURN=${ENABLE_COTURN:-false} \
+    -e ENABLE_GREENLIGHT=${ENABLE_GREENLIGHT:-false} \
+    -e ENABLE_PROMETHEUS_EXPORTER=${ENABLE_PROMETHEUS_EXPORTER:-false} \
+    jwilder/dockerize -template /docker-compose.tmpl.yml \
+    > docker-compose.yml
