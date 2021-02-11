@@ -1,6 +1,9 @@
 # Changelog
 
 ## Unreleased
+- **BigBlueButton 2.3** including all its changes :tada:
+- Template based generated of docker-compose.yml #71 #42 @alangecker @trickert76
+- Removal of `core` and all dependencies on the bigbluebutton ubuntu repository. Seperate container for `bbb-web`, `fsesl-akka` and `apps-akka` #26 @alangecker
 
 ## Release v2.2.31-1 (2020-12-23) #84
 - Applied v2.2.31 changes @alangecker
