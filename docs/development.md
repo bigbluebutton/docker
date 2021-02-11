@@ -31,10 +31,12 @@ RAILS_SECRET=SuperRailsSecret
 [... add rest of sample.env here ...]
 ```
 
+- regenerate `docker-compose.yml` \
+  `$ ./scripts/generate-compose`
 - you can than start it with \
-  `$ ./scripts/compose up -d`
+  `$ docker-compose up -d`
 - view the logs with \
-  `$ ./scripts/compose logs -f`
+  `$ docker-compose logs -f`
 - and access the API via \
   https://mconf.github.io/api-mate/#server=https://10.7.7.1/bigbluebutton/api&sharedSecret=SuperSecret
     * At some point your browser will warn you about an invalid certificate, but you can press _"Accept the Risk and Continue" / "Proceed to 10.7.7.1 (unsafe)"_
@@ -44,7 +46,9 @@ RAILS_SECRET=SuperRailsSecret
 
 ## Changes
 - After doing some changes you usually must...
+  - recreate `docker-compose.yml` \
+    `$ ./scripts/generate-compose`
   * rebuild the image(s): \
-    `$ ./scripts/compose build [containername]`
+    `$ docker-compose build [containername]`
   * restart changes image(s): \
-    `$ ./scripts/compose up -d`
+    `$ docker-compose up -d`

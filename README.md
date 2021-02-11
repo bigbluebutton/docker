@@ -29,13 +29,19 @@
    ```bash
    $ ./scripts/setup
    ```
-7. Start containers:
+4. (optional) Make additional configuration adjustments
     ```bash
-    $ ./scripts/compose up -d
+   $ nano .env
+   # always recreate the docker-compose.yml file after making any changes
+   $ ./scripts/generate-compose
     ```
-8. If you use greenlight, you can create an admin account with:
+5. Start containers:
     ```bash
-    $ ./scripts/compose exec greenlight bundle exec rake admin:create
+    $ docker-compose up -d
+    ```
+6. If you use greenlight, you can create an admin account with:
+    ```bash
+    $ docker-compose exec greenlight bundle exec rake admin:create
     ```
 
 ## How-To's
