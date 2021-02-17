@@ -20,7 +20,7 @@ fi
 
 
 EXTERNAL_IPv4=$(curl -4 -s https://icanhazip.com)
-EXTERNAL_IPv6=$(curl -6 -s https://icanhazip.com || true)
+EXTERNAL_IPv6=$(curl -6 -s -m 10 https://icanhazip.com || true)
 
 greenlight=""
 while [[ ! $greenlight =~ ^(y|n)$ ]]; do
