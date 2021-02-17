@@ -88,6 +88,11 @@ services:
   redis:
     image: redis:6.0-alpine
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 30
     networks:
       bbb-net:
         ipv4_address: 10.7.7.5 
