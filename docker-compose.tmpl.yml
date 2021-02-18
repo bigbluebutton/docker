@@ -95,6 +95,7 @@ services:
   mongodb:
     image: mongo:4.4
     restart: unless-stopped
+    test: bash -c "if mongo --eval 'quit(db.runCommand({ ping':' 1 }).ok ? 0 ':' 2)'; then exit 0; fi; exit 1;"
     networks:
       bbb-net:
         ipv4_address: 10.7.7.6
