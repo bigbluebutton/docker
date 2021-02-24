@@ -103,6 +103,13 @@ services:
   mongodb:
     image: mongo:4.4
     restart: unless-stopped
+    volumes:
+      - ./mod/mongo/mongod.conf:/etc/mongod.conf
+      - ./mod/mongo/init-replica.sh:/docker-entrypoint-initdb.d/init-replica.sh
+    tmpfs:
+      - /data/configdb
+      - /data/db
+    command: mongod --config /etc/mongod.conf --oplogSize 8 --replSet rs0 --noauth
     healthcheck:
       test: bash -c "if mongo --eval 'quit(db.runCommand({ ping':' 1 }).ok ? 0 ':' 2)'; then exit 0; fi; exit 1;"
     networks:

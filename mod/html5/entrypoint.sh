@@ -2,7 +2,7 @@
 set -e
 
 cd /app
-# export MONGO_OPLOG_URL=mongodb://10.7.7.6/local
+export MONGO_OPLOG_URL=mongodb://10.7.7.6/local
 export MONGO_URL=mongodb://10.7.7.6/meteor
 export NODE_ENV=production
 export SERVER_WEBSOCKET_COMPRESSION=0
