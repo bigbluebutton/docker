@@ -4,6 +4,7 @@ set -e
 cd /app
 export MONGO_OPLOG_URL=mongodb://10.7.7.6/local
 export MONGO_URL=mongodb://10.7.7.6/meteor
+export ROOT_URL=http://127.0.0.1/html5client
 export NODE_ENV=production
 export SERVER_WEBSOCKET_COMPRESSION=0
 export BIND_IP=0.0.0.0
@@ -17,24 +18,26 @@ if [ "$DEV_MODE" == true ]; then
     export NODE_TLS_REJECT_UNAUTHORIZED=0
 fi
 
-# copy static files into volume for direct access by nginx
-# https://github.com/bigbluebutton/bigbluebutton/issues/10739
-if [ -d "/html5-static" ]; then
-    rm -rf /html5-static/*
-    cp -r /app/programs/web.browser/* /html5-static
+if [ "$BBB_HTML5_ROLE" == "backend" ]; then
+    PARAM=NODEJS_BACKEND_INSTANCE_ID=$INSTANCE_ID
 fi
 
 
-# TODO: start multiple instances (introduced with v2.3-alpha-3)
-# https://github.com/bigbluebutton/bigbluebutton/releases/tag/v2.3-alpha-3
+# if container is the first frontend, do some additional tasks
+if [ "$BBB_HTML5_ROLE" == "frontend" ] && [ "$INSTANCE_ID" == "1" ]; then
+    # delete potential old settings.yml
 
-export INSTANCE_ID=1
-export ROOT_URL=http://127.0.0.1/html5client/$INSTANCE_ID
-export PORT=4000
+    # copy static files into volume for direct access by nginx
+    # https://github.com/bigbluebutton/bigbluebutton/issues/10739
+    if [ -d "/html5-static" ]; then
+        rm -rf /html5-static/*
+        cp -r /app/programs/web.browser/* /html5-static
+    fi
+
+fi
 
 rm -f /app/programs/server/assets/app/config/settings.yml
 dockerize \
     -template /app/programs/server/assets/app/config/settings.yml.tmpl:/app/programs/server/assets/app/config/settings.yml \
-    nice -n-2 \
-        su-exec meteor \
-            node --max-old-space-size=2048 --max_semi_space_size=128 main.js
+    su-exec meteor \
+        node --max-old-space-size=2048 --max_semi_space_size=128 main.js $PARAM

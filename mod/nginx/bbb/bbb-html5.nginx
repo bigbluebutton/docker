@@ -1,26 +1,26 @@
 location @html5client {
-  proxy_pass http://html5:4000;
+  proxy_pass http://poolhtml5servers; # use for production
   proxy_http_version 1.1;
   proxy_set_header Upgrade $http_upgrade;
   proxy_set_header Connection "Upgrade";
 }
 
-location /html5client/1/compatibility {
-  alias /html5-static/app/compatibility;
+rewrite ^/html5client/(fonts|compatibility|resources|svgs)/(.*) /html5client/$1/$2;
+
+location /html5client/compatibility {
+   alias /html5-static/app/compatibility;
 }
-location /html5client/1/fonts {
-  alias /html5-static/app/fonts;
-}
-location /html5client/1/resources {
+
+location /html5client/resources {
   alias /html5-static/app/resources;
 }
-location /html5client/1/svgs {
+
+location /html5client/svgs {
   alias /html5-static/app/svgs;
 }
 
-location /html5client/1 {
-  alias /html5-static;
-  try_files $uri @html5client;
+location /html5client/fonts {
+  alias /html5-static/app/fonts;
 }
 
 location /html5client/ {
@@ -28,6 +28,3 @@ location /html5client/ {
   try_files $uri @html5client;
 }
 
-location /_timesync {
-  proxy_pass http://html5:4000;
-}

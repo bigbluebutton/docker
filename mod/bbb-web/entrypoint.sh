@@ -24,6 +24,8 @@ mkdir -p /var/bigbluebutton/deleted
 mkdir -p /var/bigbluebutton/unpublished
 chown -R bigbluebutton:bigbluebutton /var/bigbluebutton
 
+echo "$NUMBER_OF_BACKEND_NODEJS_PROCESSES" > /tmp/NUMBER_OF_BACKEND_NODEJS_PROCESSES
+
 cd /usr/share/bbb-web/
 dockerize \
     -template /usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties.tmpl:/usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties \

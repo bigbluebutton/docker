@@ -19,7 +19,6 @@ you can find a **stable bbb-docker release for 2.2** here: https://github.com/al
 
 ## What does not work
 - probably a lot - it's in an alpha state!
-- Load balancing of html5 meteor processes
 - bbb-lti
 
 ## Install

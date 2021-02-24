@@ -5,6 +5,38 @@
 
 version: '3.6'
 
+# html5 templates
+x-html5-backend: &html5backend
+  build: mod/html5
+  image: bbb-html5
+  restart: unless-stopped
+  depends_on:
+    - redis
+    - mongodb
+    - etherpad
+  environment: &html5backend-env
+    DOMAIN: ${DOMAIN}
+    CLIENT_TITLE: ${CLIENT_TITLE}
+    ETHERPAD_API_KEY: ${ETHERPAD_API_KEY}
+    LISTEN_ONLY_MODE: ${LISTEN_ONLY_MODE:-true}
+    DISABLE_ECHO_TEST: ${DISABLE_ECHO_TEST:-false}
+    AUTO_SHARE_WEBCAM: ${AUTO_SHARE_WEBCAM:-false}
+    DISABLE_VIDEO_PREVIEW: ${DISABLE_VIDEO_PREVIEW:-false}
+    CHAT_ENABLED: ${CHAT_ENABLED:-true}
+    CHAT_START_CLOSED: ${CHAT_START_CLOSED:-false}
+    BREAKOUTROOM_LIMIT: ${BREAKOUTROOM_LIMIT:-8}
+    DEV_MODE: ${DEV_MODE:-}
+    BBB_HTML5_ROLE: backend
+
+x-html5-frontend: &html5frontend
+    <<: *html5backend
+    volumes:
+      - html5-static:/html5-static:rw
+    environment: &html5frontend-env
+      <<: *html5backend-env
+      BBB_HTML5_ROLE: frontend
+# =========================
+
 services:
   bbb-web:
     build: mod/bbb-web
@@ -25,6 +57,7 @@ services:
       STUN_SERVER: stun:${STUN_IP}:${STUN_PORT}
       TURN_SERVER: ${TURN_SERVER:-}
       TURN_SECRET: ${TURN_SECRET:-}
+      NUMBER_OF_BACKEND_NODEJS_PROCESSES: {{ .Env.NUMBER_OF_BACKEND_NODEJS_PROCESSES }}
     volumes:
       - bigbluebutton:/var/bigbluebutton
       - vol-freeswitch:/var/freeswitch/meetings
@@ -33,6 +66,32 @@ services:
     networks:
       bbb-net:
         ipv4_address: 10.7.7.2
+
+
+{{ range $i := loop 0 (atoi .Env.NUMBER_OF_BACKEND_NODEJS_PROCESSES) }}
+  html5-backend-{{ add $i 1 }}:
+    <<: *html5backend
+    environment:
+      <<: *html5backend-env
+      INSTANCE_ID: {{ add $i 1 }}
+      PORT: {{ add 4000 $i }}
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.{{ add 100 $i }}
+{{end}}
+
+{{ range $i := loop 0 (atoi .Env.NUMBER_OF_FRONTEND_NODEJS_PROCESSES) }}
+  html5-frontend-{{ add $i 1 }}:
+    <<: *html5frontend
+    environment:
+      <<: *html5frontend-env
+      INSTANCE_ID: {{ add $i 1 }}
+      PORT: {{ add 4100 $i }}
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.{{ add 200 $i }}
+{{end}}
+
 
   freeswitch:
     build: mod/freeswitch
@@ -64,7 +123,7 @@ services:
     depends_on:
       - etherpad
       - webrtc-sfu
-      - html5
+      - html5-backend-1
     volumes:
       - bigbluebutton:/var/bigbluebutton
       - html5-static:/html5-static:ro
@@ -154,33 +213,6 @@ services:
     networks:
       bbb-net:
         ipv4_address: 10.7.7.10
-
-  html5:
-    build: mod/html5
-    restart: unless-stopped
-    depends_on:
-      - redis
-      - mongodb
-      - etherpad
-    cap_add:
-      - SYS_NICE
-    volumes:
-      - html5-static:/html5-static:rw
-    environment:
-      DOMAIN: ${DOMAIN}
-      CLIENT_TITLE: ${CLIENT_TITLE}
-      ETHERPAD_API_KEY: ${ETHERPAD_API_KEY}
-      LISTEN_ONLY_MODE: ${LISTEN_ONLY_MODE:-true}
-      DISABLE_ECHO_TEST: ${DISABLE_ECHO_TEST:-false}
-      AUTO_SHARE_WEBCAM: ${AUTO_SHARE_WEBCAM:-false}
-      DISABLE_VIDEO_PREVIEW: ${DISABLE_VIDEO_PREVIEW:-false}
-      CHAT_ENABLED: ${CHAT_ENABLED:-true}
-      CHAT_START_CLOSED: ${CHAT_START_CLOSED:-false}
-      BREAKOUTROOM_LIMIT: ${BREAKOUTROOM_LIMIT:-8}
-      DEV_MODE: ${DEV_MODE:-}
-    networks:
-      bbb-net:
-        ipv4_address: 10.7.7.11
 
   fsesl-akka:
     build: mod/fsesl-akka
@@ -340,7 +372,7 @@ services:
 {{ if isTrue .Env.ENABLE_PROMETHEUS_EXPORTER }}
   # prometheus
   prometheus-exporter:
-    image: greenstatic/bigbluebutton-exporter:v0.6.0
+    image: greenstatic/bigbluebutton-exporter:v0.7.0-preview2
     restart: unless-stopped
     environment: 
       API_BASE_URL: http://10.7.7.1:8080/bigbluebutton/api/

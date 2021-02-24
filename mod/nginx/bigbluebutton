@@ -3,6 +3,19 @@ map $remote_addr $freeswitch_addr {
     default    10.7.7.1;
 }
 
+upstream poolhtml5servers {
+  zone poolhtml5servers 32k;
+  least_conn;
+  server 10.7.7.200:4100 fail_timeout=3s fail_timeout=10s max_fails=4 backup;
+  server 10.7.7.201:4101 fail_timeout=2s fail_timeout=60s max_fails=2;
+  server 10.7.7.202:4102 fail_timeout=2s fail_timeout=60s max_fails=2;
+  server 10.7.7.203:4103 fail_timeout=2s fail_timeout=60s max_fails=2;
+  server 10.7.7.204:4104 fail_timeout=2s fail_timeout=60s max_fails=2;
+  server 10.7.7.205:4105 fail_timeout=2s fail_timeout=60s max_fails=2;
+  server 10.7.7.206:4106 fail_timeout=2s fail_timeout=60s max_fails=2;
+  server 10.7.7.207:4107 fail_timeout=2s fail_timeout=60s max_fails=2;
+}
+
 server {
   listen 8080 default_server;
   listen [::]:8080 default_server;
