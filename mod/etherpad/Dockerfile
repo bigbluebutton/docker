@@ -1,4 +1,4 @@
-FROM etherpad/etherpad:1.8.7
+FROM etherpad/etherpad:1.8.9
 
 USER root
 
@@ -9,7 +9,7 @@ USER etherpad
 
 RUN npm install  \
     ep_delete_after_delay_lite \
-    git+https://git@github.com/pedrobmarin/ep_redis_publisher.git
+    git+https://git@github.com/pedrobmarin/ep_pad_ttl.git
 
 # add skin from git submodule
 COPY --chown=etherpad:0 ./bbb-etherpad-skin /opt/etherpad-lite/src/static/skins/bigbluebutton
