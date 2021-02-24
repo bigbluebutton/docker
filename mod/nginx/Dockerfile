@@ -27,3 +27,4 @@ COPY --from=builder /playback-legacy/2.0 /www/presentation/2.0
 COPY --from=builder /bbb-playback/build /www/presentation/2.3
 COPY ./bbb /etc/nginx/bbb
 COPY ./bigbluebutton /etc/nginx/conf.d/default.conf
+COPY ./nginx.conf /etc/nginx/nginx.conf
