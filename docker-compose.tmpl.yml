@@ -266,6 +266,7 @@ services:
   # recordings
   recordings:
     build: mod/recordings
+    restart: unless-stopped
     depends_on:
       - redis
     environment:
