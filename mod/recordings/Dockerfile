@@ -15,7 +15,13 @@ RUN apt-get update && apt-get install -y \
     ffmpeg \
     poppler-utils \
     imagemagick \
-    supervisor
+    supervisor \
+    locales \
+    locales-all
+
+ENV LC_ALL en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US.UTF-8
 
 # compile and install mkclean
 RUN cd /tmp \
