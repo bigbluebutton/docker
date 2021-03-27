@@ -24,9 +24,11 @@ Services as configured.
 | greenlight | | | ports: 10.7.7.1:5000:80
 | prometheus | bbb-net | 10.7.7.33 |
 
+```yml
 networks:  
   bbb-net:  
     ipam:  
       driver: default  
       config:  
         - subnet: "10.7.7.0/24"
+```
