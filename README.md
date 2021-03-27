@@ -12,7 +12,6 @@ you can find a **stable bbb-docker release for 2.2** here: https://github.com/al
 ## Features
 - Easy installation
 - Greenlight included
-- TURN server included
 - Fully automated HTTPS certificates
 - Full IPv6 support
 - Runs on any major linux distributon (Debian, Ubuntu, CentOS,...)

@@ -7,7 +7,6 @@ you can run bbb-docker locally without any certificate issues with following `.e
 DEV_MODE=true
 
 ENABLE_HTTPS_PROXY=true
-#ENABLE_COTURN=true
 #ENABLE_GREENLIGHT=true
 #ENABLE_WEBHOOKS=true
 #ENABLE_PROMETHEUS_EXPORTER=true
@@ -17,9 +16,7 @@ DOMAIN=10.7.7.1
 EXTERNAL_IPv4=10.7.7.1
 STUN_IP=216.93.246.18
 STUN_PORT=3478
-TURN_SERVER=turns:localhost:465?transport=tcp
 
-TURN_SECRET=SuperTurnSecret
 SHARED_SECRET=SuperSecret
 ETHERPAD_API_KEY=SuperEtherpadKey
 RAILS_SECRET=SuperRailsSecret

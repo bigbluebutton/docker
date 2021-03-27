@@ -32,14 +32,6 @@ while [[ ! $https_proxy =~ ^(y|n)$ ]]; do
     read -p "Should an automatic HTTPS Proxy be included? (y/n): " https_proxy
 done
 
-coturn=""
-if [ "$https_proxy" == "y" ]
-then
-    while [[ ! $coturn =~ ^(y|n)$ ]]; do
-        read -p "Should a coturn be included? (y/n): " coturn
-    done
-fi
-
 prometheus_exporter=""
 while [[ ! $prometheus_exporter =~ ^(y|n)$ ]]; do
     read -p "Should a Prometheus exporter be included? (y/n): " prometheus_exporter
@@ -112,16 +104,6 @@ fi
 if [ "$recording" == "y" ]
 then
     sed -i "s/#ENABLE_RECORDING.*/ENABLE_RECORDING=true/" .env
-fi
-
-if [ "$coturn" == "y" ]
-then
-    sed -i "s/.*TURN_SERVER=.*/TURN_SERVER=turns:$DOMAIN:465?transport=tcp/" .env
-    TURN_SECRET=$(head /dev/urandom | tr -dc A-Za-f0-9 | head -c 32)
-    sed -i "s/.*TURN_SECRET=.*/TURN_SECRET=$TURN_SECRET/" .env
-    sed -i "s/.*STUN_IP=.*/STUN_IP=$EXTERNAL_IPv4/" .env
-else
-    sed -i "s/ENABLE_COTURN.*/#ENABLE_COTURN=true/" .env
 fi
 
 if [ "$prometheus_exporter" == "y" ]
