@@ -1,4 +1,4 @@
-FROM etherpad/etherpad:1.8.10
+FROM etherpad/etherpad:1.8.13
 
 USER root
 
@@ -10,6 +10,7 @@ USER etherpad
 RUN npm install  \
     git+https://git@github.com/pedrobmarin/ep_pad_ttl.git \
     git+https://git@github.com/pedrobmarin/ep_redis_publisher.git \
+    git+https://git@github.com/ether/ep_disable_chat.git \
 # remove npm lockfile, because somehow it prevents etherpad from detecting the manual added plugin ep_bigbluebutton_patches
     && rm package-lock.json
 

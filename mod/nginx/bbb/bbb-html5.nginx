@@ -5,7 +5,9 @@ location @html5client {
   proxy_set_header Connection "Upgrade";
 }
 
-rewrite ^/html5client/(fonts|compatibility|resources|svgs)/(.*) /html5client/$1/$2;
+location /html5client/locales {
+   alias /html5-static/app/locales;
+}
 
 location /html5client/compatibility {
    alias /html5-static/app/compatibility;

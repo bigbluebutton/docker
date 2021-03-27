@@ -3,7 +3,7 @@ FROM mozilla/sbt:8u181_1.2.7 AS builder
 RUN apt-get update && apt-get install -y subversion
 
 # download bbb-common-message
-ENV TAG_COMMON_MESSAGE v2.3-alpha-7
+ENV TAG_COMMON_MESSAGE v2.3-beta-1
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_COMMON_MESSAGE/bbb-common-message /bbb-common-message \
     && rm -rf /bbb-common-message/.svn
 
@@ -13,7 +13,7 @@ RUN cd /bbb-common-message \
 
 
 # ===================================================
-ENV TAG_FSESL v2.3-alpha-7
+ENV TAG_FSESL v2.3-beta-1
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_FSESL/bbb-fsesl-client /bbb-fsesl-client \
     && rm -rf /bbb-fsesl-client/.svn
 
@@ -21,7 +21,7 @@ RUN cd /bbb-fsesl-client \
     && ./deploy.sh
 
 
-ENV TAG v2.3-alpha-7
+ENV TAG v2.3-beta-1
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG/akka-bbb-fsesl /source \
     && rm -rf /source/.svn
 
@@ -47,10 +47,10 @@ RUN groupadd -g 1007 fsesl-akka \
     && useradd -m -u 1007 -g fsesl-akka fsesl-akka
 
 COPY --from=builder /bbb-fsesl-akka-0.0.2 /bbb-fsesl-akka
-COPY application.conf /bbb-fsesl-akka/conf/application.conf.tmpl
+COPY bbb-fsesl-akka.conf /etc/bigbluebutton/bbb-fsesl-akka.conf.tmpl
 COPY logback.xml /bbb-fsesl-akka/conf/logback.xml
 
 WORKDIR /bbb-fsesl-akka
 CMD dockerize \
-    -template /bbb-fsesl-akka/conf/application.conf.tmpl:/bbb-fsesl-akka/conf/application.conf \
+    -template /etc/bigbluebutton/bbb-fsesl-akka.conf.tmpl:/etc/bigbluebutton/bbb-fsesl-akka.conf \
     gosu fsesl-akka /bbb-fsesl-akka/bin/bbb-fsesl-akka

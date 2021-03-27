@@ -14,7 +14,7 @@ USER meteor
 ENV METEOR_VERSION 1.10.2
 RUN curl -sL https://install.meteor.com?release=$METEOR_VERSION | sed s/--progress-bar/-sL/g | /bin/sh
 
-ENV TAG v2.3-alpha-7
+ENV TAG v2.3-beta-1
 RUN cd ~ \
     && svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG/bigbluebutton-html5 \
     && mv ~/bigbluebutton-html5 ~/source \
@@ -41,4 +41,4 @@ COPY settings.yml /app/programs/server/assets/app/config/settings.yml.tmpl
 ENTRYPOINT ["/entrypoint.sh"]
 
 # lets set the tag again, so that it is include in the image for later version retrieval
-ENV TAG v2.3-alpha-7
+ENV TAG v2.3-beta-1

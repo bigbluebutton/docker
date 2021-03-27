@@ -3,7 +3,7 @@ FROM mozilla/sbt:8u181_1.2.7 AS builder
 RUN apt-get update && apt-get install -y subversion
 
 # download bbb-common-message
-ENV TAG_COMMON_MESSAGE v2.3-alpha-7
+ENV TAG_COMMON_MESSAGE v2.3-beta-1
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_COMMON_MESSAGE/bbb-common-message /bbb-common-message \
     && rm -rf /bbb-common-message/.svn
 
@@ -14,7 +14,7 @@ RUN cd /bbb-common-message \
 
 # ===================================================
 
-ENV TAG v2.3-alpha-7
+ENV TAG v2.3-beta-1
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG/akka-bbb-apps /source \
     && rm -rf /source/.svn
 
@@ -39,10 +39,10 @@ RUN groupadd -g 998 bigbluebutton \
     && useradd -m -u 998 -g bigbluebutton bigbluebutton
 
 COPY --from=builder /bbb-apps-akka-0.0.4 /bbb-apps-akka
-COPY application.conf /bbb-apps-akka/conf/application.conf.tmpl
+COPY bbb-apps-akka.conf /etc/bigbluebutton/bbb-apps-akka.conf.tmpl
 COPY logback.xml /bbb-apps-akka/conf/logback.xml
 
 WORKDIR /bbb-apps-akka
 CMD dockerize \
-    -template /bbb-apps-akka/conf/application.conf.tmpl:/bbb-apps-akka/conf/application.conf \
+    -template /etc/bigbluebutton/bbb-apps-akka.conf.tmpl:/etc/bigbluebutton/bbb-apps-akka.conf \
     gosu bigbluebutton /bbb-apps-akka/bin/bbb-apps-akka

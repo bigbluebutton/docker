@@ -111,6 +111,7 @@ services:
       DISABLE_SOUND_MUTED: ${DISABLE_SOUND_MUTED:-false}
       DISABLE_SOUND_ALONE: ${DISABLE_SOUND_ALONE:-false}
       SOUNDS_LANGUAGE: ${SOUNDS_LANGUAGE:-en-us-callie}
+      ESL_PASSWORD: ${FSESL_PASSWORD:-ClueCon}
     volumes:
       - ./conf/sip_profiles:/etc/freeswitch/sip_profiles/external
       - ./conf/dialplan_public:/etc/freeswitch/dialplan/public_docker
@@ -218,6 +219,8 @@ services:
     build: mod/fsesl-akka
     depends_on:
       - redis
+    environment:
+      FSESL_PASSWORD: ${FSESL_PASSWORD:-ClueCon}
     networks:
       bbb-net:
         ipv4_address: 10.7.7.14

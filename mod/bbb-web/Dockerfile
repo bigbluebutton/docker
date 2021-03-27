@@ -3,7 +3,7 @@ FROM mozilla/sbt:8u181_1.2.7 AS builder
 RUN apt-get update && apt-get install -y subversion
 
 # download bbb-common-message
-ENV TAG_COMMON_MESSAGE v2.3-alpha-7
+ENV TAG_COMMON_MESSAGE v2.3-beta-1
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_COMMON_MESSAGE/bbb-common-message /bbb-common-message \
     && rm -rf /bbb-common-message/.svn
 
@@ -15,18 +15,18 @@ RUN cd /bbb-common-message \
 
 # install grails
 RUN cd /opt \
- && wget https://github.com/grails/grails-core/releases/download/v3.3.9/grails-3.3.9.zip \
+ && wget -q https://github.com/grails/grails-core/releases/download/v3.3.9/grails-3.3.9.zip \
  && unzip grails-3.3.9.zip
 ENV PATH="/opt/grails-3.3.9/bin:${PATH}"
 
 # install gradle
 RUN cd /opt \
- && wget https://services.gradle.org/distributions/gradle-6.7-bin.zip \
+ && wget -q https://services.gradle.org/distributions/gradle-6.7-bin.zip \
  && unzip gradle-6.7-bin
 ENV PATH="/opt/gradle-6.7/bin:${PATH}"
 
 # download bbb-common-web
-ENV TAG_COMMON_WEB v2.3-alpha-7
+ENV TAG_COMMON_WEB v2.3-beta-1
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_COMMON_WEB/bbb-common-web /bbb-common-web \
     && rm -rf /bbb-common-message/.svn
 
@@ -35,7 +35,7 @@ RUN cd /bbb-common-web \
  && ./deploy.sh
 
 # download bbb-web
-ENV TAG_WEB v2.3-alpha-7
+ENV TAG_WEB v2.3-beta-1
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_WEB/bigbluebutton-web /bbb-web \
     && rm -rf /bbb-web/.svn
 

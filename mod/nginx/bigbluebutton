@@ -6,14 +6,14 @@ map $remote_addr $freeswitch_addr {
 upstream poolhtml5servers {
   zone poolhtml5servers 32k;
   least_conn;
-  server 10.7.7.200:4100 fail_timeout=3s fail_timeout=10s max_fails=4 backup;
-  server 10.7.7.201:4101 fail_timeout=2s fail_timeout=60s max_fails=2;
-  server 10.7.7.202:4102 fail_timeout=2s fail_timeout=60s max_fails=2;
-  server 10.7.7.203:4103 fail_timeout=2s fail_timeout=60s max_fails=2;
-  server 10.7.7.204:4104 fail_timeout=2s fail_timeout=60s max_fails=2;
-  server 10.7.7.205:4105 fail_timeout=2s fail_timeout=60s max_fails=2;
-  server 10.7.7.206:4106 fail_timeout=2s fail_timeout=60s max_fails=2;
-  server 10.7.7.207:4107 fail_timeout=2s fail_timeout=60s max_fails=2;
+  server 10.7.7.200:4100 fail_timeout=10s max_fails=4 backup;
+  server 10.7.7.201:4101 fail_timeout=120s max_fails=1;
+  server 10.7.7.202:4102 fail_timeout=120s max_fails=1;
+  server 10.7.7.203:4103 fail_timeout=120s max_fails=1;
+  server 10.7.7.204:4104 fail_timeout=120s max_fails=1;
+  server 10.7.7.205:4105 fail_timeout=120s max_fails=1;
+  server 10.7.7.206:4106 fail_timeout=120s max_fails=1;
+  server 10.7.7.207:4107 fail_timeout=120s max_fails=1;
 }
 
 server {
@@ -26,42 +26,6 @@ server {
   # redirect to greenlight
   location = / {
       return 302 /b;
-  }
-
-   # Handle RTMPT (RTMP Tunneling).  Forwards requests
-   # to Red5 on port 5080
-  location ~ (/open/|/close/|/idle/|/send/|/fcs/) {
-    proxy_pass         http://core:5080;
-    proxy_redirect     off;
-    proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
-
-    client_max_body_size       10m;
-    client_body_buffer_size    128k;
-
-    proxy_connect_timeout      90;
-    proxy_send_timeout         90;
-    proxy_read_timeout         90;
-
-    proxy_buffering            off;
-    keepalive_requests         1000000000;
-  }
-
-  # Handle desktop sharing tunneling.  Forwards
-  # requests to Red5 on port 5080.
-  location /deskshare {
-     proxy_pass         http://core:5080;
-     proxy_redirect     default;
-     proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
-     client_max_body_size       10m;
-     client_body_buffer_size    128k;
-     proxy_connect_timeout      90;
-     proxy_send_timeout         90;
-     proxy_read_timeout         90;
-     proxy_buffer_size          4k;
-     proxy_buffers              4 32k;
-     proxy_busy_buffers_size    64k;
-     proxy_temp_file_write_size 64k;
-     include    fastcgi_params;
   }
 
   # Include specific rules for record and playback

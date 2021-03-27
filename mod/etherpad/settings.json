@@ -436,8 +436,8 @@
      */
     "ep_pad_ttl": {
       "ttl": 86400, // 24 hours
-      "timeout": 5,
-      "interval": 3600, // 1 hour
+      "timeout": 30,
+      "interval": 21600, // 6 hour
     },
   
     /*
@@ -458,6 +458,24 @@
     },
     */
   
+
+    /*
+      * From Etherpad 1.9.0 onwards, when Etherpad is in production mode commits from individual users are rate limited
+      *
+      * The default is to allow at most 10 changes per IP in a 1 second window.
+      * After that the change is rejected.
+      *
+      * See https://github.com/animir/node-rate-limiter-flexible/wiki/Overall-example#websocket-single-connection-prevent-flooding for more options
+      */
+    "commitRateLimiting": {
+      // duration of the rate limit window (seconds)
+      "duration": 1,
+  
+      // maximum number of chanes per IP to allow during the rate limit window
+      "points": 100
+    },
+  
+    
     /*
      * Toolbar buttons configuration.
      *
