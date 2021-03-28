@@ -1,13 +1,9 @@
 # BigBlueButton 2.3 Docker
 
-not ready for production | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigbluebutton/docker/issues)
+Version: 2.3-beta-1 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigbluebutton/docker/issues)
 
-## Important
-**This Repository - and BBB 2.3 itself - are still in an early state. Don't use it in production yet!** \
-Testing and further development welcome :)
-
-you can find a **stable bbb-docker release for 2.2** here: https://github.com/alangecker/bigbluebutton-docker
-
+## Note
+Even though it seems to be stable so far, it is still a beta, which means that you can expect broken bits and pieces in some places.
 
 ## Features
 - Easy installation
@@ -16,8 +12,7 @@ you can find a **stable bbb-docker release for 2.2** here: https://github.com/al
 - Full IPv6 support
 - Runs on any major linux distributon (Debian, Ubuntu, CentOS,...)
 
-## What does not work
-- probably a lot - it's in an alpha state!
+## What is not implemented yet
 - bbb-lti
 
 ## Install
