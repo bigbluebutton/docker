@@ -1,9 +1,14 @@
 # Changelog
 
 ## Unreleased
-- **BigBlueButton 2.3** including all its changes :tada:
-- Template based generated of docker-compose.yml #71 #42 @alangecker @trickert76
-- Removal of `core` and all dependencies on the bigbluebutton ubuntu repository. Seperate container for `bbb-web`, `fsesl-akka` and `apps-akka` #26 @alangecker
+- :tada: **BigBlueButton 2.3** including all its changes
+- Template based generated of docker-compose.yml [2.2.x#71](https://github.com/alangecker/bigbluebutton-docker/pull/71) [2.2.x#42](https://github.com/alangecker/bigbluebutton-docker/issues/42) @trickert76 @alangecker
+- Removal of `core` and all dependencies on the bigbluebutton ubuntu repository. Seperate container for `bbb-web`, `fsesl-akka` and `apps-akka` [2.2.x#26](https://github.com/alangecker/bigbluebutton-docker/issues/26) @alangecker
+- Fix recordings for Moodle BBB plugin: [2.2.x#110](https://github.com/alangecker/bigbluebutton-docker/pull/110) @danjesus
+- Fixed recordings container restart setting [2.2.x#109](https://github.com/alangecker/bigbluebutton-docker/pull/109) @manfred-w
+- Option for freeswitch language [2.2.x#85](https://github.com/alangecker/bigbluebutton-docker/pull/85) @alangecker @Daedalus3 
+- Disabled integrated coturn [#73](https://github.com/bigbluebutton/docker/issues/73)
+
 
 ## Release v2.2.31-1 (2020-12-23) #84
 - Applied v2.2.31 changes @alangecker
