@@ -53,7 +53,7 @@ RUN unzip -q /bbb-web/build/libs/bigbluebutton-0.10.0.war -d /dist
 FROM openjdk:8-jre-slim-buster
 
 RUN apt-get update && apt-get install -y \
-        wget unzip gosu socat locales \
+        wget unzip gosu locales \
         imagemagick xpdf-utils curl
 
 # set locale
