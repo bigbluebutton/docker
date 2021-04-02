@@ -12,7 +12,7 @@ if [ ! -f /tmp/bbb-kms-last-restart.txt ]; then
   exit
 fi
 
-users=$(mongo --quiet mongodb://10.7.7.6:27017/meteor --eval "db.users.count({connectionStatus: 'online'})")
+users=$(mongo --quiet mongodb://10.7.7.6:27017/meteor --eval "db.users.count()")
 echo "currently active users: $users"
 
 if [ "$users" -eq 0 ]; then

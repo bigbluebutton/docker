@@ -43,7 +43,6 @@ services:
     restart: unless-stopped
     depends_on:
         - redis
-        - libreoffice
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://10.7.7.2:8090/bigbluebutton/api || exit 1
       start_period: 2m
@@ -62,7 +61,6 @@ services:
       - bigbluebutton:/var/bigbluebutton
       - vol-freeswitch:/var/freeswitch/meetings
       - vol-kurento:/var/kurento
-      - vol-libreoffice:/var/tmp/soffice
     networks:
       bbb-net:
         ipv4_address: 10.7.7.2
@@ -238,17 +236,16 @@ services:
       bbb-net:
         ipv4_address: 10.7.7.15
 
-
-  libreoffice:
-    build: mod/libreoffice
+  jodconverter:
+    image: eugenmayer/jodconverter:rest
     restart: unless-stopped
-    volumes:
-      - vol-libreoffice:/var/tmp/soffice
-    tmpfs:
-      - /tmp
+    deploy:
+      resources:
+        limits:
+          memory: 512M
     networks:
       bbb-net:
-        ipv4_address: 10.7.7.7
+        ipv4_address: 10.7.7.20
   
   periodic:
     build: mod/periodic
@@ -375,7 +372,6 @@ volumes:
   vol-freeswitch:
   vol-kurento:
   html5-static:
-  vol-libreoffice:
 {{ if isTrue .Env.ENABLE_HTTPS_PROXY }}
   ssl_data:
 {{end}}
