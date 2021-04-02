@@ -94,7 +94,7 @@ COPY mocked-ps /usr/bin/ps
 
 # add entrypoint and templates
 COPY entrypoint.sh /entrypoint.sh
-COPY bigbluebutton.properties /usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties.tmpl
+COPY bbb-web.properties /etc/bigbluebutton/bbb-web.properties.tmpl
 COPY turn-stun-servers.xml /usr/share/bbb-web/WEB-INF/classes/spring/turn-stun-servers.xml.tmpl
 COPY logback.xml /usr/share/bbb-web/WEB-INF/classes/logback.xml
 COPY office-convert.sh /usr/share/bbb-libreoffice-conversion/convert.sh
