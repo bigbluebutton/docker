@@ -36,7 +36,7 @@
     <!--<param name="enable-100rel" value="true"/>-->
     <!--<param name="disable-srv503" value="true"/>-->
     <!-- This could be set to "passive" -->
-    <param name="local-network-acl" value="localnet.auto"/>
+    <param name="local-network-acl" value="none"/>
     <param name="manage-presence" value="false"/>
 
     <!-- Added for Microsoft Edge support 

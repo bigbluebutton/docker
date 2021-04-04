@@ -3,7 +3,7 @@ FROM mozilla/sbt:8u181_1.2.7 AS builder
 RUN apt-get update && apt-get install -y subversion
 
 # download bbb-common-message
-ENV TAG_COMMON_MESSAGE v2.3-beta-1
+ENV TAG_COMMON_MESSAGE v2.3-beta-2
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_COMMON_MESSAGE/bbb-common-message /bbb-common-message \
     && rm -rf /bbb-common-message/.svn
 
@@ -26,7 +26,7 @@ RUN cd /opt \
 ENV PATH="/opt/gradle-6.7/bin:${PATH}"
 
 # download bbb-common-web
-ENV TAG_COMMON_WEB v2.3-beta-1
+ENV TAG_COMMON_WEB v2.3-beta-2
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_COMMON_WEB/bbb-common-web /bbb-common-web \
     && rm -rf /bbb-common-message/.svn
 
@@ -35,7 +35,7 @@ RUN cd /bbb-common-web \
  && ./deploy.sh
 
 # download bbb-web
-ENV TAG_WEB v2.3-beta-1
+ENV TAG_WEB v2.3-beta-2
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_WEB/bigbluebutton-web /bbb-web \
     && rm -rf /bbb-web/.svn
 
@@ -53,8 +53,8 @@ RUN unzip -q /bbb-web/build/libs/bigbluebutton-0.10.0.war -d /dist
 FROM openjdk:8-jre-slim-buster
 
 RUN apt-get update && apt-get install -y \
-        wget unzip gosu socat locales \
-        imagemagick xpdf-utils 
+        wget unzip gosu locales \
+        imagemagick xpdf-utils curl
 
 # set locale
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
@@ -94,8 +94,9 @@ COPY mocked-ps /usr/bin/ps
 
 # add entrypoint and templates
 COPY entrypoint.sh /entrypoint.sh
-COPY bigbluebutton.properties /usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties.tmpl
+COPY bbb-web.properties /etc/bigbluebutton/bbb-web.properties.tmpl
 COPY turn-stun-servers.xml /usr/share/bbb-web/WEB-INF/classes/spring/turn-stun-servers.xml.tmpl
 COPY logback.xml /usr/share/bbb-web/WEB-INF/classes/logback.xml
+COPY office-convert.sh /usr/share/bbb-libreoffice-conversion/convert.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
