@@ -147,7 +147,7 @@ services:
         ipv4_address: 10.7.7.4
 
   redis:
-    image: redis:6.0-alpine
+    image: redis:6.2-alpine
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -175,7 +175,7 @@ services:
         ipv4_address: 10.7.7.6
 
   kurento:
-    image: kurento/kurento-media-server:6.15
+    image: kurento/kurento-media-server:6.16
     restart: unless-stopped
     environment: 
       KMS_STUN_IP: ${STUN_IP}
