@@ -24,6 +24,10 @@ server {
   absolute_redirect off;
   root /www/;
   
+  # opt-out of google's floc tracking
+  # https://www.eff.org/deeplinks/2021/03/googles-floc-terrible-idea
+  add_header Permissions-Policy "interest-cohort=()";
+
   # redirect to greenlight
   location = / {
       return 302 /b;
