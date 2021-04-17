@@ -3,9 +3,11 @@ FROM etherpad/etherpad:1.8.13
 USER root
 
 RUN apt-get update \
-    && apt-get install -y git
+    && apt-get install -y git curl
 
 USER etherpad
+
+ENV TAG v2.3-alpha-4
 
 RUN npm install  \
     git+https://git@github.com/pedrobmarin/ep_pad_ttl.git \
@@ -22,5 +24,6 @@ COPY --chown=etherpad:0 ./bbb-etherpad-skin /opt/etherpad-lite/src/static/skins/
 COPY --chown=etherpad:0 ./bbb-etherpad-plugin /opt/etherpad-lite/node_modules/ep_bigbluebutton_patches
 
 COPY settings.json /opt/etherpad-lite/settings.json
+COPY etherpad-export.sh /etherpad-export.sh
 COPY  entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
