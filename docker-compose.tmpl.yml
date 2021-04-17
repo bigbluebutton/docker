@@ -126,7 +126,7 @@ services:
     volumes:
       - bigbluebutton:/var/bigbluebutton
       - html5-static:/html5-static:ro
-      - ${DEFAULT_PRESENTATION:-/dev/null}:/etc/nginx/html/default.pdf
+      - ${DEFAULT_PRESENTATION:-/dev/null}:/www/default.pdf
     network_mode: host
     extra_hosts:
       - "host.docker.internal:10.7.7.1"
