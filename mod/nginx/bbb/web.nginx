@@ -3,7 +3,7 @@
 		proxy_http_version 1.1;
 
 		location /bigbluebutton {
-			proxy_pass         http://core:8090;
+			proxy_pass         http://bbb-web:8090;
 	       		proxy_redirect     default;
         	        proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
 
@@ -13,7 +13,7 @@
 
 
 		location ~ "^\/bigbluebutton\/presentation\/(?<prestoken>[a-zA-Z0-9_-]+)/upload$" {
-	        	proxy_pass         http://core:8090;
+	        	proxy_pass         http://bbb-web:8090;
 			proxy_redirect     default;
 			proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
 
@@ -53,14 +53,14 @@
 			if ($arg_presFilename !~ "^[0-9a-f]+-[0-9]+\.[0-9a-zA-Z]+$") {
 				return 404;
 			}
-			proxy_pass         http://core:8090$uri$is_args$args;
+			proxy_pass         http://bbb-web:8090$uri$is_args$args;
 			proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
 			# Workaround IE refusal to set cookies in iframe
 			add_header P3P 'CP="No P3P policy available"';
 		}
 
 		location = /bigbluebutton/presentation/checkPresentation {
-			proxy_pass         http://core:8090;
+			proxy_pass         http://bbb-web:8090;
 	       		proxy_redirect     default;
         	        proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
 
@@ -85,7 +85,7 @@
 		# and make sure to add sessionToken param in the request URI
 		location = /bigbluebutton/connection/checkAuthorization {
 			internal;
-			proxy_pass               http://core:8090;
+			proxy_pass               http://bbb-web:8090;
 			proxy_pass_request_body  off;
 			proxy_set_header         Content-Length "";
 			proxy_set_header         X-Original-URI $request_uri;
@@ -93,7 +93,7 @@
 
 		location = /bigbluebutton/connection/validatePad {
 			internal;
-			proxy_pass               http://core:8090;
+			proxy_pass               http://bbb-web:8090;
 			proxy_pass_request_body  off;
 			proxy_set_header         Content-Length "";
 			proxy_set_header         X-Original-URI $request_uri;
@@ -130,7 +130,7 @@
 
         location = /bigbluebutton/textTrack/validateAuthToken {
             internal;
-            proxy_pass         http://core:8090;
+            proxy_pass         http://bbb-web:8090;
             proxy_redirect     default;
             proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
 
