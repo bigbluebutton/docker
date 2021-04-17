@@ -20,7 +20,7 @@ public:
     appName: BigBlueButton HTML5 Client
     bbbServerVersion: 2.3-dev-docker
     copyright: '©2021 BigBlueButton Inc.'
-    html5ClientBuild: "1588-docker"
+    html5ClientBuild: "1617-docker"
     helpLink: https://bigbluebutton.org/html5/
     lockOnJoin: true
     cdn: ''

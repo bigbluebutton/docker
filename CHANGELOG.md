@@ -2,7 +2,7 @@
 
 ## Unreleased
 - :tada: **BigBlueButton 2.3** including all its changes
-- Template based generated of docker-compose.yml [2.2.x#71](https://github.com/alangecker/bigbluebutton-docker/pull/71) [2.2.x#42](https://github.com/alangecker/bigbluebutton-docker/issues/42) @trickert76 @alangecker
+- Template based generation of docker-compose.yml [2.2.x#71](https://github.com/alangecker/bigbluebutton-docker/pull/71) [2.2.x#42](https://github.com/alangecker/bigbluebutton-docker/issues/42) @trickert76 @alangecker
 - Removal of `core` and all dependencies on the bigbluebutton ubuntu repository. Seperate container for `bbb-web`, `fsesl-akka` and `apps-akka` [2.2.x#26](https://github.com/alangecker/bigbluebutton-docker/issues/26) @alangecker
 - Fix recordings for Moodle BBB plugin: [2.2.x#110](https://github.com/alangecker/bigbluebutton-docker/pull/110) @danjesus
 - Fixed recordings container restart setting [2.2.x#109](https://github.com/alangecker/bigbluebutton-docker/pull/109) @manfred-w
