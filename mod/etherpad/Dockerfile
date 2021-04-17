@@ -7,7 +7,9 @@ RUN apt-get update \
 
 USER etherpad
 
-ENV TAG v2.3-alpha-4
+# only used to trigger a fresh run of the npm install
+# command without caching
+ENV TAG v2.3-beta-4
 
 RUN npm install  \
     git+https://git@github.com/pedrobmarin/ep_pad_ttl.git \
