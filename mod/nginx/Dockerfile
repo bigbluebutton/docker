@@ -11,7 +11,7 @@ ENV REACT_APP_BBB_PLAYBACK_BUILD=$TAG_PLAYBACK
 # for the latest bbb-playback version shipped with 2.3-alpha-6
 # so we use the master branch 
 # RUN svn checkout https://github.com/bigbluebutton/bbb-playback/tags/$TAG_PLAYBACK /bbb-playback
-RUN git clone https://github.com/bigbluebutton/bbb-playback.git /bbb-playback && cd /bbb-playback && git checkout 4cec62c4f5332911ac035969b282a53d31374bce
+RUN git clone https://github.com/bigbluebutton/bbb-playback.git /bbb-playback && cd /bbb-playback && git checkout a9d3b7b6648fb5e85e012e73d7e7a2684d02f215
 RUN cd /bbb-playback && npm install && npm run-script build
 
 # --------------------

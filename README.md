@@ -1,6 +1,6 @@
 # 📦 BigBlueButton 2.3 Docker
 
-Version: 2.3-beta-4 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigbluebutton/docker/issues)
+Version: 2.3-beta-5 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigbluebutton/docker/issues)
 
 ## Note
 Even though it seems to be stable so far, it is still a beta, which means that you can expect broken bits and pieces in some places.
