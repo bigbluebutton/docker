@@ -16,8 +16,8 @@ elif (( $# == 1 )); then
 fi;
 
 
-source=${1}
-dest=${2}
+source="${1}"
+dest="${2}"
 
 #If output format is missing, define PDF
 convertTo="${3:-pdf}"
@@ -25,6 +25,6 @@ convertTo="${3:-pdf}"
 curl -v -X POST "http://jodconverter:8080/lool/convert-to/$convertTo" \
     -H "accept: application/octet-stream" \
     -H "Content-Type: multipart/form-data" \
-    -F "data=@${source}" > ${dest}
+    -F "data=@${source}" > "${dest}"
 
 exit 0

@@ -20,7 +20,7 @@ public:
     appName: BigBlueButton HTML5 Client
     bbbServerVersion: 2.3-dev-docker
     copyright: '©2021 BigBlueButton Inc.'
-    html5ClientBuild: "1643-docker"
+    html5ClientBuild: "1654-docker"
     helpLink: https://bigbluebutton.org/html5/
     lockOnJoin: true
     cdn: ''
@@ -168,6 +168,7 @@ public:
       # subscribe reattempt increases the reconnection timer up to this
       maxTimeout: 60000
     screenshare:
+      bitrate: 1500
       mediaTimeouts:
         maxConnectionAttempts: 2
         # Base screen media timeout (send|recv)
@@ -433,10 +434,9 @@ public:
     sdpSemantics: 'unified-plan'
   stats:
     enabled: true
-    interval: 2000
-    length: 5
+    interval: 10000
     timeout: 30000
-    log: false
+    log: true
     notification:
       warning: false
       error: true
@@ -608,6 +608,8 @@ public:
       flushOnClose: true
       logTag: ''
 private:
+  analytics:
+    includeChat: true
   app:
     host: 0.0.0.0
     localesUrl: /locale-list
