@@ -73,7 +73,7 @@
     <param name="ext-sip-ip" value="auto-nat"/>
     -->
 
-    <param name="rtp-ip" value="$${local_ip_v4}"/>
+    <param name="rtp-ip" value="$${external_ip_v4}"/>
     <param name="sip-ip" value="$${local_ip_v4}"/>
     <param name="ext-rtp-ip" value="$${external_rtp_ip}"/>
     <param name="ext-sip-ip" value="$${external_sip_ip}"/>
