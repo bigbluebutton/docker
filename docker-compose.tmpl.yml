@@ -237,7 +237,7 @@ services:
         ipv4_address: 10.7.7.15
 
   jodconverter:
-    image: eugenmayer/jodconverter:rest
+    build: mod/jodconverter
     restart: unless-stopped
     deploy:
       resources:
