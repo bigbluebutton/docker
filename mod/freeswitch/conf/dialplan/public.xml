@@ -1,6 +1,5 @@
 <!--
     NOTICE:
-
     This context is usually accessed via the external sip profile listening on port 5080.
     
     It is recommended to have separate inbound and outbound contexts.  Not only for security
