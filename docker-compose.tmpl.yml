@@ -215,6 +215,7 @@ services:
 
   fsesl-akka:
     build: mod/fsesl-akka
+    restart: unless-stopped
     depends_on:
       - redis
     environment:
@@ -225,6 +226,7 @@ services:
 
   apps-akka:
     build: mod/apps-akka
+    restart: unless-stopped
     depends_on:
       - redis
     environment:
