@@ -202,6 +202,7 @@ services:
       FREESWITCH_IP: host.docker.internal
       FREESWITCH_SIP_IP: ${EXTERNAL_IPv4}
       ESL_IP: host.docker.internal
+      ESL_PASSWORD: ${FSESL_PASSWORD:-ClueCon}
       LOG_LEVEL: info
       NODE_CONFIG: '{"kurento":[{"ip":"${EXTERNAL_IPv4}","url":"ws://kurento:8888/kurento"}]}'
     ports:

@@ -35,7 +35,7 @@ RUN apt-get update && apt-get install -y \
 # git sparse-checkout is not yet available with buster and there
 # is no other sane way of downloading a single directory via git
 
-ENV TAG v2.3-rc-1
+ENV TAG v2.3.0
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG/bbb-voice-conference/config/freeswitch/conf /etc/freeswitch \
     && rm -rf /etc/freeswitch/.svn
 

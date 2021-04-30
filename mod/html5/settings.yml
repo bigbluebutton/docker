@@ -4,9 +4,9 @@ public:
     desktopFontSize: 14px
     audioChatNotification: false
     autoJoin: true
-    listenOnlyMode: {{ .Env.LISTEN_ONLY_MODE }}
+    listenOnlyMode: true
     forceListenOnly: false
-    skipCheck: {{ .Env.DISABLE_ECHO_TEST }}
+    skipCheck: false
     skipCheckOnJoin: false
     #
     # Allow users to change microphone/speaker dinamically
@@ -16,11 +16,11 @@ public:
     # "media.setsinkid.enabled" to make it work properly
     # enableDynamicAudioDeviceSelection: true
     #
-    clientTitle: {{ .Env.CLIENT_TITLE }}
+    clientTitle: BigBlueButton
     appName: BigBlueButton HTML5 Client
-    bbbServerVersion: 2.3-dev-docker
+    bbbServerVersion: 2.3-dev
     copyright: '©2021 BigBlueButton Inc.'
-    html5ClientBuild: "1654-docker"
+    html5ClientBuild: "1669-docker"
     helpLink: https://bigbluebutton.org/html5/
     lockOnJoin: true
     cdn: ''
@@ -360,6 +360,7 @@ public:
     enabled: true
     max_custom: 5
     allowDragAndDropFile: false
+    maxTypedAnswerLength: 45
   captions:
     enabled: true
     enableDictation: false
@@ -463,8 +464,6 @@ public:
     panZoomThrottle: 32
     restoreOnUpdate: false
     uploadEndpoint: '/bigbluebutton/presentation/upload'
-    uploadSizeMin: 0
-    uploadSizeMax: 50000000
     uploadValidMimeTypes:
       - extension: .pdf
         mime: application/pdf
@@ -504,6 +503,7 @@ public:
         mime: image/png
   selectRandomUser:
     enabled: true
+    countdown: false
   user:
     role_moderator: MODERATOR
     role_viewer: VIEWER
