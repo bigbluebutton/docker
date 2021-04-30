@@ -4,9 +4,9 @@ public:
     desktopFontSize: 14px
     audioChatNotification: false
     autoJoin: true
-    listenOnlyMode: true
+    listenOnlyMode: {{ .Env.LISTEN_ONLY_MODE }}
     forceListenOnly: false
-    skipCheck: false
+    skipCheck: {{ .Env.DISABLE_ECHO_TEST }}
     skipCheckOnJoin: false
     #
     # Allow users to change microphone/speaker dinamically
@@ -16,9 +16,9 @@ public:
     # "media.setsinkid.enabled" to make it work properly
     # enableDynamicAudioDeviceSelection: true
     #
-    clientTitle: BigBlueButton
+    clientTitle: {{ .Env.CLIENT_TITLE }}
     appName: BigBlueButton HTML5 Client
-    bbbServerVersion: 2.3-dev
+    bbbServerVersion: 2.3-dev-docker
     copyright: '©2021 BigBlueButton Inc.'
     html5ClientBuild: "1669-docker"
     helpLink: https://bigbluebutton.org/html5/
