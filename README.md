@@ -24,7 +24,7 @@ Version: 2.3.0 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigblue
     4. Ensure docker-compose works and that you use a version ≥ 1.28 : `$ docker-compose --version`
 2. Clone this repository
    ```sh
-   $ git clone --recurse-submodules https://github.com/bigbluebutton/docker.git bbb-docker
+   $ git clone -b main --recurse-submodules https://github.com/bigbluebutton/docker.git bbb-docker
    $ cd bbb-docker
    ```
 3. Run setup:
