@@ -115,9 +115,17 @@ fi
 RANDOM_1=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
 RANDOM_2=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
 RANDOM_3=$(head /dev/urandom | tr -dc a-f0-9 | head -c 128)
+if [ ! "$greenlight" == "y" ]
+then
+    RANDOM_4=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
+fi
 sed -i "s/SHARED_SECRET=.*/SHARED_SECRET=$RANDOM_1/" .env
 sed -i "s/ETHERPAD_API_KEY=.*/ETHERPAD_API_KEY=$RANDOM_2/" .env
 sed -i "s/RAILS_SECRET=.*/RAILS_SECRET=$RANDOM_3/" .env
+if [ ! "$greenlight" == "y" ]
+then
+    sed -i "s/POSTGRESQL_SECRET=.*/POSTGRESQL_SECRET=$RANDOM_4/" .env
+fi
 
 ./scripts/generate-compose
 
