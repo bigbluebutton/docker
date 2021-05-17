@@ -346,7 +346,7 @@ services:
     environment:
       POSTGRES_DB: greenlight
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: ${POSTGRESQL_SECRET}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
