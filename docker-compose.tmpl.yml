@@ -7,7 +7,11 @@ version: '3.6'
 
 # html5 templates
 x-html5-backend: &html5backend
-  build: mod/html5
+  build:
+    context: mod/html5
+    args:
+      - BBB_REPO_URL={{ .Env.BBB_REPO_URL }}
+      - BBB_BRANCH_OR_TAG={{ .Env.BBB_BRANCH_OR_TAG }}
   image: bbb-html5
   restart: unless-stopped
   depends_on:
@@ -39,7 +43,11 @@ x-html5-frontend: &html5frontend
 
 services:
   bbb-web:
-    build: mod/bbb-web
+    build:
+      context: mod/bbb-web
+      args:
+        - BBB_REPO_URL={{ .Env.BBB_REPO_URL }}
+        - BBB_BRANCH_OR_TAG={{ .Env.BBB_BRANCH_OR_TAG }}
     restart: unless-stopped
     depends_on:
         - redis
@@ -92,7 +100,11 @@ services:
 
 
   freeswitch:
-    build: mod/freeswitch
+    build:
+      context: mod/freeswitch
+      args:
+        - BBB_REPO_URL={{ .Env.BBB_REPO_URL }}
+        - BBB_BRANCH_OR_TAG={{ .Env.BBB_BRANCH_OR_TAG }}
     restart: unless-stopped
     cap_add:
       - IPC_LOCK
@@ -215,7 +227,11 @@ services:
         ipv4_address: 10.7.7.10
 
   fsesl-akka:
-    build: mod/fsesl-akka
+    build:
+      context: mod/fsesl-akka
+      args:
+        - BBB_REPO_URL={{ .Env.BBB_REPO_URL }}
+        - BBB_BRANCH_OR_TAG={{ .Env.BBB_BRANCH_OR_TAG }}
     restart: unless-stopped
     depends_on:
       - redis
@@ -226,7 +242,11 @@ services:
         ipv4_address: 10.7.7.14
 
   apps-akka:
-    build: mod/apps-akka
+    build:
+      context: mod/apps-akka
+      args:
+        - BBB_REPO_URL={{ .Env.BBB_REPO_URL }}
+        - BBB_BRANCH_OR_TAG={{ .Env.BBB_BRANCH_OR_TAG }}
     restart: unless-stopped
     depends_on:
       - redis
@@ -265,7 +285,11 @@ services:
 {{ if isTrue .Env.ENABLE_RECORDING }}
   # recordings
   recordings:
-    build: mod/recordings
+    build:
+      context: mod/recordings
+      args:
+        - BBB_REPO_URL={{ .Env.BBB_REPO_URL }}
+        - BBB_BRANCH_OR_TAG={{ .Env.BBB_BRANCH_OR_TAG }}
     restart: unless-stopped
     depends_on:
       - redis
@@ -286,7 +310,11 @@ services:
 {{ if isTrue .Env.ENABLE_WEBHOOKS }}
   # webhooks
   webhooks:
-    build: mod/webhooks
+    build:
+      context: mod/webhooks
+      args:
+        - BBB_REPO_URL={{ .Env.BBB_REPO_URL }}
+        - BBB_BRANCH_OR_TAG={{ .Env.BBB_BRANCH_OR_TAG }}
     restart: unless-stopped
     environment:
       DOMAIN: ${DOMAIN}

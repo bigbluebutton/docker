@@ -30,5 +30,7 @@ docker run  \
     -e ENABLE_PROMETHEUS_EXPORTER=${ENABLE_PROMETHEUS_EXPORTER:-false} \
     -e NUMBER_OF_BACKEND_NODEJS_PROCESSES=${NUMBER_OF_BACKEND_NODEJS_PROCESSES:-1} \
     -e NUMBER_OF_FRONTEND_NODEJS_PROCESSES=${NUMBER_OF_FRONTEND_NODEJS_PROCESSES:-1} \
+    -e BBB_REPO_URL=${BBB_REPO_URL:-https://github.com/bigbluebutton/bigbluebutton} \
+    -e BBB_BRANCH_OR_TAG=${BBB_BRANCH_OR_TAG:-develop} \
     jwilder/dockerize -template /docker-compose.tmpl.yml \
     > docker-compose.yml

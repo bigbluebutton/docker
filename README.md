@@ -8,6 +8,7 @@ Version: 2.3.0 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigblue
 - Fully automated HTTPS certificates
 - Full IPv6 support
 - Runs on any major linux distributon (Debian, Ubuntu, CentOS,...)
+- BBB development support: Custom config of branch/tag and repo (e.g. also a fork)
 
 ## What is not implemented yet
 - bbb-lti
@@ -45,6 +46,14 @@ Version: 2.3.0 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigblue
     ```bash
     $ docker-compose exec greenlight bundle exec rake admin:create
     ```
+7. If you want to build a different tag/branch or use another repo or fork:
+   Add the following to your .env
+   ```
+   BBB_REPO_URL=https://github.com/longliveenduro/bigbluebutton.git
+   BBB_BRANCH_OR_TAG=develop
+   # or
+   # BBB_BRANCH_OR_TAG=tags/v2.3.1
+   ```
 
 ## Further How-To's
 - [Upgrading](docs/upgrading.md)

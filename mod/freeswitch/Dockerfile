@@ -1,8 +1,19 @@
 FROM debian:buster-slim
 
+ARG BBB_REPO_URL
+ENV BBB_REPO_URL $BBB_REPO_URL
+ARG BBB_BRANCH_OR_TAG
+ENV BBB_BRANCH_OR_TAG $BBB_BRANCH_OR_TAG
+
+# upgrade git so we have the sparse checkout and clone with filter feature
+RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> /etc/apt/sources.list \
+    && apt-get update \
+    && apt-get install -y git \
+    && apt-get clean all
+
 # add freeswitch repo
 RUN apt-get update && \
-apt-get install -y --no-install-recommends subversion curl wget ca-certificates gnupg gnupg2 lsb-release unzip && \
+apt-get install -y --no-install-recommends curl wget ca-certificates gnupg gnupg2 lsb-release unzip && \
 curl -k https://files.freeswitch.org/repo/deb/debian-release/fsstretch-archive-keyring.asc | apt-key add - && \
 echo 'deb http://files.freeswitch.org/repo/deb/debian-release/ buster main' > /etc/apt/sources.list.d/freeswitch.list
 
@@ -29,15 +40,12 @@ RUN apt-get update && apt-get install -y \
         freeswitch-sounds-en-us-callie \
         iptables
 
-
-# -- get official bbb freeswitch config
-# we use svn for retrieving the files since the repo is quite large,
-# git sparse-checkout is not yet available with buster and there
-# is no other sane way of downloading a single directory via git
-
-ENV TAG v2.3.0
-RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG/bbb-voice-conference/config/freeswitch/conf /etc/freeswitch \
-    && rm -rf /etc/freeswitch/.svn
+# get official bbb freeswitch config
+# clone only bbb-voice-conference/config/freeswitch/conf subfolder
+RUN git clone --filter=blob:none --no-checkout $BBB_REPO_URL \
+    && cd bigbluebutton \
+    && git sparse-checkout set bbb-voice-conference/config/freeswitch/conf \
+    && git checkout $BBB_BRANCH_OR_TAG -b docker-build
 
 # the current available freeswitch-mod-opusfile is broken,
 # it can't write any .opus files. The fix provided in
@@ -50,9 +58,14 @@ RUN wget -O /usr/lib/freeswitch/mod/mod_opusfile.so https://github.com/bbb-pkg/b
     && dpkg -i /tmp/libopusenc0_0.2.1-1bbb1_amd64.deb \
     && rm /tmp/libopusenc0_0.2.1-1bbb1_amd64.deb
 
+RUN ls bigbluebutton/bbb-voice-conference/config/freeswitch/conf/
+RUN cp -R bigbluebutton/bbb-voice-conference/config/freeswitch/conf/* /etc/freeswitch
+
+RUN ls /etc/freeswitch
+
 # add modifications
 COPY ./conf /etc/freeswitch/
-
+RUN ls /etc/freeswitch
 
 COPY ./entrypoint.sh /entrypoint.sh
 ENTRYPOINT /entrypoint.sh

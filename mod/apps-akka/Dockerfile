@@ -1,27 +1,30 @@
 FROM mozilla/sbt:8u181_1.2.7 AS builder
 
-RUN apt-get update && apt-get install -y subversion
+ARG BBB_REPO_URL
+ENV BBB_REPO_URL $BBB_REPO_URL
+ARG BBB_BRANCH_OR_TAG
+ENV BBB_BRANCH_OR_TAG $BBB_BRANCH_OR_TAG
 
-# download bbb-common-message
-ENV TAG_COMMON_MESSAGE v2.3.0
-RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_COMMON_MESSAGE/bbb-common-message /bbb-common-message \
-    && rm -rf /bbb-common-message/.svn
+# upgrade git so we have the sparse checkout and clone with filter feature
+RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> /etc/apt/sources.list \
+    && apt-get update \
+    && apt-get install -y git \
+    && apt-get clean all
 
-# compile bbb-common-message
-RUN cd /bbb-common-message \
- && ./deploy.sh 
+# clone only bbb-common-message and akkas-bbb-apps subfolder
+RUN git clone --filter=blob:none --no-checkout $BBB_REPO_URL \
+    && cd bigbluebutton \
+    && git sparse-checkout set bbb-common-message akka-bbb-apps \
+    && git checkout $BBB_BRANCH_OR_TAG -b docker-build
 
+# compile and locally publish bbb-common-message
+RUN cd bigbluebutton/bbb-common-message \
+    && ./deploy.sh
 
-# ===================================================
-
-ENV TAG v2.3.0
-RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG/akka-bbb-apps /source \
-    && rm -rf /source/.svn
-
-# compile and unzip bin
-RUN cd /source \
+# compile and package akka-bbb-apps
+RUN cd bigbluebutton/akka-bbb-apps \
     && sbt universal:packageBin \
-    && unzip /source/target/universal/bbb-apps-akka-0.0.4.zip -d /
+    && unzip target/universal/bbb-apps-akka-0.0.4.zip -d /
 
 # ===================================================
 
