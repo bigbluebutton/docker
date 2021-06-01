@@ -5,6 +5,7 @@ Version: 2.3.0 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigblue
 ## Features
 - Easy installation
 - Greenlight included
+- TURN server included
 - Fully automated HTTPS certificates
 - Full IPv6 support
 - Runs on any major linux distributon (Debian, Ubuntu, CentOS,...)
