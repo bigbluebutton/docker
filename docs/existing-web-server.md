@@ -15,7 +15,39 @@ At this point, choose one of the following sections according to which Web serve
 Eventually, BigBlueButton should be publicly accessible on `https://bbb.example.com/`. If you chose to install Greenlight, then the previous URL should allow you to open its home page. The APIs will be accessible through `https://bbb.example.com/bigbluebutton/`.
 
 ## Integration with nginx
-> *Not written yet. can you imagine writing down some instructions?*
+1. Add the following directives to the _https_ virtual host `bbb.example.com` 
+```
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    '' close;
+}
+
+server {
+  server_name bbb.example.com;
+
+  listen 80;
+  listen 443 ssl;
+
+  ssl_certificate /etc/letsencrypt/live/bbb.example.com/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/bbb.example.com/privkey.pem;
+
+  access_log  /var/log/nginx/bigbluebutton.access.log;
+  error_log /var/log/nginx/bigbluebutton.error.log;
+
+  location / {
+    proxy_pass http://127.0.0.1:8080;
+    proxy_http_version 1.1;
+    proxy_set_header Host $http_host;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  }
+}
+```
+2. Restart nginx
+```
+service nginx restart
+```
 
 ## Integration with Apache
 1. Make sure that the following Apache modules are in use: `proxy`, `rewrite`, `proxy_http`, `proxy_wstunnel`. On _apache2_, the following command activates these modules,  whenever they are not already enabled:
