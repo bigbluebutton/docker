@@ -33,10 +33,20 @@ while [[ ! $https_proxy =~ ^(y|n)$ ]]; do
 done
 
 coturn=""
-if [ "$https_proxy" == "y" ]
+while [[ ! $coturn =~ ^(y|n)$ ]]; do
+    read -p "Should a coturn be included? (y/n): " coturn
+done
+if [ "$coturn" == "y" ] && [ ! "$https_proxy" == "y" ]
 then
-    while [[ ! $coturn =~ ^(y|n)$ ]]; do
-        read -p "Should a coturn be included? (y/n): " coturn
+    echo "Coturn needs TLS to function properly."
+    echo "   Since automatic HTTPS Proxy is disabled,"
+    echo "   you must provide a relative or absolute path"
+    echo "   to your certificates."
+    while [[ -z "$CERTPATH" ]]; do
+        read -p "Please enter path to cert.pem: " CERTPATH 
+    done
+    while [[ -z "$KEYPATH" ]]; do
+        read -p "Please enter path to key.pem: " KEYPATH 
     done
 fi
 
@@ -122,6 +132,12 @@ then
     sed -i "s/.*STUN_IP=.*/STUN_IP=$EXTERNAL_IPv4/" .env
 else
     sed -i "s/ENABLE_COTURN.*/#ENABLE_COTURN=true/" .env
+fi
+
+if [ -n "$CERTPATH" ] && [ -n "$KEYPATH" ]
+then
+    sed -i "s/#COTURN_TLS_CERT_PATH=.*/COTURN_TLS_CERT_PATH=$CERTPATH/" .env
+    sed -i "s/#COTURN_TLS_KEY_PATH=.*/COTURN_TLS_KEY_PATH=$KEYPATH/" .env
 fi
 
 if [ "$prometheus_exporter" == "y" ]
