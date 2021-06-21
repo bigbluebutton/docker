@@ -27,3 +27,8 @@ location /b/cable {
   client_body_timeout 6h;
   send_timeout        6h;
 }
+
+# this is necessary for the preupload_presentation feature
+location /rails/active_storage {
+  return 301 /b$request_uri;
+}
