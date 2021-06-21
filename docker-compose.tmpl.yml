@@ -319,6 +319,28 @@ services:
     network_mode: host
 {{end}}
 
+{{ if isTrue .Env.ENABLE_COTURN }}
+  # coturn
+  coturn:
+    image: instrumentisto/coturn:4.5
+    restart: unless-stopped
+    command:
+      - "--external-ip=${EXTERNAL_IPv4}/${EXTERNAL_IPv4}"
+      - "--external-ip=${EXTERNAL_IPv6:-::1}/${EXTERNAL_IPv6:-::1}"
+      - "--static-auth-secret=${TURN_SECRET}"
+    volumes:
+      {{ if isTrue .Env.ENABLE_HTTPS_PROXY }}
+      - ssl_data:/etc/resty-auto-ssl
+      {{else}}
+      - ${COTURN_TLS_CERT_PATH}:/tmp/cert.pem
+      - ${COTURN_TLS_KEY_PATH}:/tmp/key.pem
+      {{end}}
+      - ./mod/coturn/entrypoint.sh:/usr/local/bin/docker-entrypoint.sh
+      - ./mod/coturn/turnserver.conf:/etc/coturn/turnserver.conf
+    network_mode: host
+{{end}}
+
+
 {{ if isTrue .Env.ENABLE_GREENLIGHT }}
   # greenlight
   greenlight:

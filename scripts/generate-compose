@@ -19,6 +19,20 @@ if [ -z "$EXTERNAL_IPv4" ]; then
     exit 1
 fi
 
+if [ "$ENABLE_COTURN" == true ]; then
+  if [ -z "$ENABLE_HTTPS_PROXY" ] && [ -z "$COTURN_TLS_CERT_PATH" ]; then
+    echo "ERROR: coturn requires TLS certificates."
+    echo "Either enable the https proxy for certificate retrival"
+    echo "or provide a path to your certificates in .env file."
+    exit 1
+  fi
+  if [ -z "$ENABLE_HTTPS_PROXY" ] && [ "$DEV_MODE" == true ]; then
+    echo "ERROR: the https proxy can't get a certificate if ran locally and therefor coturn will never start"
+    echo "you should disable coturn in .env"
+    exit 1
+  fi
+fi
+
 docker run  \
     --rm  \
     -v $(pwd)/docker-compose.tmpl.yml:/docker-compose.tmpl.yml \
@@ -26,6 +40,7 @@ docker run  \
     -e ENABLE_RECORDING=${ENABLE_RECORDING:-false} \
     -e ENABLE_HTTPS_PROXY=${ENABLE_HTTPS_PROXY:-false} \
     -e ENABLE_WEBHOOKS=${ENABLE_WEBHOOKS:-false} \
+    -e ENABLE_COTURN=${ENABLE_COTURN:-false} \
     -e ENABLE_GREENLIGHT=${ENABLE_GREENLIGHT:-false} \
     -e ENABLE_PROMETHEUS_EXPORTER=${ENABLE_PROMETHEUS_EXPORTER:-false} \
     -e NUMBER_OF_BACKEND_NODEJS_PROCESSES=${NUMBER_OF_BACKEND_NODEJS_PROCESSES:-1} \
