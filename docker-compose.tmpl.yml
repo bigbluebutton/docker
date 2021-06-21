@@ -330,7 +330,7 @@ services:
       DB_HOST: postgres
       DB_NAME: greenlight
       DB_USERNAME: postgres
-      DB_PASSWORD: password
+      DB_PASSWORD: ${POSTGRESQL_SECRET:-password}
       {{ if isTrue .Env.DEV_MODE }}
       BIGBLUEBUTTON_ENDPOINT: http://10.7.7.1:8080/bigbluebutton/api/
       {{else}}
@@ -346,7 +346,7 @@ services:
     environment:
       POSTGRES_DB: greenlight
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: ${POSTGRESQL_SECRET:-password}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
