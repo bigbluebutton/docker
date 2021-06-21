@@ -26,6 +26,7 @@ Version: 2.3.0 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigblue
    ```sh
    $ git clone -b main --recurse-submodules https://github.com/bigbluebutton/docker.git bbb-docker
    $ cd bbb-docker
+   $ git submodule update --init
    ```
 3. Run setup:
    ```bash
