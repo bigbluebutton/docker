@@ -1,10 +1,11 @@
 # 📦 BigBlueButton 2.3 Docker
 
-Version: 2.3.0 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigbluebutton/docker/issues)
+Version: 2.3.4 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigbluebutton/docker/issues)
 
 ## Features
 - Easy installation
 - Greenlight included
+- TURN server included
 - Fully automated HTTPS certificates
 - Full IPv6 support
 - Runs on any major linux distributon (Debian, Ubuntu, CentOS,...)
@@ -26,6 +27,7 @@ Version: 2.3.0 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigblue
    ```sh
    $ git clone -b main --recurse-submodules https://github.com/bigbluebutton/docker.git bbb-docker
    $ cd bbb-docker
+   $ git submodule update --init
    ```
 3. Run setup:
    ```bash

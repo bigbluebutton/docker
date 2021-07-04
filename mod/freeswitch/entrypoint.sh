@@ -36,7 +36,7 @@ if [ "$SOUNDS_LANGUAGE" == "de-de-daedalus3" ]; then
 
     fi
 else
-    SOUNDS_PACKAGE=freeswitch-sounds-${SOUNDS_LANGUAGE}
+    SOUNDS_PACKAGE=$(echo "freeswitch-sounds-${SOUNDS_LANGUAGE}" | tr '[:upper:]' '[:lower:]')
     if ! dpkg -s $SOUNDS_PACKAGE >/dev/null 2>&1; then
         echo "sounds package for $SOUNDS_LANGUAGE not installed yet"
         apt-get install $SOUNDS_PACKAGE
