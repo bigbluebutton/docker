@@ -10,6 +10,12 @@ Version: 2.3.4 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigblue
 - Full IPv6 support
 - Runs on any major linux distributon (Debian, Ubuntu, CentOS,...)
 
+## TO DO
+
+- [ ] Create `.env` for staging to bypass `scripts/setup`
+- [ ] Edit `scripts/generate-compose` to take specific envfile as argument
+- [ ] Create `.env` for staging to bypass `scripts/setup`
+
 ## What is not implemented yet
 - bbb-lti
 

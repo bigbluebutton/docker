@@ -12,5 +12,5 @@ docker-compose.yml
 *.log
 
 # App generated
-.env
+#.env
 postgres-data
