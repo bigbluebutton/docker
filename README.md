@@ -15,6 +15,7 @@ Version: 2.3.4 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigblue
 - [ ] Create `.env` for staging to bypass `scripts/setup`
 - [ ] Edit `scripts/generate-compose` to take specific envfile as argument
 - [ ] Create `.env` for staging to bypass `scripts/setup`
+- [ ] Edit README.md for install
 
 ## What is not implemented yet
 - bbb-lti
