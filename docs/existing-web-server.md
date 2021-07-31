@@ -21,12 +21,15 @@ map $http_upgrade $connection_upgrade {
     default upgrade;
     '' close;
 }
+map $remote_addr $endpoint_addr {
+    "~:"    [::1];
+    default    127.0.0.1;
+}
 
 server {
+  listen 443 ssl http2 default_server;
+  listen [::]:443 ssl http2 default_server;
   server_name bbb.example.com;
-
-  listen 80;
-  listen 443 ssl;
 
   ssl_certificate /etc/letsencrypt/live/bbb.example.com/fullchain.pem;
   ssl_certificate_key /etc/letsencrypt/live/bbb.example.com/privkey.pem;
@@ -35,14 +38,18 @@ server {
   error_log /var/log/nginx/bigbluebutton.error.log;
 
   location / {
-    proxy_pass http://127.0.0.1:8080;
     proxy_http_version 1.1;
-    proxy_set_header Host $http_host;
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection "upgrade";
+    proxy_pass http://$endpoint_addr:8080;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection $connection_upgrade;
+    proxy_cache_bypass $http_upgrade;
   }
 }
+
 ```
 2. Restart nginx
 ```
