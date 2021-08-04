@@ -337,6 +337,8 @@ services:
       {{end}}
       - ./mod/coturn/entrypoint.sh:/usr/local/bin/docker-entrypoint.sh
       - ./mod/coturn/turnserver.conf:/etc/coturn/turnserver.conf
+    environment:
+      ENABLE_HTTPS_PROXY:
     network_mode: host
 {{end}}
 
