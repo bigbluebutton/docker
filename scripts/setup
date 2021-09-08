@@ -65,7 +65,7 @@ echo "Should the recording feature be included?"
 echo "   IMPORTANT: this is currently a big privacy issues, because it will "
 echo "   record everything which happens in the conference, even when the button"
 echo "   suggets, that it does not."
-echo "   make sure that you awalys get peoples consent, before they join a room!"
+echo "   make sure that you always get peoples consent, before they join a room!"
 echo "   https://github.com/bigbluebutton/bigbluebutton/issues/9202"
 while [[ ! $recording =~ ^(y|n)$ ]]; do
 
