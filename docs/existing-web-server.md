@@ -15,7 +15,51 @@ At this point, choose one of the following sections according to which Web serve
 Eventually, BigBlueButton should be publicly accessible on `https://bbb.example.com/`. If you chose to install Greenlight, then the previous URL should allow you to open its home page. The APIs will be accessible through `https://bbb.example.com/bigbluebutton/`.
 
 ## Integration with nginx
-> *Not written yet. can you imagine writing down some instructions?*
+```
+#
+# This Virtual Host on HTTPS
+#
+server {
+	listen			443		ssl;
+        listen			[::]:443	ssl;
+	#
+	##
+	## THIS virtual server
+	##
+        server_name		meet.server.de;
+	#
+	##
+	## Logging Settings
+	##
+	access_log 		/var/log/nginx/meet_access.log;
+	error_log 		/var/log/nginx/meet_error.log;
+	#
+	##
+	## Web content
+	##
+        root			/var/www/;
+        index 			index.html;
+	#
+	location / {
+		proxy_pass		http://127.0.0.1:8081/;
+		proxy_redirect		http://127.0.0.1:8081/	https://meet.server.de;
+		proxy_set_header	Host			$http_host;
+		proxy_set_header	X-Real-IP            	$remote_addr;
+		proxy_set_header	X-Host            	meet.server.de:443;
+		proxy_set_header	X-Forwarded-For      	$proxy_add_x_forwarded_for;
+		proxy_set_header	X-Forwarded-Proto    	$scheme;
+		proxy_set_header	X-Forwarded-Host    	$host;
+		proxy_set_header	X-Forwarded-Server    	$host;
+		client_max_body_size	100m;
+	}
+}
+#
+# Vim autoconfiguration line follows...
+# vi:set noai:shiftwidth=1:
+#
+# end-of-meet.server.de.conf
+#
+```
 
 ## Integration with Apache
 1. Make sure that the following Apache modules are in use: `proxy`, `rewrite`, `proxy_http`, `proxy_wstunnel`. On _apache2_, the following command activates these modules,  whenever they are not already enabled:
