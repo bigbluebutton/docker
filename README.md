@@ -45,7 +45,7 @@ Version: 2.3.4 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigblue
     ```
 6. If you use greenlight, you can create an admin account with:
     ```bash
-    $ docker-compose exec greenlight bundle exec rake admin:create
+    $ docker exec bbb-docker_greenlight_1 bundle exec rake admin:create
     ```
 
 ## Further How-To's
