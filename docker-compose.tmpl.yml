@@ -311,10 +311,10 @@ services:
       - ./mod/https/site-ipv4only.conf:/etc/nginx/conf.d/bbb-docker.conf
     {{end}}
     environment:
-      {{ if not .Env.DEV_MODE }}
-      ALLOWED_DOMAINS: ${DOMAIN}
-      {{else}}
+      {{ if isTrue .Env.DEV_MODE }}
       ALLOWED_DOMAINS: ""
+      {{else}}
+      ALLOWED_DOMAINS: ${DOMAIN}
       {{end}}
     network_mode: host
 {{end}}
