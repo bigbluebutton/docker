@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## Release v2.3.14-1 (2021-10-06)
+- Applied changes v2.3.5-v2.3.14 @alangecker
+- updated wget to not use proxies [#143](https://github.com/bigbluebutton/docker/pull/143) @mghadam
+- fixed sed delimiter for CERTPATH and KEYPATH [#144](https://github.com/bigbluebutton/docker/pull/144) @mghadam
+- https_proxy: fix setting of ALLOWED_DOMAINS [#145](https://github.com/bigbluebutton/docker/pull/145) @clandmeter
+- coturn: expose ENABLE_HTTPS_PROXY env variable [#146](https://github.com/bigbluebutton/docker/pull/146) [#156](https://github.com/bigbluebutton/docker/pull/156) @clandmeter @omidmaldar
+
 ## Release v2.3.4-1 (2021-06-22) #131
 - Applied v2.3.4 changes [#130](https://github.com/bigbluebutton/docker/pull/130) @alangecker 
 - Reintegrate turn with default ports and support for external certificates [#126](https://github.com/bigbluebutton/docker/pull/126) @cjhille
