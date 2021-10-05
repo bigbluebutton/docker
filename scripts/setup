@@ -136,8 +136,8 @@ fi
 
 if [ -n "$CERTPATH" ] && [ -n "$KEYPATH" ]
 then
-    sed -i "s/#COTURN_TLS_CERT_PATH=.*/COTURN_TLS_CERT_PATH=$CERTPATH/" .env
-    sed -i "s/#COTURN_TLS_KEY_PATH=.*/COTURN_TLS_KEY_PATH=$KEYPATH/" .env
+    sed -i "s,#COTURN_TLS_CERT_PATH=.*,COTURN_TLS_CERT_PATH=$CERTPATH," .env
+    sed -i "s,#COTURN_TLS_KEY_PATH=.*,COTURN_TLS_KEY_PATH=$KEYPATH," .env
 fi
 
 if [ "$prometheus_exporter" == "y" ]
