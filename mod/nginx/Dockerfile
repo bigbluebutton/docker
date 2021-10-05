@@ -4,7 +4,7 @@ RUN apk add subversion git
 
 # --------------------
 
-ENV TAG_PLAYBACK v2.3.2
+ENV TAG_PLAYBACK v3.1.0
 ENV REACT_APP_BBB_PLAYBACK_BUILD=$TAG_PLAYBACK
 
 # apparently there is currently no github release & tag created
