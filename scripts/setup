@@ -64,8 +64,8 @@ recording=""
 echo "Should the recording feature be included?"
 echo "   IMPORTANT: this is currently a big privacy issues, because it will "
 echo "   record everything which happens in the conference, even when the button"
-echo "   suggets, that it does not."
-echo "   make sure that you awalys get peoples consent, before they join a room!"
+echo "   suggests, that it does not."
+echo "   make sure that you always get people's consent, before they join a room!"
 echo "   https://github.com/bigbluebutton/bigbluebutton/issues/9202"
 while [[ ! $recording =~ ^(y|n)$ ]]; do
 
@@ -136,8 +136,8 @@ fi
 
 if [ -n "$CERTPATH" ] && [ -n "$KEYPATH" ]
 then
-    sed -i "s/#COTURN_TLS_CERT_PATH=.*/COTURN_TLS_CERT_PATH=$CERTPATH/" .env
-    sed -i "s/#COTURN_TLS_KEY_PATH=.*/COTURN_TLS_KEY_PATH=$KEYPATH/" .env
+    sed -i "s,#COTURN_TLS_CERT_PATH=.*,COTURN_TLS_CERT_PATH=$CERTPATH," .env
+    sed -i "s,#COTURN_TLS_KEY_PATH=.*,COTURN_TLS_KEY_PATH=$KEYPATH," .env
 fi
 
 if [ "$prometheus_exporter" == "y" ]

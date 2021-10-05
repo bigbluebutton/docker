@@ -44,7 +44,7 @@ services:
     depends_on:
         - redis
     healthcheck:
-      test: wget --no-verbose --tries=1 --spider http://10.7.7.2:8090/bigbluebutton/api || exit 1
+      test: wget --no-proxy --no-verbose --tries=1 --spider http://10.7.7.2:8090/bigbluebutton/api || exit 1
       start_period: 2m
     environment:
       DEV_MODE: ${DEV_MODE:-}
@@ -311,10 +311,10 @@ services:
       - ./mod/https/site-ipv4only.conf:/etc/nginx/conf.d/bbb-docker.conf
     {{end}}
     environment:
-      {{ if not .Env.DEV_MODE }}
-      ALLOWED_DOMAINS: ${DOMAIN}
-      {{else}}
+      {{ if isTrue .Env.DEV_MODE }}
       ALLOWED_DOMAINS: ""
+      {{else}}
+      ALLOWED_DOMAINS: ${DOMAIN}
       {{end}}
     network_mode: host
 {{end}}
@@ -337,6 +337,8 @@ services:
       {{end}}
       - ./mod/coturn/entrypoint.sh:/usr/local/bin/docker-entrypoint.sh
       - ./mod/coturn/turnserver.conf:/etc/coturn/turnserver.conf
+    environment:
+      ENABLE_HTTPS_PROXY:
     network_mode: host
 {{end}}
 

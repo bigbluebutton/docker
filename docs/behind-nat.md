@@ -10,5 +10,5 @@ $ ip addr add 144.76.97.34/32 dev ens3
 Specific to your linux distribution. Use a search engine of your choice. ;)
 
 ## Ports
-Also don't forget to forward all necassary ports listed in http://docs.bigbluebutton.org/2.2/configure-firewall.html
+Also don't forget to forward all necassary ports listed in https://docs.bigbluebutton.org/admin/configure-firewall.html
 
