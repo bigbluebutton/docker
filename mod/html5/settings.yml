@@ -13,13 +13,13 @@ public:
     # Skips the echo test when connecting with microphone.
     skipCheck: {{ .Env.DISABLE_ECHO_TEST }}
     # Skips the echo test when connecting with microphone right after user
-    # joins the room the first time. Subsequents joins  to microphone won't
-    # have echo test skipped, for example if user leave and join mic again
-    # or reloading page and joining mic again.
+    # joins the room the first time. Subsequent joins to microphone won't
+    # have echo test skipped, for example if user leaves and joins the mic
+    # again or reloading page and joining mic again.
     # This setting won't have effect if skipCheck = true
     skipCheckOnJoin: false
     #
-    # Allow users to change microphone/speaker dinamically
+    # Allow users to change microphone/speaker dynamically
     # The device is changed immediately, without the need to rejoin
     # audio. Default value is true
     # Firefox users: if no output devices is shown, you may set the flag
@@ -28,9 +28,9 @@ public:
     #
     clientTitle: {{ .Env.CLIENT_TITLE }}
     appName: BigBlueButton HTML5 Client
-    bbbServerVersion: 2.3-docker
+    bbbServerVersion: "2.4-docker"
     copyright: '©2021 BigBlueButton Inc.'
-    html5ClientBuild: "1845-docker"
+    html5ClientBuild: "2277-docker"
     helpLink: https://bigbluebutton.org/html5/
     lockOnJoin: true
     cdn: ''
@@ -44,7 +44,6 @@ public:
     allowUserLookup: false
     dynamicGuestPolicy: true
     enableGuestLobbyMessage: true
-    enableNetworkInformation: false
     enableLimitOfViewersInWebcam: false
     enableMultipleCameras: true
     enableTalkingIndicator: true
@@ -93,9 +92,9 @@ public:
     #
     # Shows stats about download and upload rates, audio jitter, lost packets
     # and turn information
-    enableNetworkStats: false
+    enableNetworkStats: true
     # Enable the button to allow users to copy network stats to clipboard
-    enableCopyNetworkStatsButton: false
+    enableCopyNetworkStatsButton: true
     defaultSettings:
       application:
         animations: true
@@ -103,11 +102,14 @@ public:
         chatPushAlerts: false
         userJoinAudioAlerts: false
         userJoinPushAlerts: false
+        userLeaveAudioAlerts: false
+        userLeavePushAlerts: false
         raiseHandAudioAlerts: true
         raiseHandPushAlerts: true
         guestWaitingAudioAlerts: true
         guestWaitingPushAlerts: true
         paginationEnabled: true
+        pushLayoutToEveryone: false
         # fallbackLocale: if the locale the client is loaded in does not have a
         # translation a string, it will use the translation from the locale
         # specified in fallbackLocale. Note that fallbackLocale should be a
@@ -188,9 +190,6 @@ public:
       - warning
   externalVideoPlayer:
     enabled: true
-  networkMonitoring:
-    enableNetworkMonitoring: false
-    packetLostThreshold: 10
   kurento:
     wsUrl: wss://{{ .Env.DOMAIN }}/bbb-webrtc-sfu
     # Valid for video-provider. Time (ms) before its WS connection times out
@@ -206,6 +205,14 @@ public:
       # subscribe reattempt increases the reconnection timer up to this
       maxTimeout: 60000
     screenshare:
+      # Experimental. True is the canonical behavior. Flip to false to reverse
+      # the negotiation flow for subscribers.
+      subscriberOffering: true
+      # Experimental. Server wide configuration to choose which bbb-webrtc-sfu
+      # media server adapter should be used for screen sharing.
+      # Default is undefined, which means the default setting in bbb-webrtc-sfu
+      # prevails (screenshareMediaServer).
+      #mediaServer: Kurento
       bitrate: 1500
       mediaTimeouts:
         maxConnectionAttempts: 2
@@ -305,6 +312,16 @@ public:
     enableVideo: true
     enableVideoMenu: true
     enableListenOnly: true
+    # Experimental. Server wide configuration to choose which bbb-webrtc-sfu
+    # media server adapter should be used for listen only.
+    # Default is undefined, which means the default setting in bbb-webrtc-sfu
+    # prevails (listenOnlyMediaServer).
+    #listenOnlyMediaServer: Kurento
+    # Experimental. Server wide configuration to choose which bbb-webrtc-sfu
+    # media server adapter should be used for webcams.
+    # Default is undefined, which means the default setting in bbb-webrtc-sfu
+    # prevails (videoMediaServer).
+    #videoMediaServer: Kurento
     autoShareWebcam: {{ .Env.AUTO_SHARE_WEBCAM }}
     skipVideoPreview: {{ .Env.DISABLE_VIDEO_PREVIEW }}
     skipVideoPreviewOnFirstJoin: false
@@ -399,6 +416,7 @@ public:
     maxCustom: 5
     allowDragAndDropFile: false
     maxTypedAnswerLength: 45
+    chatMessage: true
   captions:
     enabled: true
     enableDictation: false
@@ -434,6 +452,7 @@ public:
       chat_poll_result: PUBLIC_CHAT_POLL_RESULT
     typingIndicator:
       enabled: true
+    moderatorChatEmphasized: true
   note:
     enabled: true
     url: https://{{ .Env.DOMAIN }}/pad
@@ -452,6 +471,9 @@ public:
     echoTestNumber: 'echo'
     relayOnlyOnReconnect: false
     listenOnlyCallTimeout: 25000
+    # Experimental. True is the canonical behavior. Flip to false to reverse
+    # the negotiation flow for LO subscribers.
+    listenOnlyOffering: true
     #Timeout (ms) for gathering ICE candidates. When this timeout expires
     #the SDP is sent to the server with the candidates the browser gathered
     #so far. Increasing this value might help avoiding 1004 error when
@@ -499,7 +521,6 @@ public:
     help: STATS_HELP_URL
   presentation:
     allowDownloadable: true
-    defaultPresentationFile: default.pdf
     panZoomThrottle: 32
     restoreOnUpdate: false
     uploadEndpoint: '/bigbluebutton/presentation/upload'
@@ -550,6 +571,7 @@ public:
       moderator: false
       mobile: true
       guest: true
+      sharingWebcam: true
   whiteboard:
     annotationsQueueProcessInterval: 60
     cursorInterval: 150
@@ -646,6 +668,16 @@ public:
       throttleInterval: 400
       flushOnClose: true
       logTag: ''
+  virtualBackgrounds:
+    enabled: true
+    storedOnBBB: true
+    showThumbnails: true
+    imagesPath: /resources/images/virtual-backgrounds/
+    thumbnailsPath: /resources/images/virtual-backgrounds/thumbnails/
+    fileNames:
+      - home.jpg
+      - coffeeshop.jpg
+      - board.jpg
 private:
   analytics:
     includeChat: true
@@ -711,4 +743,3 @@ private:
       version: 10
     - browser: YandexBrowser
       version: 19
-      

@@ -1,4 +1,4 @@
-FROM etherpad/etherpad:1.8.13
+FROM etherpad/etherpad:1.8.14
 
 USER root
 
@@ -9,7 +9,7 @@ USER etherpad
 
 # only used to trigger a fresh run of the npm install
 # command without caching
-ENV TAG v2.3.0
+ENV TAG v2.4-rc-1
 
 RUN npm install  \
     git+https://git@github.com/pedrobmarin/ep_pad_ttl.git \

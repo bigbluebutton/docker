@@ -56,6 +56,7 @@ services:
       STUN_SERVER: stun:${STUN_IP}:${STUN_PORT}
       TURN_SERVER: ${TURN_SERVER:-}
       TURN_SECRET: ${TURN_SECRET:-}
+      ENABLE_LEARNING_DASHBOARD: ${ENABLE_LEARNING_DASHBOARD:-true}
       NUMBER_OF_BACKEND_NODEJS_PROCESSES: {{ .Env.NUMBER_OF_BACKEND_NODEJS_PROCESSES }}
     volumes:
       - bigbluebutton:/var/bigbluebutton

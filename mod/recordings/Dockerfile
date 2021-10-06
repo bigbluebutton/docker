@@ -36,7 +36,7 @@ RUN cd /tmp \
 
 # add dockerize
 ENV DOCKERIZE_VERSION v0.6.1
-RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+RUN wget -q https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
@@ -45,7 +45,7 @@ RUN mkdir -p \
     /usr/local/bigbluebutton/core \
     /etc/bigbluebutton
 
-ENV TAG v2.3.14
+ENV TAG v2.4-rc-1
 
 # add bbb-record-core (lib, scripts and Gemfile)
 RUN cd /usr/local/bigbluebutton/core \
