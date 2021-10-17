@@ -38,6 +38,8 @@ docker run  \
     -v $(pwd)/docker-compose.tmpl.yml:/docker-compose.tmpl.yml \
     -e DEV_MODE=${DEV_MODE:-false} \
     -e ENABLE_RECORDING=${ENABLE_RECORDING:-false} \
+    -e REMOVE_OLD_RECORDING=${REMOVE_OLD_RECORDING:-false} \
+    -e RECORDING_MAX_AGE_DAYS=${RECORDING_MAX_AGE_DAYS:-14} \
     -e ENABLE_HTTPS_PROXY=${ENABLE_HTTPS_PROXY:-false} \
     -e ENABLE_WEBHOOKS=${ENABLE_WEBHOOKS:-false} \
     -e ENABLE_COTURN=${ENABLE_COTURN:-false} \
