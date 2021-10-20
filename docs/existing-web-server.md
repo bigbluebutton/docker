@@ -17,6 +17,79 @@ Eventually, BigBlueButton should be publicly accessible on `https://bbb.example.
 ## Integration with nginx
 > *Not written yet. can you imagine writing down some instructions?*
 
+#####################################################################
+location /bbb-webrtc-sfu  {
+  proxy_pass http://<my-domain.com>:8080/bbb-webrtc-sfu;
+  proxy_http_version 1.1;
+  proxy_set_header Upgrade $http_upgrade;
+  proxy_set_header Connection "Upgrade";
+}
+
+location /ws {
+        proxy_pass http://<my-domain.com>:8080/ws;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_read_timeout 6h;
+        proxy_send_timeout 6h;
+        client_body_timeout 6h;
+        send_timeout 6h;
+}
+
+location /html5client {
+  proxy_pass http://<my-domain.com>:8080/html5client;
+  proxy_http_version 1.1;
+  proxy_set_header Upgrade $http_upgrade;
+  proxy_set_header Connection "Upgrade";
+}
+
+location /pad {
+    add_header X-Frame-Options "";
+    proxy_pass http://<my-domain.com>:8080/pad;
+}
+
+location /pad/socket.io {
+    proxy_pass http://<my-domain.com>:8080/pad/socket.io;
+    proxy_http_version 1.1;  # recommended with keepalive connections
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "Upgrade";
+}
+
+location /bigbluebutton {
+    proxy_pass http://<my-domain.com>:8080/bigbluebutton;
+}
+
+location /b {
+  proxy_pass          http://10.7.7.1:5000;
+  proxy_set_header    Host              $host;
+  proxy_set_header    X-Forwarded-For   $proxy_add_x_forwarded_for;
+  proxy_set_header    X-Forwarded-Proto $scheme;
+  proxy_set_header    X-Forwarded-Ssl on;
+  proxy_http_version  1.1;
+}
+
+location /b/cable {
+  proxy_pass          http://10.7.7.1:5000;
+  proxy_set_header    Host              $host;
+  proxy_set_header    X-Forwarded-For   $proxy_add_x_forwarded_for;
+  proxy_set_header    X-Forwarded-Proto $scheme;
+  proxy_set_header    X-Forwarded-Ssl on;
+  proxy_set_header    Upgrade           $http_upgrade;
+  proxy_set_header    Connection        "Upgrade";
+  proxy_http_version  1.1;
+  proxy_read_timeout  6h;
+  proxy_send_timeout  6h;
+  client_body_timeout 6h;
+  send_timeout        6h;
+}
+
+# this is necessary for the preupload_presentation feature
+location /rails/active_storage {
+  return 301 /b$request_uri;
+}
+
+#####################################################################
+
 ## Integration with Apache
 1. Make sure that the following Apache modules are in use: `proxy`, `rewrite`, `proxy_http`, `proxy_wstunnel`. On _apache2_, the following command activates these modules,  whenever they are not already enabled:
 ```
