@@ -17,8 +17,8 @@ upstream poolhtml5servers {
 }
 
 server {
-  listen 8080 default_server;
-  listen [::]:8080 default_server;
+  listen 48087 default_server;
+  listen [::]:48087 default_server;
   server_name _;
   access_log /dev/stdout;
   absolute_redirect off;
