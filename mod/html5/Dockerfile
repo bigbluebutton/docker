@@ -36,7 +36,7 @@ RUN addgroup -g 2000 meteor && \
 COPY --from=builder /usr/local/bin/dockerize /usr/local/bin/dockerize
 COPY --from=builder --chown=meteor:meteor /home/meteor/app/bundle /app
 COPY entrypoint.sh /entrypoint.sh
-COPY settings.yml /app/programs/server/assets/app/config/settings.yml.tmpl
+COPY bbb-html5.yml /app/bbb-html5.yml.tmpl
 
 ENTRYPOINT ["/entrypoint.sh"]
 
