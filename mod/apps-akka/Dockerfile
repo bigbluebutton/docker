@@ -3,7 +3,7 @@ FROM mozilla/sbt:8u212_1.2.8 AS builder
 RUN apt-get update && apt-get install -y subversion
 
 # download bbb-common-message
-ENV TAG_COMMON_MESSAGE v2.4-rc-1
+ENV TAG_COMMON_MESSAGE v2.4-rc-5
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_COMMON_MESSAGE/bbb-common-message /bbb-common-message \
     && rm -rf /bbb-common-message/.svn
 
@@ -14,7 +14,7 @@ RUN cd /bbb-common-message \
 
 # ===================================================
 
-ENV TAG v2.4-rc-1
+ENV TAG v2.4-rc-5
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG/akka-bbb-apps /source \
     && rm -rf /source/.svn
 
@@ -25,7 +25,7 @@ RUN cd /source \
 
 # ===================================================
 
-FROM openjdk:8-jre-slim-buster
+FROM openjdk:8-jre-slim-bullseye
 
 RUN apt update && apt-get install -y wget gosu
 

@@ -1,7 +1,15 @@
-FROM node:14-alpine
+FROM node:14-bullseye-slim
 
-RUN apk add git \
-    && adduser -D -u 2004 -g webrtc-sfu webrtc-sfu
+
+RUN apt-get update && apt-get -y install \
+  git \
+  make \
+  python \
+  python3-pip \
+  g++ \
+  ffmpeg
+
+RUN useradd --uid 2004 --user-group webrtc-sfu 
 
 ADD ./bbb-webrtc-sfu app
 
@@ -17,8 +25,10 @@ RUN cp config/default.example.yml config/production.yml \
  && chown -R webrtc-sfu:webrtc-sfu config \
  && rm .git \
  && npm install --unsafe-perm \
- && npm cache clear --force
-
+ && npm cache clear --force \
+ && rm -rf node_modules/mediasoup/worker/out/Release/subprojects \
+ && rm -rf node_modules/mediasoup/worker/out/Release/mediasoup-worker.p \
+ && rm -rf node_modules/mediasoup/worker/out/Release/deps
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh
 
 USER webrtc-sfu

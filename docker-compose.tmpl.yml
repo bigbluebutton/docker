@@ -160,7 +160,7 @@ services:
         ipv4_address: 10.7.7.5
 
   mongodb:
-    image: mongo:4.4
+    image: mongo:5.0
     restart: unless-stopped
     volumes:
       - ./mod/mongo/mongod.conf:/etc/mongod.conf

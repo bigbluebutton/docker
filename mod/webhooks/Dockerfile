@@ -13,7 +13,7 @@ RUN wget -q https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VE
 USER webhooks
 
 
-ENV TAG v2.4-rc-1
+ENV TAG v2.4-rc-5
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG/bbb-webhooks /app \
     && rm -rf /app/.svn \
     && cd /app && npm install --production

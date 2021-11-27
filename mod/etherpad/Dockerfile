@@ -1,4 +1,5 @@
-FROM etherpad/etherpad:1.8.14
+FROM etherpad/etherpad:1.8.14 
+# TODO: update to 1.8.15 as soon as available
 
 USER root
 
@@ -9,9 +10,11 @@ USER etherpad
 
 # only used to trigger a fresh run of the npm install
 # command without caching
-ENV TAG v2.4-rc-1
+ENV TAG v2.4-rc-5
 
+# ep_cursortrace: using mconf's fork due to https://github.com/ether/ep_cursortrace/pull/25 not being accepted upstream
 RUN npm install  \
+    git+https://github.com/mconf/ep_cursortrace.git \
     git+https://git@github.com/pedrobmarin/ep_pad_ttl.git \
     git+https://git@github.com/pedrobmarin/ep_redis_publisher.git \
     git+https://git@github.com/ether/ep_disable_chat.git \

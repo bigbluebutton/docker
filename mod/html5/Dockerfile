@@ -1,4 +1,4 @@
-FROM node:14-buster-slim AS builder
+FROM node:14.18.1-bullseye-slim AS builder
 
 RUN apt-get update && apt-get install -y wget curl subversion python3 build-essential
 RUN groupadd -g 2000 meteor && useradd -m -u 2001 -g meteor meteor
@@ -11,17 +11,16 @@ RUN wget -q https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VE
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 USER meteor
-ENV METEOR_VERSION 2.3.6
+ENV METEOR_VERSION 2.5
 RUN curl -sL https://install.meteor.com?release=$METEOR_VERSION | sed s/--progress-bar/-sL/g | /bin/sh
 
-ENV TAG v2.4-rc-1
+ENV TAG v2.4-rc-5
 RUN cd ~ \
     && svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG/bigbluebutton-html5 \
     && mv ~/bigbluebutton-html5 ~/source \
     && cd ~/source \
-    && ~/.meteor/meteor npm install --production \
-    && npm rebuild node-sass \
-    && METEOR_DISABLE_OPTIMISTIC_CACHING=1  ~/.meteor/meteor build --directory ~/app \
+    && ~/.meteor/meteor npm ci --production \
+    && METEOR_DISABLE_OPTIMISTIC_CACHING=1  ~/.meteor/meteor build --architecture os.linux.x86_64 --directory ~/app \
     && rm -rf ~/source
 
 RUN cd ~/app/bundle/programs/server \
@@ -29,7 +28,7 @@ RUN cd ~/app/bundle/programs/server \
     
 # ------------------------------
 
-FROM node:14-alpine
+FROM node:14.18.1-alpine
 
 RUN addgroup -g 2000 meteor && \
     adduser -D -u 2001 -G meteor meteor && \
@@ -42,4 +41,4 @@ COPY settings.yml /app/programs/server/assets/app/config/settings.yml.tmpl
 ENTRYPOINT ["/entrypoint.sh"]
 
 # lets set the tag again, so that it is include in the image for later version retrieval
-ENV TAG v2.4-rc-1
+ENV TAG v2.4-rc-5

@@ -1,6 +1,10 @@
 # Changelog
 
 ## Unreleased
+- BigBlueButton v2.4 @alangecker [#159](https://github.com/bigbluebutton/docker/pull/159)
+- Enable optimization for Prometheus Exporter when recording is enabled @omidmaldar [#161](https://github.com/bigbluebutton/docker/pull/161)
+- Automatically remove old recordings after N days @omidmaldar [#162](https://github.com/bigbluebutton/docker/pull/162)
+
 
 ## Release v2.3.14-1 (2021-10-06)
 - Applied changes v2.3.5-v2.3.14 @alangecker
