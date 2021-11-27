@@ -43,10 +43,10 @@ then
     echo "   you must provide a relative or absolute path"
     echo "   to your certificates."
     while [[ -z "$CERTPATH" ]]; do
-        read -p "Please enter path to cert.pem: " CERTPATH 
+        read -p "Please enter path to cert.pem: " CERTPATH
     done
     while [[ -z "$KEYPATH" ]]; do
-        read -p "Please enter path to key.pem: " KEYPATH 
+        read -p "Please enter path to key.pem: " KEYPATH
     done
 fi
 
@@ -71,6 +71,24 @@ while [[ ! $recording =~ ^(y|n)$ ]]; do
 
     read -p "Choice (y/n): " recording
 done
+
+if [ "$recording" == "y" ]
+then
+
+  remove_old_recording=""
+  while [[ ! $remove_old_recording =~ ^(y|n)$ ]]; do
+      read -p "Should old recordings be removed? (y/n): " remove_old_recording
+  done
+
+  if [ "$remove_old_recording" == "y" ]
+  then
+    recording_max_age_days=""
+    while [[ ! $recording_max_age_days =~ ^[0-9]{1,4}$ ]]; do
+        read -p "Please enter max age(days) for keeping recordings: " recording_max_age_days
+    done
+  fi
+
+fi
 
 ip_correct=""
 while [[ ! $ip_correct =~ ^(y|n)$ ]]; do
@@ -122,6 +140,12 @@ fi
 if [ "$recording" == "y" ]
 then
     sed -i "s/#ENABLE_RECORDING.*/ENABLE_RECORDING=true/" .env
+fi
+
+if [ "$remove_old_recording" == "y" ]
+then
+    sed -i "s/#REMOVE_OLD_RECORDING=.*/REMOVE_OLD_RECORDING=true/" .env
+    sed -i "s/#RECORDING_MAX_AGE_DAYS=.*/RECORDING_MAX_AGE_DAYS=$recording_max_age_days/" .env
 fi
 
 if [ "$coturn" == "y" ]

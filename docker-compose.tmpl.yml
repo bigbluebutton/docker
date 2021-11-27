@@ -115,7 +115,7 @@ services:
       - ./conf/dialplan_public:/etc/freeswitch/dialplan/public_docker
       - vol-freeswitch:/var/freeswitch/meetings
     network_mode: host
-  
+
   nginx:
     build: mod/nginx
     restart: unless-stopped
@@ -156,7 +156,7 @@ services:
       retries: 30
     networks:
       bbb-net:
-        ipv4_address: 10.7.7.5 
+        ipv4_address: 10.7.7.5
 
   mongodb:
     image: mongo:4.4
@@ -177,7 +177,7 @@ services:
   kurento:
     image: kurento/kurento-media-server:6.16
     restart: unless-stopped
-    environment: 
+    environment:
       KMS_STUN_IP: ${STUN_IP}
       KMS_STUN_PORT: ${STUN_PORT}
       KMS_MIN_PORT: 24577
@@ -188,7 +188,7 @@ services:
     network_mode: host
     volumes:
       - vol-kurento:/var/kurento
-  
+
   webrtc-sfu:
     build:  mod/webrtc-sfu
     restart: unless-stopped
@@ -249,7 +249,7 @@ services:
     networks:
       bbb-net:
         ipv4_address: 10.7.7.20
-  
+
   periodic:
     build: mod/periodic
     restart: unless-stopped
@@ -258,6 +258,12 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - bigbluebutton:/var/bigbluebutton
+    tmpfs:
+      - /var/log/bigbluebutton
+    environment:
+      ENABLE_RECORDING: ${ENABLE_RECORDING}
+      REMOVE_OLD_RECORDING: ${REMOVE_OLD_RECORDING}
+      RECORDING_MAX_AGE_DAYS: ${RECORDING_MAX_AGE_DAYS}
     networks:
       bbb-net:
         ipv4_address: 10.7.7.12
@@ -385,7 +391,7 @@ services:
   prometheus-exporter:
     image: greenstatic/bigbluebutton-exporter:v0.7.0-preview2
     restart: unless-stopped
-    environment: 
+    environment:
       API_BASE_URL: http://10.7.7.1:8080/bigbluebutton/api/
       API_SECRET: ${SHARED_SECRET}
       RECORDINGS_METRICS_READ_FROM_DISK: "false"
