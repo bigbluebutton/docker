@@ -50,11 +50,6 @@ then
     done
 fi
 
-prometheus_exporter=""
-while [[ ! $prometheus_exporter =~ ^(y|n)$ ]]; do
-    read -p "Should a Prometheus exporter be included? (y/n): " prometheus_exporter
-done
-
 DOMAIN=""
 while [[ -z "$DOMAIN" ]]; do
     read -p "Please enter the domain name: " DOMAIN
@@ -68,9 +63,22 @@ echo "   suggests, that it does not."
 echo "   make sure that you always get people's consent, before they join a room!"
 echo "   https://github.com/bigbluebutton/bigbluebutton/issues/9202"
 while [[ ! $recording =~ ^(y|n)$ ]]; do
-
     read -p "Choice (y/n): " recording
 done
+
+prometheus_exporter=""
+while [[ ! $prometheus_exporter =~ ^(y|n)$ ]]; do
+    read -p "Should a Prometheus exporter be included? (y/n): " prometheus_exporter
+done
+if [ "$prometheus_exporter" == "y" ]  && [ "$recording" == "y" ]
+then
+    echo "Should Prometheus exporter optimization be enabled?"
+    echo "  This instructs exporter to collect expensive recordings metrics by querying the disk instead of the API."
+    echo "  Enabling this can substantially decrease the scrape time required for the exporter to respond to metrics requests"
+    prometheus_exporter_optimization=""
+    while [[ ! $prometheus_exporter_optimization =~ ^(y|n)$ ]]; do
+        read -p "Choice (y/n): " prometheus_exporter_optimization
+    done
 
 if [ "$recording" == "y" ]
 then
@@ -166,7 +174,12 @@ fi
 
 if [ "$prometheus_exporter" == "y" ]
 then
-    sed -i "s/#ENABLE_PROMETHEUS_EXPORTER.*/ENABLE_PROMETHEUS_EXPORTER=true/" .env
+    sed -i "s/#ENABLE_PROMETHEUS_EXPORTER=.*/ENABLE_PROMETHEUS_EXPORTER=true/" .env
+fi
+
+if [ "$prometheus_exporter_optimization" == "y" ]
+then
+    sed -i "s/#ENABLE_PROMETHEUS_EXPORTER_OPTIMIZATION=.*/ENABLE_PROMETHEUS_EXPORTER_OPTIMIZATION=true/" .env
 fi
 
 # change secrets

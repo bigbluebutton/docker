@@ -394,11 +394,16 @@ services:
     environment:
       API_BASE_URL: http://10.7.7.1:8080/bigbluebutton/api/
       API_SECRET: ${SHARED_SECRET}
-      RECORDINGS_METRICS_READ_FROM_DISK: "false"
+      RECORDINGS_METRICS_READ_FROM_DISK: "${ENABLE_PROMETHEUS_EXPORTER_OPTIMIZATION:-false}"
     networks:
       bbb-net:
         ipv4_address: 10.7.7.33
+    {{ if isTrue .Env.ENABLE_PROMETHEUS_EXPORTER_OPTIMIZATION }}
+    volumes:
+      - bigbluebutton:/var/bigbluebutton:ro
+    {{end}}
 {{end}}
+
 
 volumes:
   bigbluebutton:
