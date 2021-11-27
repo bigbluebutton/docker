@@ -95,6 +95,7 @@ then
         read -p "Please enter max age(days) for keeping recordings: " recording_max_age_days
     done
   fi
+
 fi
 
 ip_correct=""
