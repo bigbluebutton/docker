@@ -1,5 +1,4 @@
-FROM etherpad/etherpad:1.8.14 
-# TODO: update to 1.8.15 as soon as available
+FROM etherpad/etherpad:1.8.16
 
 USER root
 
