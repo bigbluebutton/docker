@@ -243,6 +243,8 @@ services:
   jodconverter:
     build: mod/jodconverter
     restart: unless-stopped
+    tmpfs:
+      - /tmp
     deploy:
       resources:
         limits:

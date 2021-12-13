@@ -7,17 +7,13 @@ RUN apt-get update \
 
 USER etherpad
 
-# only used to trigger a fresh run of the npm install
-# command without caching
-ENV TAG v2.4-rc-5
-
 # ep_cursortrace: using mconf's fork due to https://github.com/ether/ep_cursortrace/pull/25 not being accepted upstream
 RUN npm install  \
-    git+https://github.com/mconf/ep_cursortrace.git \
-    git+https://git@github.com/pedrobmarin/ep_pad_ttl.git \
-    git+https://git@github.com/pedrobmarin/ep_redis_publisher.git \
-    git+https://git@github.com/ether/ep_disable_chat.git \
-    git+https://github.com/ether/ep_sticky_attributes.git \
+    git+https://github.com/mconf/ep_cursortrace.git#v3.1.8 \
+    git+https://github.com/pedrobmarin/ep_pad_ttl.git#360136cd38493dd698435631f2373cbb7089082d \
+    git+https://github.com/pedrobmarin/ep_redis_publisher.git#ed7d8af49876757559ef9d7c8970665c08445d4b \
+    git+https://github.com/ether/ep_disable_chat.git#v0.0.3 \
+    git+https://github.com/ether/ep_sticky_attributes.git#v0.1.9 \
 # remove npm lockfile, because somehow it prevents etherpad from detecting the manual added plugin ep_bigbluebutton_patches
     && rm package-lock.json
 
