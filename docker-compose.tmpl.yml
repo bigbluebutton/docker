@@ -43,6 +43,7 @@ services:
     restart: unless-stopped
     depends_on:
         - redis
+        - etherpad
     healthcheck:
       test: wget --no-proxy --no-verbose --tries=1 --spider http://10.7.7.2:8090/bigbluebutton/api || exit 1
       start_period: 2m
