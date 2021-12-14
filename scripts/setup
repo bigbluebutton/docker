@@ -79,6 +79,7 @@ then
     while [[ ! $prometheus_exporter_optimization =~ ^(y|n)$ ]]; do
         read -p "Choice (y/n): " prometheus_exporter_optimization
     done
+fi
 
 if [ "$recording" == "y" ]
 then
