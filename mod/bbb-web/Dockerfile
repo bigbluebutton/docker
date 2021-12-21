@@ -3,7 +3,7 @@ FROM mozilla/sbt:8u212_1.2.8 AS builder
 RUN apt-get update && apt-get install -y subversion
 
 # download bbb-common-message
-ENV TAG_COMMON_MESSAGE v2.4-rc-7
+ENV TAG_COMMON_MESSAGE v2.4.0
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_COMMON_MESSAGE/bbb-common-message /bbb-common-message \
     && rm -rf /bbb-common-message/.svn
 
@@ -26,7 +26,7 @@ RUN cd /opt \
 ENV PATH="/opt/gradle-6.7/bin:${PATH}"
 
 # download bbb-common-web
-ENV TAG_COMMON_WEB v2.4-rc-7
+ENV TAG_COMMON_WEB v2.4.0
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_COMMON_WEB/bbb-common-web /bbb-common-web \
     && rm -rf /bbb-common-message/.svn
 
@@ -35,7 +35,7 @@ RUN cd /bbb-common-web \
  && ./deploy.sh
 
 # download bbb-web
-ENV TAG_WEB v2.4-rc-7
+ENV TAG_WEB v2.4.0
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_WEB/bigbluebutton-web /bbb-web \
     && rm -rf /bbb-web/.svn
 
@@ -77,10 +77,10 @@ RUN wget -q https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VE
 RUN mkdir -p /usr/share/bigbluebutton/blank \
     && cd /usr/share/bigbluebutton/blank \
     && wget \
-        https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/v2.4-rc-7/bigbluebutton-config/slides/blank-svg.svg \
-        https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/v2.4-rc-7/bigbluebutton-config/slides/blank-thumb.png \
-        https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/v2.4-rc-7/bigbluebutton-config/slides/blank-presentation.pdf \
-        https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/v2.4-rc-7/bigbluebutton-config/slides/blank-png.png \
+        https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/v2.4.0/bigbluebutton-config/slides/blank-svg.svg \
+        https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/v2.4.0/bigbluebutton-config/slides/blank-thumb.png \
+        https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/v2.4.0/bigbluebutton-config/slides/blank-presentation.pdf \
+        https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/v2.4.0/bigbluebutton-config/slides/blank-png.png \
     && sed -i 's/<policy domain="coder" rights="none" pattern="PDF" \/>/<policy domain="coder" rights="write" pattern="PDF" \/>/g' /etc/ImageMagick-6/policy.xml
 
 # get bbb-web

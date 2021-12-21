@@ -4,7 +4,7 @@ RUN apk add subversion git
 
 # --------------------
 
-ENV TAG_LEARNING_DASHBOARD v2.4-rc-7
+ENV TAG_LEARNING_DASHBOARD v2.4.0
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_LEARNING_DASHBOARD/bbb-learning-dashboard /bbb-learning-dashboard && rm -r /bbb-learning-dashboard/.svn
 RUN cd /bbb-learning-dashboard && npm ci && npm run build
 

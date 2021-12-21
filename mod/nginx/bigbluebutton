@@ -10,10 +10,11 @@ upstream poolhtml5servers {
   server 10.7.7.201:4101 fail_timeout=120s max_fails=1;
   server 10.7.7.202:4102 fail_timeout=120s max_fails=1;
   server 10.7.7.203:4103 fail_timeout=120s max_fails=1;
-  server 10.7.7.204:4104 fail_timeout=120s max_fails=1;
-  server 10.7.7.205:4105 fail_timeout=120s max_fails=1;
-  server 10.7.7.206:4106 fail_timeout=120s max_fails=1;
-  server 10.7.7.207:4107 fail_timeout=120s max_fails=1;
+  # TODO: set server list based on NUMBER_OF_FRONTEND_NODEJS_PROCESSES
+  # server 10.7.7.204:4104 fail_timeout=120s max_fails=1;
+  # server 10.7.7.205:4105 fail_timeout=120s max_fails=1;
+  # server 10.7.7.206:4106 fail_timeout=120s max_fails=1;
+  # server 10.7.7.207:4107 fail_timeout=120s max_fails=1;
 }
 
 server {
