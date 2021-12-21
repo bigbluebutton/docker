@@ -13,6 +13,7 @@ mkdir -p /var/bigbluebutton/recording/status/ended
 mkdir -p /var/bigbluebutton/recording/status/published
 mkdir -p /var/bigbluebutton/captions/inbox
 mkdir -p /var/bigbluebutton/published
+mkdir -p /var/bigbluebutton/published/notes
 mkdir -p /var/bigbluebutton/deleted
 mkdir -p /var/bigbluebutton/unpublished
 chown -R bigbluebutton:bigbluebutton /var/bigbluebutton

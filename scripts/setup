@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-cd $(dirname $0)/..
+cd "$(dirname "$0")/.."
 
 if ! [ -x "$(command -v curl)" ]; then
   echo "Error: curl is not installed, but the setup script relies on it."
@@ -79,6 +79,7 @@ then
     while [[ ! $prometheus_exporter_optimization =~ ^(y|n)$ ]]; do
         read -p "Choice (y/n): " prometheus_exporter_optimization
     done
+fi
 
 if [ "$recording" == "y" ]
 then
@@ -186,17 +187,14 @@ fi
 RANDOM_1=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
 RANDOM_2=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
 RANDOM_3=$(head /dev/urandom | tr -dc a-f0-9 | head -c 128)
-if [ ! "$greenlight" == "y" ]
-then
-    RANDOM_4=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
-fi
+RANDOM_4=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
+RANDOM_5=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
+
 sed -i "s/SHARED_SECRET=.*/SHARED_SECRET=$RANDOM_1/" .env
 sed -i "s/ETHERPAD_API_KEY=.*/ETHERPAD_API_KEY=$RANDOM_2/" .env
 sed -i "s/RAILS_SECRET=.*/RAILS_SECRET=$RANDOM_3/" .env
-if [ ! "$greenlight" == "y" ]
-then
-    sed -i "s/POSTGRESQL_SECRET=.*/POSTGRESQL_SECRET=$RANDOM_4/" .env
-fi
+sed -i "s/FSESL_PASSWORD=.*/FSESL_PASSWORD=$RANDOM_4/" .env
+sed -i "s/POSTGRESQL_SECRET=.*/POSTGRESQL_SECRET=$RANDOM_5/" .env
 
 ./scripts/generate-compose
 

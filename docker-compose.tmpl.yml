@@ -43,6 +43,7 @@ services:
     restart: unless-stopped
     depends_on:
         - redis
+        - etherpad
     healthcheck:
       test: wget --no-proxy --no-verbose --tries=1 --spider http://10.7.7.2:8090/bigbluebutton/api || exit 1
       start_period: 2m
@@ -56,6 +57,7 @@ services:
       STUN_SERVER: stun:${STUN_IP}:${STUN_PORT}
       TURN_SERVER: ${TURN_SERVER:-}
       TURN_SECRET: ${TURN_SECRET:-}
+      ENABLE_LEARNING_DASHBOARD: ${ENABLE_LEARNING_DASHBOARD:-true}
       NUMBER_OF_BACKEND_NODEJS_PROCESSES: {{ .Env.NUMBER_OF_BACKEND_NODEJS_PROCESSES }}
     volumes:
       - bigbluebutton:/var/bigbluebutton
@@ -242,6 +244,8 @@ services:
   jodconverter:
     build: mod/jodconverter
     restart: unless-stopped
+    tmpfs:
+      - /tmp
     deploy:
       resources:
         limits:
@@ -362,7 +366,7 @@ services:
       DB_USERNAME: postgres
       DB_PASSWORD: ${POSTGRESQL_SECRET:-password}
       {{ if isTrue .Env.DEV_MODE }}
-      BIGBLUEBUTTON_ENDPOINT: http://10.7.7.1:8080/bigbluebutton/api/
+      BIGBLUEBUTTON_ENDPOINT: http://10.7.7.1:48087/bigbluebutton/api/
       {{else}}
       BIGBLUEBUTTON_ENDPOINT: https://${DOMAIN}/bigbluebutton/api/
       {{end}}
@@ -392,7 +396,7 @@ services:
     image: greenstatic/bigbluebutton-exporter:v0.7.0-preview2
     restart: unless-stopped
     environment:
-      API_BASE_URL: http://10.7.7.1:8080/bigbluebutton/api/
+      API_BASE_URL: http://10.7.7.1:48087/bigbluebutton/api/
       API_SECRET: ${SHARED_SECRET}
       RECORDINGS_METRICS_READ_FROM_DISK: "${ENABLE_PROMETHEUS_EXPORTER_OPTIMIZATION:-false}"
     networks:

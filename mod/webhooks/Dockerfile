@@ -1,8 +1,8 @@
-FROM node:12-alpine
+FROM node:14-alpine
 
 # download dockerize
 ENV DOCKERIZE_VERSION v0.6.1
-RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+RUN wget -q https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && apk add subversion \
@@ -13,7 +13,7 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
 USER webhooks
 
 
-ENV TAG v2.3.4
+ENV TAG v2.4.0
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG/bbb-webhooks /app \
     && rm -rf /app/.svn \
     && cd /app && npm install --production

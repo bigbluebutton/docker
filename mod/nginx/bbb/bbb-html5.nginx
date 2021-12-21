@@ -25,6 +25,14 @@ location /html5client/fonts {
   alias /html5-static/app/fonts;
 }
 
+location /html5client/wasm {
+  types {
+    application/wasm wasm;
+  }
+  gzip_static on;
+  alias /html5-static/app/wasm;
+}
+
 location /html5client/ {
   alias /html5-static;
   try_files $uri @html5client;

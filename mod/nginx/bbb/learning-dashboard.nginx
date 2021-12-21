@@ -1,0 +1,9 @@
+location ~ /learning-dashboard/([0-9a-f]+-[0-9]+)/(.*) {
+    root /var/bigbluebutton/learning-dashboard/;
+    autoindex off;
+}
+
+location /learning-dashboard/ {
+    alias /www/learning-dashboard/;
+    autoindex off;
+}
