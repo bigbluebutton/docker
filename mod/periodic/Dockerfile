@@ -1,4 +1,4 @@
-FROM debian:buster-slim
+FROM debian:bullseye-slim
 
 # -- install mongo cli
 RUN apt-get update \
@@ -10,6 +10,8 @@ RUN apt-get update \
 # -- install docker cli
 COPY --from=library/docker:latest /usr/local/bin/docker /usr/bin/docker
 
-COPY bbb-restart-kms bbb-resync-freeswitch entrypoint.sh /
+COPY bbb-remove-old-recordings bbb-restart-kms bbb-resync-freeswitch entrypoint.sh /
+
+RUN chmod +x bbb-remove-old-recordings
 
 ENTRYPOINT ["/entrypoint.sh"]

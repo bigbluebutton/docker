@@ -10,3 +10,8 @@ RUN apt-get update && apt -y install  --no-install-recommends \
     fonts-liberation \
     fontconfig \
     ttf-mscorefonts-installer
+
+
+# avoid "APPLICATION FAILED TO START. Config data location '/etc/app/' does not exist"
+# https://github.com/bigbluebutton/docker/issues/178
+CMD ["--spring.config.additional-location=optional:/etc/app/"]

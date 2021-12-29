@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-cd $(dirname $0)/..
+cd "$(dirname "$0")/.."
 
 if ! [ -x "$(command -v curl)" ]; then
   echo "Error: curl is not installed, but the setup script relies on it."
@@ -43,17 +43,12 @@ then
     echo "   you must provide a relative or absolute path"
     echo "   to your certificates."
     while [[ -z "$CERTPATH" ]]; do
-        read -p "Please enter path to cert.pem: " CERTPATH 
+        read -p "Please enter path to cert.pem: " CERTPATH
     done
     while [[ -z "$KEYPATH" ]]; do
-        read -p "Please enter path to key.pem: " KEYPATH 
+        read -p "Please enter path to key.pem: " KEYPATH
     done
 fi
-
-prometheus_exporter=""
-while [[ ! $prometheus_exporter =~ ^(y|n)$ ]]; do
-    read -p "Should a Prometheus exporter be included? (y/n): " prometheus_exporter
-done
 
 DOMAIN=""
 while [[ -z "$DOMAIN" ]]; do
@@ -68,9 +63,41 @@ echo "   suggests, that it does not."
 echo "   make sure that you always get people's consent, before they join a room!"
 echo "   https://github.com/bigbluebutton/bigbluebutton/issues/9202"
 while [[ ! $recording =~ ^(y|n)$ ]]; do
-
     read -p "Choice (y/n): " recording
 done
+
+prometheus_exporter=""
+while [[ ! $prometheus_exporter =~ ^(y|n)$ ]]; do
+    read -p "Should a Prometheus exporter be included? (y/n): " prometheus_exporter
+done
+if [ "$prometheus_exporter" == "y" ]  && [ "$recording" == "y" ]
+then
+    echo "Should Prometheus exporter optimization be enabled?"
+    echo "  This instructs exporter to collect expensive recordings metrics by querying the disk instead of the API."
+    echo "  Enabling this can substantially decrease the scrape time required for the exporter to respond to metrics requests"
+    prometheus_exporter_optimization=""
+    while [[ ! $prometheus_exporter_optimization =~ ^(y|n)$ ]]; do
+        read -p "Choice (y/n): " prometheus_exporter_optimization
+    done
+fi
+
+if [ "$recording" == "y" ]
+then
+
+  remove_old_recording=""
+  while [[ ! $remove_old_recording =~ ^(y|n)$ ]]; do
+      read -p "Should old recordings be removed? (y/n): " remove_old_recording
+  done
+
+  if [ "$remove_old_recording" == "y" ]
+  then
+    recording_max_age_days=""
+    while [[ ! $recording_max_age_days =~ ^[0-9]{1,4}$ ]]; do
+        read -p "Please enter max age(days) for keeping recordings: " recording_max_age_days
+    done
+  fi
+
+fi
 
 ip_correct=""
 while [[ ! $ip_correct =~ ^(y|n)$ ]]; do
@@ -124,6 +151,12 @@ then
     sed -i "s/#ENABLE_RECORDING.*/ENABLE_RECORDING=true/" .env
 fi
 
+if [ "$remove_old_recording" == "y" ]
+then
+    sed -i "s/#REMOVE_OLD_RECORDING=.*/REMOVE_OLD_RECORDING=true/" .env
+    sed -i "s/#RECORDING_MAX_AGE_DAYS=.*/RECORDING_MAX_AGE_DAYS=$recording_max_age_days/" .env
+fi
+
 if [ "$coturn" == "y" ]
 then
     sed -i "s/.*TURN_SERVER=.*/TURN_SERVER=turns:$DOMAIN:5349?transport=tcp/" .env
@@ -142,24 +175,26 @@ fi
 
 if [ "$prometheus_exporter" == "y" ]
 then
-    sed -i "s/#ENABLE_PROMETHEUS_EXPORTER.*/ENABLE_PROMETHEUS_EXPORTER=true/" .env
+    sed -i "s/#ENABLE_PROMETHEUS_EXPORTER=.*/ENABLE_PROMETHEUS_EXPORTER=true/" .env
+fi
+
+if [ "$prometheus_exporter_optimization" == "y" ]
+then
+    sed -i "s/#ENABLE_PROMETHEUS_EXPORTER_OPTIMIZATION=.*/ENABLE_PROMETHEUS_EXPORTER_OPTIMIZATION=true/" .env
 fi
 
 # change secrets
 RANDOM_1=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
 RANDOM_2=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
 RANDOM_3=$(head /dev/urandom | tr -dc a-f0-9 | head -c 128)
-if [ ! "$greenlight" == "y" ]
-then
-    RANDOM_4=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
-fi
+RANDOM_4=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
+RANDOM_5=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
+
 sed -i "s/SHARED_SECRET=.*/SHARED_SECRET=$RANDOM_1/" .env
 sed -i "s/ETHERPAD_API_KEY=.*/ETHERPAD_API_KEY=$RANDOM_2/" .env
 sed -i "s/RAILS_SECRET=.*/RAILS_SECRET=$RANDOM_3/" .env
-if [ ! "$greenlight" == "y" ]
-then
-    sed -i "s/POSTGRESQL_SECRET=.*/POSTGRESQL_SECRET=$RANDOM_4/" .env
-fi
+sed -i "s/FSESL_PASSWORD=.*/FSESL_PASSWORD=$RANDOM_4/" .env
+sed -i "s/POSTGRESQL_SECRET=.*/POSTGRESQL_SECRET=$RANDOM_5/" .env
 
 ./scripts/generate-compose
 

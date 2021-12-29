@@ -1,6 +1,9 @@
-# 📦 BigBlueButton 2.3 Docker
+<img width="1012" alt="bbb-docker-banner" src="https://user-images.githubusercontent.com/1273169/141153216-0386cd4e-0aaf-473a-8f42-a048e52ed0d7.png">
 
-Version: 2.3.14 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigbluebutton/docker/issues)
+
+# 📦 BigBlueButton 2.4 Docker
+
+Version: 2.4.0 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigbluebutton/docker/issues)
 
 ## Features
 - Easy installation

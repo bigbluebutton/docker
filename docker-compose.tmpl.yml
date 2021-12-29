@@ -43,6 +43,7 @@ services:
     restart: unless-stopped
     depends_on:
         - redis
+        - etherpad
     healthcheck:
       test: wget --no-proxy --no-verbose --tries=1 --spider http://10.7.7.2:8090/bigbluebutton/api || exit 1
       start_period: 2m
@@ -56,6 +57,7 @@ services:
       STUN_SERVER: stun:${STUN_IP}:${STUN_PORT}
       TURN_SERVER: ${TURN_SERVER:-}
       TURN_SECRET: ${TURN_SECRET:-}
+      ENABLE_LEARNING_DASHBOARD: ${ENABLE_LEARNING_DASHBOARD:-true}
       NUMBER_OF_BACKEND_NODEJS_PROCESSES: {{ .Env.NUMBER_OF_BACKEND_NODEJS_PROCESSES }}
     volumes:
       - bigbluebutton:/var/bigbluebutton
@@ -115,7 +117,7 @@ services:
       - ./conf/dialplan_public:/etc/freeswitch/dialplan/public_docker
       - vol-freeswitch:/var/freeswitch/meetings
     network_mode: host
-  
+
   nginx:
     build: mod/nginx
     restart: unless-stopped
@@ -156,7 +158,7 @@ services:
       retries: 30
     networks:
       bbb-net:
-        ipv4_address: 10.7.7.5 
+        ipv4_address: 10.7.7.5
 
   mongodb:
     image: mongo:4.4
@@ -177,7 +179,7 @@ services:
   kurento:
     image: kurento/kurento-media-server:6.16
     restart: unless-stopped
-    environment: 
+    environment:
       KMS_STUN_IP: ${STUN_IP}
       KMS_STUN_PORT: ${STUN_PORT}
       KMS_MIN_PORT: 24577
@@ -188,7 +190,7 @@ services:
     network_mode: host
     volumes:
       - vol-kurento:/var/kurento
-  
+
   webrtc-sfu:
     build:  mod/webrtc-sfu
     restart: unless-stopped
@@ -242,6 +244,8 @@ services:
   jodconverter:
     build: mod/jodconverter
     restart: unless-stopped
+    tmpfs:
+      - /tmp
     deploy:
       resources:
         limits:
@@ -249,7 +253,7 @@ services:
     networks:
       bbb-net:
         ipv4_address: 10.7.7.20
-  
+
   periodic:
     build: mod/periodic
     restart: unless-stopped
@@ -258,6 +262,12 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - bigbluebutton:/var/bigbluebutton
+    tmpfs:
+      - /var/log/bigbluebutton
+    environment:
+      ENABLE_RECORDING: ${ENABLE_RECORDING}
+      REMOVE_OLD_RECORDING: ${REMOVE_OLD_RECORDING}
+      RECORDING_MAX_AGE_DAYS: ${RECORDING_MAX_AGE_DAYS}
     networks:
       bbb-net:
         ipv4_address: 10.7.7.12
@@ -356,7 +366,7 @@ services:
       DB_USERNAME: postgres
       DB_PASSWORD: ${POSTGRESQL_SECRET:-password}
       {{ if isTrue .Env.DEV_MODE }}
-      BIGBLUEBUTTON_ENDPOINT: http://10.7.7.1:8080/bigbluebutton/api/
+      BIGBLUEBUTTON_ENDPOINT: http://10.7.7.1:48087/bigbluebutton/api/
       {{else}}
       BIGBLUEBUTTON_ENDPOINT: https://${DOMAIN}/bigbluebutton/api/
       {{end}}
@@ -385,14 +395,19 @@ services:
   prometheus-exporter:
     image: greenstatic/bigbluebutton-exporter:v0.7.0-preview2
     restart: unless-stopped
-    environment: 
-      API_BASE_URL: http://10.7.7.1:8080/bigbluebutton/api/
+    environment:
+      API_BASE_URL: http://10.7.7.1:48087/bigbluebutton/api/
       API_SECRET: ${SHARED_SECRET}
-      RECORDINGS_METRICS_READ_FROM_DISK: "false"
+      RECORDINGS_METRICS_READ_FROM_DISK: "${ENABLE_PROMETHEUS_EXPORTER_OPTIMIZATION:-false}"
     networks:
       bbb-net:
         ipv4_address: 10.7.7.33
+    {{ if isTrue .Env.ENABLE_PROMETHEUS_EXPORTER_OPTIMIZATION }}
+    volumes:
+      - bigbluebutton:/var/bigbluebutton:ro
+    {{end}}
 {{end}}
+
 
 volumes:
   bigbluebutton:
