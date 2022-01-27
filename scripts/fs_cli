@@ -3,4 +3,10 @@ set -e
 
 cd $(dirname $0)/..
 
-docker-compose exec freeswitch fs_cli -H 10.7.7.1
+# load .env
+if [ -f .env ]
+then
+  export $(cat .env | sed 's/#.*//g' | grep "FSESL_PASSWORD" | xargs)
+fi
+
+docker-compose exec freeswitch fs_cli -H 10.7.7.1 -p "$FSESL_PASSWORD"

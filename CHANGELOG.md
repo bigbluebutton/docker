@@ -1,6 +1,9 @@
 # Changelog
 
-## Unreleased
+## Unreleases
+- Applied v2.4.2 changes @alangecker
+
+## Release v2.4.0 (2021-12-29)
 - BigBlueButton v2.4 @alangecker [#159](https://github.com/bigbluebutton/docker/pull/159)
 - **Breaking change:** change nginx port from `8080` to `48087`. see [upgrade note](docs/upgrading.md) @alangeker [#133](https://github.com/bigbluebutton/docker/issues/133)
 - Enable optimization for Prometheus Exporter when recording is enabled @omidmaldar [#161](https://github.com/bigbluebutton/docker/pull/161)

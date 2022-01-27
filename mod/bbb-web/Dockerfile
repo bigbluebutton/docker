@@ -3,7 +3,7 @@ FROM mozilla/sbt:8u212_1.2.8 AS builder
 RUN apt-get update && apt-get install -y subversion
 
 # download bbb-common-message
-ENV TAG_COMMON_MESSAGE v2.4.0
+ENV TAG_COMMON_MESSAGE v2.4.1
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_COMMON_MESSAGE/bbb-common-message /bbb-common-message \
     && rm -rf /bbb-common-message/.svn
 
@@ -26,7 +26,7 @@ RUN cd /opt \
 ENV PATH="/opt/gradle-6.7/bin:${PATH}"
 
 # download bbb-common-web
-ENV TAG_COMMON_WEB v2.4.0
+ENV TAG_COMMON_WEB v2.4.1
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_COMMON_WEB/bbb-common-web /bbb-common-web \
     && rm -rf /bbb-common-message/.svn
 
@@ -35,7 +35,7 @@ RUN cd /bbb-common-web \
  && ./deploy.sh
 
 # download bbb-web
-ENV TAG_WEB v2.4.0
+ENV TAG_WEB v2.4.1
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_WEB/bigbluebutton-web /bbb-web \
     && rm -rf /bbb-web/.svn
 

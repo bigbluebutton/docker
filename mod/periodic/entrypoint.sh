@@ -14,7 +14,7 @@ do
 	/bbb-resync-freeswitch
 
 	# delete presentations older than N days
-	find /var/bigbluebutton/ -maxdepth 1 -type d -name "*-*" -mtime +$history -exec rm -rf '{}' +
+	find /var/bigbluebutton/ -maxdepth 1 -type d -name "*-[0-9]*" -mtime +$history -exec rm -rf '{}' +
 
   # delete recordings older than $RECORDING_MAX_AGE_DAYS
   if [ "$ENABLE_RECORDING" == true ] && [ "$REMOVE_OLD_RECORDING" == true ]; then
