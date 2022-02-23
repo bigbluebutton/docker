@@ -1,7 +1,9 @@
 # Changelog
 
 ## Unreleased
-- Applied v2.4.4 changes @alangecker
+- Applied v2.4.4 changes @alangecker [#195](https://github.com/bigbluebutton/docker/pull/195)
+- Update Russian sound announcement examples @lexuzieel [#196](https://github.com/bigbluebutton/docker/pull/196)
+- fix for presentation slides not displayed if they contain type 3 fonts @rottaran  [#191](https://github.com/bigbluebutton/docker/pull/191)
 
 ## Release v2.4.0 (2021-12-29)
 - BigBlueButton v2.4 @alangecker [#159](https://github.com/bigbluebutton/docker/pull/159)
