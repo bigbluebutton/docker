@@ -3,7 +3,7 @@ FROM mozilla/sbt:8u212_1.2.8 AS builder
 RUN apt-get update && apt-get install -y subversion
 
 # download bbb-common-message
-ENV TAG_COMMON_MESSAGE v2.4.0
+ENV TAG_COMMON_MESSAGE v2.4.1
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_COMMON_MESSAGE/bbb-common-message /bbb-common-message \
     && rm -rf /bbb-common-message/.svn
 
@@ -13,7 +13,7 @@ RUN cd /bbb-common-message \
 
 
 # ===================================================
-ENV TAG_FSESL v2.4.0
+ENV TAG_FSESL v2.4.1
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_FSESL/bbb-fsesl-client /bbb-fsesl-client \
     && rm -rf /bbb-fsesl-client/.svn
 
@@ -21,7 +21,7 @@ RUN cd /bbb-fsesl-client \
     && ./deploy.sh
 
 
-ENV TAG v2.4.0
+ENV TAG v2.4.1
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG/akka-bbb-fsesl /source \
     && rm -rf /source/.svn
 
