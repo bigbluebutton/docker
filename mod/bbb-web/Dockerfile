@@ -101,4 +101,7 @@ COPY turn-stun-servers.xml /usr/share/bbb-web/WEB-INF/classes/spring/turn-stun-s
 COPY logback.xml /usr/share/bbb-web/WEB-INF/classes/logback.xml
 COPY office-convert.sh /usr/share/bbb-libreoffice-conversion/convert.sh
 
+# add symlink /var/bigbluebutton/learning-analytics-dashboard --> /var/bigbluebutton/learning-dashboard
+RUN mkdir -p /var/bigbluebutton/learning-dashboard/ && ln -s /var/bigbluebutton/learning-dashboard/ /var/bigbluebutton/learning-analytics-dashboard
+
 ENTRYPOINT ["/entrypoint.sh"]
