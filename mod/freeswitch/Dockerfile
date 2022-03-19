@@ -3,8 +3,8 @@ FROM debian:bullseye-slim
 # add freeswitch repo
 RUN apt-get update && \
 apt-get install -y --no-install-recommends subversion curl wget ca-certificates gnupg gnupg2 lsb-release unzip && \
-wget -O /usr/share/keyrings/freeswitch-archive-keyring.gpg https://files.freeswitch.org/repo/deb/debian-release/freeswitch-archive-keyring.gpg && \
-echo 'deb [signed-by=/usr/share/keyrings/freeswitch-archive-keyring.gpg] http://files.freeswitch.org/repo/deb/debian-release/ bullseye main' > /etc/apt/sources.list.d/freeswitch.list
+wget -q -O /usr/share/keyrings/freeswitch-archive-keyring.gpg https://freeswitch-mirror.chandi.it/repo/deb/debian-release/signalwire-freeswitch-repo.gpg && \
+echo 'deb [signed-by=/usr/share/keyrings/freeswitch-archive-keyring.gpg] http://freeswitch-mirror.chandi.it/repo/deb/debian-release/ bullseye main' > /etc/apt/sources.list.d/freeswitch.list
 
 # install dockerize
 ENV DOCKERIZE_VERSION v0.6.1

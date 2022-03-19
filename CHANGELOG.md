@@ -1,6 +1,11 @@
 # Changelog
 
 ## Unreleased
+
+## Release v2.4.4-2 (2022-03-19)
+- Use own freeswitch mirror instead of the official login-only one @alangecker [#203](https://github.com/bigbluebutton/docker/issues/203)
+
+## Release v2.4.4 (2022-02-23)
 - Applied v2.4.4 changes @alangecker [#195](https://github.com/bigbluebutton/docker/pull/195)
 - Update Russian sound announcement examples @lexuzieel [#196](https://github.com/bigbluebutton/docker/pull/196)
 - fix for presentation slides not displayed if they contain type 3 fonts @rottaran  [#191](https://github.com/bigbluebutton/docker/pull/191)
