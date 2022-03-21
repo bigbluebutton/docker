@@ -1,9 +1,11 @@
 # Changelog
 
 ## Unreleased
-
-## Release v2.4.4-2 (2022-03-19)
+- Applied BBB v2.4.5 changes @alangecker 
+- New mute & unmute sounds by senfcall
+- Update etherpad @pedrobmarin [#202](https://github.com/bigbluebutton/docker/pull/202)
 - Use own freeswitch mirror instead of the official login-only one @alangecker [#203](https://github.com/bigbluebutton/docker/issues/203)
+- Ignore docker-compose.override.yml @dorianim [#183](https://github.com/bigbluebutton/docker/pull/183)
 
 ## Release v2.4.4 (2022-02-23)
 - Applied v2.4.4 changes @alangecker [#195](https://github.com/bigbluebutton/docker/pull/195)
