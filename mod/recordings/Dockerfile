@@ -9,9 +9,14 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     libsystemd-dev \
     python3 \
-    python3-pyinotify \
+    python3-attr \
+    python3-cairo \
+    python3-gi \
+    python3-gi-cairo \
     python3-lxml \
     python3-icu \
+    python3-pyinotify \
+    gir1.2-pangocairo-1.0 \
     ffmpeg \
     poppler-utils \
     imagemagick \
