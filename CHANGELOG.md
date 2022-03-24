@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## Release v2.4.5 (2022-03-24)
 - Applied BBB v2.4.5 changes @alangecker 
 - New mute & unmute sounds by senfcall
 - Update etherpad @pedrobmarin [#202](https://github.com/bigbluebutton/docker/pull/202)
