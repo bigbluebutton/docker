@@ -7,3 +7,12 @@
 [submodule "mod/etherpad/bbb-etherpad-plugin"]
 	path = mod/etherpad/bbb-etherpad-plugin
 	url = https://github.com/alangecker/bbb-etherpad-plugin
+[submodule "mod/bbb-pads/bbb-pads"]
+	path = mod/bbb-pads/bbb-pads
+	url = https://github.com/bigbluebutton/bbb-pads
+[submodule "mod/webhooks/bbb-webhooks"]
+	path = mod/webhooks/bbb-webhooks
+	url = https://github.com/bigbluebutton/bbb-webhooks
+[submodule "mod/nginx/bbb-playback"]
+	path = mod/nginx/bbb-playback
+	url = https://github.com/bigbluebutton/bbb-playback

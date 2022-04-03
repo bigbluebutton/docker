@@ -45,20 +45,20 @@ RUN mkdir -p \
     /usr/local/bigbluebutton/core \
     /etc/bigbluebutton
 
-ENV TAG v2.4.4
+ARG TAG_RECORDINGS
 
 # add bbb-record-core (lib, scripts and Gemfile)
 RUN cd /usr/local/bigbluebutton/core \
-    && svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG/record-and-playback/core/lib \
-    && svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG/record-and-playback/core/scripts \
+    && svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_RECORDINGS/record-and-playback/core/lib \
+    && svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_RECORDINGS/record-and-playback/core/scripts \
     && rm -rf /usr/local/bigbluebutton/core/*/.svn \
-    && wget https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/$TAG/record-and-playback/core/Gemfile.lock \
-    && wget https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/$TAG/record-and-playback/core/Gemfile \
-    && wget https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/$TAG/record-and-playback/core/Rakefile
+    && wget https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/$TAG_RECORDINGS/record-and-playback/core/Gemfile.lock \
+    && wget https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/$TAG_RECORDINGS/record-and-playback/core/Gemfile \
+    && wget https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/$TAG_RECORDINGS/record-and-playback/core/Rakefile
 
 # add bbb-playback-presentation scripts
 RUN cd /tmp \
-    && svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG/record-and-playback/presentation/scripts \
+    && svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_RECORDINGS/record-and-playback/presentation/scripts \
     && rsync -av /tmp/scripts/ /usr/local/bigbluebutton/core/scripts/ \
     && rm -rf /tmp/scripts
 

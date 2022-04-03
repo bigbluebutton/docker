@@ -4,13 +4,11 @@ RUN apk add subversion git
 
 # --------------------
 
-ENV TAG_LEARNING_DASHBOARD v2.4.5
+ARG TAG_LEARNING_DASHBOARD
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_LEARNING_DASHBOARD/bbb-learning-dashboard /bbb-learning-dashboard && rm -r /bbb-learning-dashboard/.svn
 RUN cd /bbb-learning-dashboard && npm ci && npm run build
 
-ENV TAG_PLAYBACK v3.3.0
-ENV REACT_APP_BBB_PLAYBACK_BUILD=$TAG_PLAYBACK
-RUN svn checkout https://github.com/bigbluebutton/bbb-playback/tags/$TAG_PLAYBACK /bbb-playback && rm -r /bbb-playback/.svn
+COPY ./bbb-playback /bbb-playback
 RUN cd /bbb-playback && npm ci && npm run build
 
 # --------------------

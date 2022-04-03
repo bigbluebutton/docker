@@ -33,9 +33,20 @@ if [ "$ENABLE_COTURN" == true ]; then
   fi
 fi
 
+export $(cat tags.env | sed 's/#.*//g' | xargs)
+
 docker run  \
     --rm  \
     -v $(pwd)/docker-compose.tmpl.yml:/docker-compose.tmpl.yml \
+    -e BBB_BUILD_TAG=${BBB_BUILD_TAG} \
+    -e TAG_COMMON_MESSAGE=${TAG_COMMON_MESSAGE} \
+    -e TAG_APPS_AKKA=${TAG_APPS_AKKA} \
+    -e TAG_FSESL_AKKA=${TAG_FSESL_AKKA} \
+    -e TAG_BBB_WEB=${TAG_BBB_WEB} \
+    -e TAG_HTML5=${TAG_HTML5} \
+    -e TAG_FS_CONFIG=${TAG_FS_CONFIG} \
+    -e TAG_LEARNING_DASHBOARD=${TAG_LEARNING_DASHBOARD} \
+    -e TAG_RECORDINGS=${TAG_RECORDINGS} \
     -e DEV_MODE=${DEV_MODE:-false} \
     -e ENABLE_RECORDING=${ENABLE_RECORDING:-false} \
     -e REMOVE_OLD_RECORDING=${REMOVE_OLD_RECORDING:-false} \

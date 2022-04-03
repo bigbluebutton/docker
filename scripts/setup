@@ -198,6 +198,9 @@ sed -i "s/POSTGRESQL_SECRET=.*/POSTGRESQL_SECRET=$RANDOM_5/" .env
 
 ./scripts/generate-compose
 
+echo "building bbb-docker-base-java"
+docker build -t bbb-docker-base-java mod/base-java
+
 echo "--------------------------------------------------"
 echo "configuration file .env got successfully created!"
 echo ""

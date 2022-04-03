@@ -7,7 +7,11 @@ version: '3.6'
 
 # html5 templates
 x-html5-backend: &html5backend
-  build: mod/html5
+  build: 
+    context: mod/html5
+    args:
+      BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+      TAG_HTML5: {{ .Env.TAG_HTML5 }}
   image: bbb-html5
   restart: unless-stopped
   depends_on:
@@ -39,7 +43,12 @@ x-html5-frontend: &html5frontend
 
 services:
   bbb-web:
-    build: mod/bbb-web
+    build: 
+      context: mod/bbb-web
+      args:
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+        TAG_COMMON_MESSAGE: {{ .Env.TAG_COMMON_MESSAGE }}
+        TAG_BBB_WEB: {{ .Env.TAG_BBB_WEB }}
     restart: unless-stopped
     depends_on:
         - redis
@@ -94,7 +103,11 @@ services:
 
 
   freeswitch:
-    build: mod/freeswitch
+    container_name: bbb-freeswitch
+    build: 
+      context: mod/freeswitch
+      args:
+        TAG_FS_CONFIG: {{ .Env.TAG_FS_CONFIG }}
     restart: unless-stopped
     cap_add:
       - IPC_LOCK
@@ -119,7 +132,10 @@ services:
     network_mode: host
 
   nginx:
-    build: mod/nginx
+    build:
+      context: mod/nginx
+      args:
+        TAG_LEARNING_DASHBOARD: {{ .Env.TAG_LEARNING_DASHBOARD }}
     restart: unless-stopped
     depends_on:
       - etherpad
@@ -192,7 +208,10 @@ services:
       - vol-kurento:/var/kurento
 
   webrtc-sfu:
-    build:  mod/webrtc-sfu
+    build: 
+      context: mod/webrtc-sfu
+      args:
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
     restart: unless-stopped
     depends_on:
       - redis
@@ -217,10 +236,16 @@ services:
         ipv4_address: 10.7.7.10
 
   fsesl-akka:
-    build: mod/fsesl-akka
+    build: 
+      context: mod/fsesl-akka
+      args:
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+        TAG_COMMON_MESSAGE: {{ .Env.TAG_COMMON_MESSAGE }}
+        TAG_FSESL_AKKA: {{ .Env.TAG_FSESL_AKKA }}
     restart: unless-stopped
     depends_on:
       - redis
+      - freeswitch
     environment:
       FSESL_PASSWORD: ${FSESL_PASSWORD:-ClueCon}
     networks:
@@ -228,7 +253,12 @@ services:
         ipv4_address: 10.7.7.14
 
   apps-akka:
-    build: mod/apps-akka
+    build: 
+      context: mod/apps-akka
+      args:
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+        TAG_COMMON_MESSAGE: {{ .Env.TAG_COMMON_MESSAGE }}
+        TAG_APPS_AKKA: {{ .Env.TAG_APPS_AKKA }}
     restart: unless-stopped
     depends_on:
       - redis
@@ -275,7 +305,11 @@ services:
 {{ if isTrue .Env.ENABLE_RECORDING }}
   # recordings
   recordings:
-    build: mod/recordings
+    build: 
+      context: mod/recordings
+      args:
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+        TAG_RECORDINGS: {{ .Env.TAG_RECORDINGS }}
     restart: unless-stopped
     depends_on:
       - redis

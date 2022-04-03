@@ -30,6 +30,7 @@ else
 
     echo ""
     echo "# rebuild images"
+    docker build -t bbb-docker-base-java mod/base-java
 
     # rebuild everything which got modified
     docker-compose build --pull
