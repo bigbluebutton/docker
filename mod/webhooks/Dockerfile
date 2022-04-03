@@ -1,26 +1,24 @@
-FROM node:14-alpine
-
-# download dockerize
-ENV DOCKERIZE_VERSION v0.6.1
-RUN wget -q https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && apk add subversion \
-    && mkdir /app \
-    && adduser -D -u 2002 -g webhooks webhooks \
-    && chown webhooks:webhooks /app
-
-USER webhooks
+FROM node:14.18.1-bullseye-slim AS builder
 
 
-ENV TAG v2.4.0
-RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG/bbb-webhooks /app \
-    && rm -rf /app/.svn \
-    && cd /app && npm install --production
+RUN apt-get update && apt-get install -y git wget
 
+RUN  wget -q https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64 -O /usr/bin/yq \
+    && chmod +x /usr/bin/yq
+
+COPY ./bbb-webhooks /bbb-webhooks
+RUN cd /bbb-webhooks && npm install --production
+
+RUN chmod 777 /bbb-webhooks/config
+# ------------------------------
+
+FROM node:14.18.1-bullseye-slim
+RUN useradd --uid 2004 --user-group bbb-webhooks
+
+COPY --from=builder /usr/bin/yq /usr/bin/yq
+COPY --from=builder /bbb-webhooks /bbb-webhooks
 COPY entrypoint.sh /entrypoint.sh
-COPY config.yml /app/config/default.yml.tmpl
 
+USER bbb-webhooks
 ENTRYPOINT /entrypoint.sh
-
 
