@@ -21,7 +21,6 @@ x-html5-backend: &html5backend
   environment: &html5backend-env
     DOMAIN: ${DOMAIN}
     CLIENT_TITLE: ${CLIENT_TITLE}
-    ETHERPAD_API_KEY: ${ETHERPAD_API_KEY}
     LISTEN_ONLY_MODE: ${LISTEN_ONLY_MODE:-true}
     DISABLE_ECHO_TEST: ${DISABLE_ECHO_TEST:-false}
     AUTO_SHARE_WEBCAM: ${AUTO_SHARE_WEBCAM:-false}
@@ -164,8 +163,20 @@ services:
       bbb-net:
         ipv4_address: 10.7.7.4
 
+  bbb-pads:
+    build: mod/bbb-pads
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - etherpad
+    environment:
+      ETHERPAD_API_KEY: ${ETHERPAD_API_KEY}
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.18
+
   redis:
-    image: redis:6.2-alpine
+    image: redis:7.0-rc-alpine
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -177,7 +188,8 @@ services:
         ipv4_address: 10.7.7.5
 
   mongodb:
-    image: mongo:4.4
+    container_name: bbb-mongodb
+    image: mongo:5.0
     restart: unless-stopped
     volumes:
       - ./mod/mongo/mongod.conf:/etc/mongod.conf
@@ -231,6 +243,8 @@ services:
     extra_hosts:
       - host.docker.internal:10.7.7.1
       - kurento:10.7.7.1
+    volumes:
+      - vol-mediasoup:/var/mediasoup
     networks:
       bbb-net:
         ipv4_address: 10.7.7.10
@@ -292,6 +306,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - bigbluebutton:/var/bigbluebutton
+      - vol-mediasoup:/var/mediasoup
     tmpfs:
       - /var/log/bigbluebutton
     environment:
@@ -313,12 +328,14 @@ services:
     restart: unless-stopped
     depends_on:
       - redis
+      - bbb-pads
     environment:
       DOMAIN: ${DOMAIN}
     volumes:
       - bigbluebutton:/var/bigbluebutton
       - vol-freeswitch:/var/freeswitch/meetings
       - vol-kurento:/var/kurento
+      - vol-mediasoup:/var/mediasoup
     tmpfs:
       - /var/log/bigbluebutton
       - /tmp
@@ -366,7 +383,7 @@ services:
 {{ if isTrue .Env.ENABLE_COTURN }}
   # coturn
   coturn:
-    image: instrumentisto/coturn:4.5
+    image: coturn/coturn:4.5
     restart: unless-stopped
     command:
       - "--external-ip=${EXTERNAL_IPv4}/${EXTERNAL_IPv4}"
@@ -447,6 +464,7 @@ volumes:
   bigbluebutton:
   vol-freeswitch:
   vol-kurento:
+  vol-mediasoup:
   html5-static:
 {{ if isTrue .Env.ENABLE_HTTPS_PROXY }}
   ssl_data:

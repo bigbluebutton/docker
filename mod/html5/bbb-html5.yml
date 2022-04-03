@@ -13,15 +13,11 @@ public:
   chat:
     enabled: {{ .Env.CHAT_ENABLED }}
     startClosed: {{ .Env.CHAT_START_CLOSED }}
-  note:
+  pads:
     url: https://{{ .Env.DOMAIN }}/pad
 private:
   app:
     host: 0.0.0.0
-  etherpad:
-    apikey: {{ .Env.ETHERPAD_API_KEY }}
-    host: etherpad
-    port: 9001
   redis:
     host: redis
     port: '6379'

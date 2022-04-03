@@ -11,7 +11,7 @@ export BIND_IP=0.0.0.0
 export LANG=en_US.UTF-8
 export INSTANCE_MAX=1
 export ENVIRONMENT_TYPE=production
-export NODE_VERSION=node-v12.16.1-linux-x64
+export NODE_VERSION=node-v14.18.3-linux-x64
 export BBB_HTML5_LOCAL_SETTINGS=/app/bbb-html5.yml
 
 if [ "$DEV_MODE" == true ]; then
@@ -26,7 +26,7 @@ fi
 
 # if container is the first frontend, do some additional tasks
 if [ "$BBB_HTML5_ROLE" == "frontend" ] && [ "$INSTANCE_ID" == "1" ]; then
-    # delete potential old settings.yml
+
 
     # copy static files into volume for direct access by nginx
     # https://github.com/bigbluebutton/bigbluebutton/issues/10739
