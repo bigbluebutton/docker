@@ -236,7 +236,11 @@ services:
       ESL_PASSWORD: ${FSESL_PASSWORD:-ClueCon}
       # TODO: add mediasoup IPv6
       # TODO: can listen to 0.0.0.0 for nat support? https://github.com/versatica/mediasoup/issues/487
+    {{ if .Env.EXTERNAL_IPv6 }}
+      MS_WEBRTC_LISTEN_IPS: '[{"ip":"${EXTERNAL_IPv6}", "announcedIp":"${EXTERNAL_IPv6}"}, {"ip":"${EXTERNAL_IPv4}", "announcedIp":"${EXTERNAL_IPv4}"}]'
+    {{else}}
       MS_WEBRTC_LISTEN_IPS: '[{"ip":"${EXTERNAL_IPv4}", "announcedIp":"${EXTERNAL_IPv4}"}]'
+    {{end}}
       MS_RTP_LISTEN_IP: '{"ip":"0.0.0.0", "announcedIp":"${EXTERNAL_IPv4}"}'
     volumes:
       - vol-mediasoup:/var/mediasoup
