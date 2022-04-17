@@ -21,7 +21,7 @@ RUN sed -i "s/VERSION/$TAG_HTML5/" /app/bundle/programs/web.browser/head.html \
 
 # ------------------------------
 
-FROM node:14.18.1-alpine
+FROM node:14.18.3-alpine
 
 RUN addgroup -g 2000 meteor && \
     adduser -D -u 2001 -G meteor meteor && \

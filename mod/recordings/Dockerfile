@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y \
     supervisor \
     locales \
     locales-all
+# TODO: missing packages
 
 ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
@@ -79,11 +80,11 @@ RUN sed -i 's|Journald::Logger\.new.*|Logger.new("/var/log/bigbluebutton/recordi
 
 # add bbb-record with some adjustments so bbb-record works in this environment
 RUN cd /usr/bin \
-    && wget https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/$TAG/bigbluebutton-config/bin/bbb-record \
+    && wget https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/$TAG_RECORDINGS/bigbluebutton-config/bin/bbb-record \
     && chmod +x /usr/bin/bbb-record \
     && sed -i 's/^BBB_WEB.*/BBB_WEB=""/' /usr/bin/bbb-record \
     && sed -i 's/systemctl.*//' /usr/bin/bbb-record \
-    && echo "BIGBLUEBUTTON_RELEASE=$TAG" > /etc/bigbluebutton/bigbluebutton-release
+    && echo "BIGBLUEBUTTON_RELEASE=$TAG_RECORDINGS" > /etc/bigbluebutton/bigbluebutton-release
 
 # create user
 # the ID should match the one creating the files in `core`
