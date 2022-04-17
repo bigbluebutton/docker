@@ -7,8 +7,6 @@ history=5
 
 while :
 do
-	# restart kurento after 24h
-	/bbb-restart-kms
 
 	# resync freeswitch
 	/bbb-resync-freeswitch

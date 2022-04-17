@@ -30,8 +30,6 @@ ENV NODE_ENV production
 COPY --from=builder /app /app
 RUN chown -R webrtc-sfu:webrtc-sfu /app/config
 
-COPY docker-entrypoint.sh /app/docker-entrypoint.sh
-
 USER webrtc-sfu
-ENTRYPOINT [ "/app/docker-entrypoint.sh" ]
+WORKDIR /app
 CMD [ "npm", "start" ]

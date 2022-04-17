@@ -70,7 +70,6 @@ services:
     volumes:
       - bigbluebutton:/var/bigbluebutton
       - vol-freeswitch:/var/freeswitch/meetings
-      - vol-kurento:/var/kurento
     networks:
       bbb-net:
         ipv4_address: 10.7.7.2
@@ -149,7 +148,7 @@ services:
       - "host.docker.internal:10.7.7.1"
       - "bbb-web:10.7.7.2"
       - "etherpad:10.7.7.4"
-      - "webrtc-sfu:10.7.7.10"
+      - "webrtc-sfu:10.7.7.1"
       - "html5:10.7.7.11"
 
   etherpad:
@@ -204,8 +203,9 @@ services:
       bbb-net:
         ipv4_address: 10.7.7.6
 
+  #  TODO: remove as soon as not required anymore by webrtc-sfu
   kurento:
-    image: kurento/kurento-media-server:6.16
+    image: kurento/kurento-media-server:6.17
     restart: unless-stopped
     environment:
       KMS_STUN_IP: ${STUN_IP}
@@ -213,11 +213,10 @@ services:
       KMS_MIN_PORT: 24577
       KMS_MAX_PORT: 32768
       KMS_TURN_URL:
-      KMS_NETWORK_INTERFACES: ${NETWORK_INTERFACE:-}
       GST_DEBUG: 3,Kurento*:4,kms*:4,KurentoWebSocketTransport:5
     network_mode: host
-    volumes:
-      - vol-kurento:/var/kurento
+    tmpfs:
+      - /var/kurento
 
   webrtc-sfu:
     build: 
@@ -227,27 +226,21 @@ services:
     restart: unless-stopped
     depends_on:
       - redis
-      - kurento
+      - freeswitch
     environment:
-      CLIENT_HOST: 0.0.0.0
-      KURENTO_NAME: kurento
-      REDIS_HOST: redis
-      FREESWITCH_IP: host.docker.internal
+      CLIENT_HOST: 10.7.7.1
+      REDIS_HOST: 10.7.7.5
+      FREESWITCH_IP: 10.7.7.1
       FREESWITCH_SIP_IP: ${EXTERNAL_IPv4}
-      ESL_IP: host.docker.internal
+      ESL_IP: 10.7.7.1
       ESL_PASSWORD: ${FSESL_PASSWORD:-ClueCon}
-      LOG_LEVEL: info
-      NODE_CONFIG: '{"kurento":[{"ip":"${EXTERNAL_IPv4}","url":"ws://kurento:8888/kurento"}]}'
-    ports:
-      - "127.0.0.1:3008:3008"
-    extra_hosts:
-      - host.docker.internal:10.7.7.1
-      - kurento:10.7.7.1
+      # TODO: add mediasoup IPv6
+      # TODO: can listen to 0.0.0.0 for nat support? https://github.com/versatica/mediasoup/issues/487
+      MS_WEBRTC_LISTEN_IPS: '[{"ip":"${EXTERNAL_IPv4}", "announcedIp":"${EXTERNAL_IPv4}"}]'
+      MS_RTP_LISTEN_IP: '{"ip":"0.0.0.0", "announcedIp":"${EXTERNAL_IPv4}"}'
     volumes:
       - vol-mediasoup:/var/mediasoup
-    networks:
-      bbb-net:
-        ipv4_address: 10.7.7.10
+    network_mode: host
 
   fsesl-akka:
     build: 
@@ -334,7 +327,6 @@ services:
     volumes:
       - bigbluebutton:/var/bigbluebutton
       - vol-freeswitch:/var/freeswitch/meetings
-      - vol-kurento:/var/kurento
       - vol-mediasoup:/var/mediasoup
     tmpfs:
       - /var/log/bigbluebutton
@@ -463,7 +455,6 @@ services:
 volumes:
   bigbluebutton:
   vol-freeswitch:
-  vol-kurento:
   vol-mediasoup:
   html5-static:
 {{ if isTrue .Env.ENABLE_HTTPS_PROXY }}
