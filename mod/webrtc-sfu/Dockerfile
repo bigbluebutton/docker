@@ -23,7 +23,7 @@ RUN cd /app \
 
 
 # =============================
-FROM node:14.18.3-bullseye-slim
+FROM node:14.19.1-bullseye-slim
 RUN useradd --uid 2004 --user-group webrtc-sfu 
 ENV NODE_ENV production
 

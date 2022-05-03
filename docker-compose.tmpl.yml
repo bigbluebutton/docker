@@ -244,6 +244,8 @@ services:
       MS_RTP_LISTEN_IP: '{"ip":"0.0.0.0", "announcedIp":"${EXTERNAL_IPv4}"}'
     volumes:
       - vol-mediasoup:/var/mediasoup
+    tmpfs:
+      - /var/log/bbb-webrtc-sfu
     network_mode: host
 
   fsesl-akka:

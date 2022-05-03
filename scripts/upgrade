@@ -33,7 +33,7 @@ else
     docker build -t bbb-docker-base-java mod/base-java
 
     # rebuild everything which got modified
-    docker-compose build --pull
+    docker-compose build
 
     COMMIT_HASH=$(git rev-parse --short HEAD)
     BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)

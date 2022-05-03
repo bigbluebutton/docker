@@ -5,11 +5,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     subversion curl wget ca-certificates gnupg gnupg2 lsb-release unzip
 
-# install dockerize
-ENV DOCKERIZE_VERSION v0.6.1
-RUN wget -q https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+COPY --from=bbb-docker-base-java /usr/local/bin/dockerize /usr/local/bin/dockerize
 
 
 # install freeswitch
