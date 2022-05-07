@@ -207,16 +207,9 @@ services:
   kurento:
     image: kurento/kurento-media-server:6.17
     restart: unless-stopped
-    environment:
-      KMS_STUN_IP: ${STUN_IP}
-      KMS_STUN_PORT: ${STUN_PORT}
-      KMS_MIN_PORT: 24577
-      KMS_MAX_PORT: 32768
-      KMS_TURN_URL:
-      GST_DEBUG: 3,Kurento*:4,kms*:4,KurentoWebSocketTransport:5
     network_mode: host
-    tmpfs:
-      - /var/kurento
+    volumes:
+      - vol-kurento:/var/kurento
 
   webrtc-sfu:
     build: 
@@ -334,6 +327,7 @@ services:
       - bigbluebutton:/var/bigbluebutton
       - vol-freeswitch:/var/freeswitch/meetings
       - vol-mediasoup:/var/mediasoup
+      - vol-kurento:/var/kurento
     tmpfs:
       - /var/log/bigbluebutton
       - /tmp
@@ -461,6 +455,7 @@ services:
 volumes:
   bigbluebutton:
   vol-freeswitch:
+  vol-kurento:
   vol-mediasoup:
   html5-static:
 {{ if isTrue .Env.ENABLE_HTTPS_PROXY }}
