@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# checkouts submodules based on the tag
+# provided in `tags.env`
+
+
+set -e
+cd "$(dirname "$0")/.."
+
+export $(cat tags.env | sed 's/#.*//g' | xargs)
+
+function checkout {
+    path=$1
+    ref=$2
+    pushd $path
+    git checkout $ref
+    popd > /dev/null
+}
+
+checkout mod/webrtc-sfu/bbb-webrtc-sfu $TAG_WEBRTC_SFU
+checkout mod/nginx/bbb-playback $TAG_PLAYBACK
+checkout mod/bbb-pads/bbb-pads $TAG_PADS
+checkout mod/webhooks/bbb-webhooks $TAG_WEBHOOKS
+
+echo ""
+echo "# git submodule"
+git submodule

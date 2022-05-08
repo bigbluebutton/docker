@@ -1,4 +1,4 @@
-FROM etherpad/etherpad:1.8.17
+FROM etherpad/etherpad:1.8.18
 
 USER root
 

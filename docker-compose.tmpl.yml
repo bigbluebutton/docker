@@ -175,7 +175,7 @@ services:
         ipv4_address: 10.7.7.18
 
   redis:
-    image: redis:7.0-rc-alpine
+    image: redis:7.0-alpine
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -230,7 +230,7 @@ services:
       # TODO: add mediasoup IPv6
       # TODO: can listen to 0.0.0.0 for nat support? https://github.com/versatica/mediasoup/issues/487
     {{ if .Env.EXTERNAL_IPv6 }}
-      MS_WEBRTC_LISTEN_IPS: '[{"ip":"${EXTERNAL_IPv6}", "announcedIp":"${EXTERNAL_IPv6}"}, {"ip":"${EXTERNAL_IPv4}", "announcedIp":"${EXTERNAL_IPv4}"}]'
+      MS_WEBRTC_LISTEN_IPS: '[{"ip":"{{ .Env.EXTERNAL_IPv6 }}", "announcedIp":"{{ .Env.EXTERNAL_IPv6 }}"}, {"ip":"${EXTERNAL_IPv4}", "announcedIp":"${EXTERNAL_IPv4}"}]'
     {{else}}
       MS_WEBRTC_LISTEN_IPS: '[{"ip":"${EXTERNAL_IPv4}", "announcedIp":"${EXTERNAL_IPv4}"}]'
     {{end}}
@@ -436,7 +436,7 @@ services:
 {{ if isTrue .Env.ENABLE_PROMETHEUS_EXPORTER }}
   # prometheus
   prometheus-exporter:
-    image: greenstatic/bigbluebutton-exporter:v0.7.0-preview2
+    image: greenstatic/bigbluebutton-exporter:latest
     restart: unless-stopped
     environment:
       API_BASE_URL: http://10.7.7.1:48087/bigbluebutton/api/
