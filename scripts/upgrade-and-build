@@ -10,10 +10,15 @@ then
     git pull
 
     # restart script, since it might have changed.
-    RESTARTED=1 ./scripts/upgrade
+    RESTARTED=1 ./scripts/upgrade-and-build
     exit
 
 else
+
+    echo ""
+    echo "# pull newest git submodules"
+    git submodule init
+    git submodule update
 
     echo ""
     echo "# recreate docker-compose.yml"
@@ -22,14 +27,20 @@ else
     echo ""
     echo "# pull newest images"
     docker-compose pull --ignore-pull-failures
-    
+
+    echo ""
+    echo "# rebuild images"
+    docker build -t alangecker/bbb-docker-base-java:latest mod/base-java
+
+    # rebuild everything which got modified
+    docker-compose build
 
     COMMIT_HASH=$(git rev-parse --short HEAD)
     BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
-
+    
     echo ""
     echo "-------------------------------------"
-    echo "update is ready!"
+    echo "images successfully rebuilt!"
     echo "we are on $COMMIT_HASH ($BRANCH_NAME)"
     echo ""
     echo "use following command for restarting bbb:"
