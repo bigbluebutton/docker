@@ -327,7 +327,7 @@ services:
       args:
         BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
         TAG_RECORDINGS: {{ .Env.TAG_RECORDINGS }}
-    image: alangecker/bbb-docker-recordings:{{ .Env.BBB_BUILD_TAG }}
+    image: alangecker/bbb-docker-recordings:{{ .Env.TAG_RECORDINGS }}
     restart: unless-stopped
     depends_on:
       - redis
