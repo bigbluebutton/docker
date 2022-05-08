@@ -26,7 +26,7 @@ FROM node:14.19.1-alpine
 RUN addgroup -g 2000 meteor && \
     adduser -D -u 2001 -G meteor meteor && \
     apk add su-exec
-COPY --from=bbb-docker-base-java /usr/local/bin/dockerize /usr/local/bin/dockerize
+COPY --from=alangecker/bbb-docker-base-java /usr/local/bin/dockerize /usr/local/bin/dockerize
 COPY --from=builder --chown=meteor:meteor /app/bundle /app
 COPY entrypoint.sh /entrypoint.sh
 COPY bbb-html5.yml /app/bbb-html5.yml.tmpl

@@ -23,7 +23,7 @@ RUN cd /source \
 
 # ===================================================
 
-FROM bbb-docker-base-java
+FROM alangecker/bbb-docker-base-java
 
 COPY --from=builder /bbb-apps-akka-0.0.4 /bbb-apps-akka
 COPY bbb-apps-akka.conf /etc/bigbluebutton/bbb-apps-akka.conf.tmpl

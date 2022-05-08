@@ -5,7 +5,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     subversion curl wget ca-certificates gnupg gnupg2 lsb-release unzip
 
-COPY --from=bbb-docker-base-java /usr/local/bin/dockerize /usr/local/bin/dockerize
+COPY --from=alangecker/bbb-docker-base-java /usr/local/bin/dockerize /usr/local/bin/dockerize
 
 
 # install freeswitch

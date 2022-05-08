@@ -12,7 +12,7 @@ x-html5-backend: &html5backend
     args:
       BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
       TAG_HTML5: {{ .Env.TAG_HTML5 }}
-  image: bbb-html5
+  image: alangecker/bbb-docker-html5:{{ .Env.TAG_HTML5 }}
   restart: unless-stopped
   depends_on:
     - redis
@@ -48,6 +48,7 @@ services:
         BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
         TAG_COMMON_MESSAGE: {{ .Env.TAG_COMMON_MESSAGE }}
         TAG_BBB_WEB: {{ .Env.TAG_BBB_WEB }}
+    image: alangecker/bbb-docker-web:{{ .Env.TAG_BBB_WEB }}
     restart: unless-stopped
     depends_on:
         - redis
@@ -106,6 +107,7 @@ services:
       context: mod/freeswitch
       args:
         TAG_FS_CONFIG: {{ .Env.TAG_FS_CONFIG }}
+    image: alangecker/bbb-docker-freeswitch:{{ .Env.TAG_FS_CONFIG }}
     restart: unless-stopped
     cap_add:
       - IPC_LOCK
@@ -134,6 +136,7 @@ services:
       context: mod/nginx
       args:
         TAG_LEARNING_DASHBOARD: {{ .Env.TAG_LEARNING_DASHBOARD }}
+    image: alangecker/bbb-docker-nginx:1.21-{{ .Env.TAG_PLAYBACK }}-{{ .Env.TAG_LEARNING_DASHBOARD }}
     restart: unless-stopped
     depends_on:
       - etherpad
@@ -153,6 +156,7 @@ services:
 
   etherpad:
     build: mod/etherpad
+    image: alangecker/bbb-docker-etherpad:1.8.18
     restart: unless-stopped
     depends_on:
       - redis
@@ -164,6 +168,7 @@ services:
 
   bbb-pads:
     build: mod/bbb-pads
+    image: alangecker/bbb-docker-pads:{{ .Env.TAG_PADS }}
     restart: unless-stopped
     depends_on:
       - redis
@@ -216,6 +221,7 @@ services:
       context: mod/webrtc-sfu
       args:
         BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+    image: alangecker/bbb-docker-webrtc-sfu:{{ .Env.TAG_WEBRTC_SFU }}
     restart: unless-stopped
     depends_on:
       - redis
@@ -248,6 +254,7 @@ services:
         BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
         TAG_COMMON_MESSAGE: {{ .Env.TAG_COMMON_MESSAGE }}
         TAG_FSESL_AKKA: {{ .Env.TAG_FSESL_AKKA }}
+    image: alangecker/bbb-docker-fsesl-akka:{{ .Env.TAG_FSESL_AKKA }}
     restart: unless-stopped
     depends_on:
       - redis
@@ -265,6 +272,7 @@ services:
         BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
         TAG_COMMON_MESSAGE: {{ .Env.TAG_COMMON_MESSAGE }}
         TAG_APPS_AKKA: {{ .Env.TAG_APPS_AKKA }}
+    image: alangecker/bbb-docker-apps-akka:{{ .Env.TAG_APPS_AKKA }}
     restart: unless-stopped
     depends_on:
       - redis
@@ -279,6 +287,7 @@ services:
 
   jodconverter:
     build: mod/jodconverter
+    image: alangecker/bbb-docker-jodconverter:latest
     restart: unless-stopped
     tmpfs:
       - /tmp
@@ -292,6 +301,7 @@ services:
 
   periodic:
     build: mod/periodic
+    image: alangecker/bbb-docker-periodic:v2.5.0-rc.1
     restart: unless-stopped
     depends_on:
       - mongodb
@@ -317,6 +327,7 @@ services:
       args:
         BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
         TAG_RECORDINGS: {{ .Env.TAG_RECORDINGS }}
+    image: alangecker/bbb-docker-recordings:{{ .Env.BBB_BUILD_TAG }}
     restart: unless-stopped
     depends_on:
       - redis
@@ -340,6 +351,7 @@ services:
   # webhooks
   webhooks:
     build: mod/webhooks
+    image: alangecker/bbb-docker-webhooks:{{ .Env.TAG_WEBHOOKS }}
     restart: unless-stopped
     environment:
       DOMAIN: ${DOMAIN}
