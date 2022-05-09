@@ -4,6 +4,7 @@ Services as configured.
 |Service | Network | IP address | Other Option |
 --- | --- | --- | --- 
 | bbb-web | bbb-net | 10.7.7.2 |
+| bbb-pads | bbb-net | 10.7.7.18 |
 | html5-backend-{{$i}} | bbb-net | 10.7.7.{{add 100 $i}}| Port {{ add 4000 $i }}
 | html5-frontend-{{$i}}| bbb-net | 10.7.7.{{add 200 $i}}| Port {{ add 4100 $i }}
 | freeswitch| network_mode: host | |
@@ -12,7 +13,7 @@ Services as configured.
 | redis | bbb-net | 10.7.7.5|
 | mongodb | bbb-net | 10.7.7.6|
 | kurento | network-mode: host | |
-| webrtc-sfu | bbb-net | 10.7.7.10|     ports:      - "127.0.0.1:3008:3008" <br />    extra_hosts:<br />      - host.docker.internal:10.7.7.1<br />      - kurento:10.7.7.1
+| webrtc-sfu | bbb-net |  | network_mode: host
 | fsesl-akka | bbb-net | 10.7.7.14 |
 | apps-akka | bbb-net | 10.7.7.15 |
 | libreoffice | bbb-net | 10.7.7.7 |
