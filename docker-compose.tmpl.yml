@@ -387,7 +387,7 @@ services:
 {{ if isTrue .Env.ENABLE_COTURN }}
   # coturn
   coturn:
-    image: coturn/coturn:4.5
+    image: coturn/coturn:4.5-alpine
     restart: unless-stopped
     command:
       - "--external-ip=${EXTERNAL_IPv4}/${EXTERNAL_IPv4}"
@@ -404,6 +404,7 @@ services:
       - ./mod/coturn/turnserver.conf:/etc/coturn/turnserver.conf
     environment:
       ENABLE_HTTPS_PROXY:
+    user: root
     network_mode: host
 {{end}}
 
