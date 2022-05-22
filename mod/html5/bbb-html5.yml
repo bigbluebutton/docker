@@ -1,6 +1,6 @@
 public:
   app:
-    bbbServerVersion: v2.5.0-beta.2-docker
+    bbbServerVersion: {{ .Env.TAG_HTML5 }}-docker
     listenOnlyMode: {{ .Env.LISTEN_ONLY_MODE }}
     skipCheck: {{ .Env.DISABLE_ECHO_TEST }}
     clientTitle: {{ .Env.CLIENT_TITLE }}

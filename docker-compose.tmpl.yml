@@ -156,7 +156,7 @@ services:
 
   etherpad:
     build: mod/etherpad
-    image: alangecker/bbb-docker-etherpad:1.8.18
+    image: alangecker/bbb-docker-etherpad:1.8.18-2
     restart: unless-stopped
     depends_on:
       - redis

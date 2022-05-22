@@ -8,10 +8,11 @@ RUN apt-get update \
 USER etherpad
 
 RUN npm install  \
-    ep_cursortrace@3.1.15 \
+    ep_cursortrace@3.1.16 \
     git+https://github.com/mconf/ep_pad_ttl.git#360136cd38493dd698435631f2373cbb7089082d \
-    git+https://github.com/mconf/ep_redis_publisher.git#1d903bf900dd53ebc5347f9583b6e240cf754d63 \
-    ep_disable_chat@0.0.7 \
+    git+https://github.com/mconf/ep_redis_publisher.git#a30a48e4bc1e501b5b102884b9a0b26c30798484 \
+    ep_disable_chat@0.0.8 \
+    ep_auth_session@1.1.1 \
 # remove npm lockfile, because somehow it prevents etherpad from detecting the manual added plugin ep_bigbluebutton_patches
     && rm package-lock.json
 
