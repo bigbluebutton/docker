@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+- BigBlueButton v2.5 @alangecker [#207](https://github.com/bigbluebutton/docker/pull/207)
+- central `tags.env` file with the tag names of most BBB components @alangecker
+- Usage of [official docker build images](https://gitlab.senfcall.de/senfcall-public/docker-bbb-build) for building @alangecker
+- publish docker images @alangecker [#174](https://github.com/bigbluebutton/docker/issues/174)
+- etherpad: enforce bbb-pads session handling @pedrobmarin [#211](https://github.com/bigbluebutton/docker/pull/211)
+- etherpad: avoid icons overlapping @pedrobmarin [#210](https://github.com/bigbluebutton/docker/pull/210)
+- fix recordings which include presentation polls @lightweight [#205](https://github.com/bigbluebutton/docker/pull/205)
+
 ## Release v2.4.5 (2022-03-24)
 - Applied BBB v2.4.5 changes @alangecker 
 - New mute & unmute sounds by senfcall

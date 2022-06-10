@@ -1,33 +1,20 @@
-FROM mozilla/sbt:8u212_1.2.8 AS builder
+ARG BBB_BUILD_TAG
+FROM gitlab.senfcall.de:5050/senfcall-public/docker-bbb-build:$BBB_BUILD_TAG AS builder
 
-RUN apt-get update && apt-get install -y subversion
+ARG TAG_COMMON_MESSAGE
 
 # download bbb-common-message
-ENV TAG_COMMON_MESSAGE v2.4.5
 RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_COMMON_MESSAGE/bbb-common-message /bbb-common-message \
-    && rm -rf /bbb-common-message/.svn
-
-# compile bbb-common-message
-RUN cd /bbb-common-message \
- && ./deploy.sh 
+    && cd /bbb-common-message \
+    && ./deploy.sh \
+    && rm -rf /bbb-common-message
 
 # ===================================================
 
-# install grails
-RUN cd /opt \
- && wget -q https://github.com/grails/grails-core/releases/download/v3.3.9/grails-3.3.9.zip \
- && unzip grails-3.3.9.zip
-ENV PATH="/opt/grails-3.3.9/bin:${PATH}"
-
-# install gradle
-RUN cd /opt \
- && wget -q https://services.gradle.org/distributions/gradle-6.7-bin.zip \
- && unzip gradle-6.7-bin
-ENV PATH="/opt/gradle-6.7/bin:${PATH}"
+ARG TAG_BBB_WEB
 
 # download bbb-common-web
-ENV TAG_COMMON_WEB v2.4.5
-RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_COMMON_WEB/bbb-common-web /bbb-common-web \
+RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_BBB_WEB/bbb-common-web /bbb-common-web \
     && rm -rf /bbb-common-message/.svn
 
 # compile bbb-common-web
@@ -35,8 +22,7 @@ RUN cd /bbb-common-web \
  && ./deploy.sh
 
 # download bbb-web
-ENV TAG_WEB v2.4.5
-RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_WEB/bigbluebutton-web /bbb-web \
+RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_BBB_WEB/bigbluebutton-web /bbb-web \
     && rm -rf /bbb-web/.svn
 
 # compile bbb-web
@@ -50,28 +36,7 @@ RUN unzip -q /bbb-web/build/libs/bigbluebutton-0.10.0.war -d /dist
 
 
 # ===================================================
-FROM openjdk:8-jre-slim-bullseye
-
-RUN apt-get update && apt-get install -y \
-        wget unzip gosu locales \
-        imagemagick xpdf-utils curl
-
-# set locale
-RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
-ENV LANG en_US.UTF-8  
-ENV LANGUAGE en_US:en  
-ENV LC_ALL en_US.UTF-8     
-
-
-# add user & group
-RUN groupadd -g 998 bigbluebutton && useradd -m -u 998 -g bigbluebutton bigbluebutton
-
-# add dockerize
-ENV DOCKERIZE_VERSION v0.6.1
-RUN wget -q https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-
+FROM alangecker/bbb-docker-base-java
 
 # add blank presentation files and allow conversation to pdf/svg
 RUN mkdir -p /usr/share/bigbluebutton/blank \
