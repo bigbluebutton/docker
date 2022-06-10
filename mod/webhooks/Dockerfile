@@ -19,6 +19,7 @@ COPY --from=builder /usr/bin/yq /usr/bin/yq
 COPY --from=builder /bbb-webhooks /bbb-webhooks
 COPY entrypoint.sh /entrypoint.sh
 
+RUN mkdir /bbb-webhooks/log && chmod 777 /bbb-webhooks/log
 USER bbb-webhooks
 ENTRYPOINT /entrypoint.sh
 

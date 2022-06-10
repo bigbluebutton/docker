@@ -3,7 +3,7 @@
 
 # 📦 BigBlueButton 2.4 Docker
 
-Version: 2.5.0 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigbluebutton/docker/issues)
+Version: 2.5.1 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigbluebutton/docker/issues)
 
 ## Features
 - Easy installation
