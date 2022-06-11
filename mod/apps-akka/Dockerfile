@@ -28,6 +28,7 @@ FROM alangecker/bbb-docker-base-java
 COPY --from=builder /bbb-apps-akka-0.0.4 /bbb-apps-akka
 COPY bbb-apps-akka.conf /etc/bigbluebutton/bbb-apps-akka.conf.tmpl
 COPY logback.xml /bbb-apps-akka/conf/logback.xml
+RUN  chmod +x /entrypoint.sh
 COPY entrypoint.sh /entrypoint.sh
 
 USER bigbluebutton
