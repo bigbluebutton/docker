@@ -13,6 +13,7 @@ RUN apt update && apt install -y jq moreutils \
     && useradd --uid 2003 --user-group bbb-pads
 
 COPY --from=builder /bbb-pads /bbb-pads
-USER bbb-pads
 COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+USER bbb-pads
 ENTRYPOINT /entrypoint.sh
