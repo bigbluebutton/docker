@@ -32,6 +32,7 @@ FROM alangecker/bbb-docker-base-java
 COPY --from=builder /bbb-fsesl-akka-0.0.2 /bbb-fsesl-akka
 COPY bbb-fsesl-akka.conf /etc/bigbluebutton/bbb-fsesl-akka.conf.tmpl
 COPY logback.xml /bbb-fsesl-akka/conf/logback.xml
+RUN chmod +x /entrypoint.sh
 COPY entrypoint.sh /entrypoint.sh
 
 USER bigbluebutton
