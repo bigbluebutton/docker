@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e 
+apk add jq su-exec
 if [ "$ENABLE_HTTPS_PROXY" == true ]; then
-  apk add jq
 
   while [ ! -f /etc/resty-auto-ssl/storage/file/*latest ]
   do
@@ -28,4 +28,4 @@ if [ "${1:0:1}" == '-' ]; then
   set -- turnserver "$@"
 fi
 
-exec $(eval "echo $@")
+su-exec nobody $(eval "echo $@")

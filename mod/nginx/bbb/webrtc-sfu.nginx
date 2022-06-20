@@ -6,7 +6,7 @@ location /bbb-webrtc-sfu {
     auth_request_set $meeting_id $sent_http_meeting_id;
     auth_request_set $voice_bridge $sent_http_voice_bridge;
 
-    proxy_pass http://webrtc-sfu:3008;
+    proxy_pass http://10.7.7.1:3008;
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection "Upgrade";

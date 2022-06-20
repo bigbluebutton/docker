@@ -7,8 +7,12 @@ version: '3.6'
 
 # html5 templates
 x-html5-backend: &html5backend
-  build: mod/html5
-  image: bbb-html5
+  build: 
+    context: mod/html5
+    args:
+      BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+      TAG_HTML5: {{ .Env.TAG_HTML5 }}
+  image: alangecker/bbb-docker-html5:{{ .Env.TAG_HTML5 }}
   restart: unless-stopped
   depends_on:
     - redis
@@ -17,7 +21,6 @@ x-html5-backend: &html5backend
   environment: &html5backend-env
     DOMAIN: ${DOMAIN}
     CLIENT_TITLE: ${CLIENT_TITLE}
-    ETHERPAD_API_KEY: ${ETHERPAD_API_KEY}
     LISTEN_ONLY_MODE: ${LISTEN_ONLY_MODE:-true}
     DISABLE_ECHO_TEST: ${DISABLE_ECHO_TEST:-false}
     AUTO_SHARE_WEBCAM: ${AUTO_SHARE_WEBCAM:-false}
@@ -39,7 +42,13 @@ x-html5-frontend: &html5frontend
 
 services:
   bbb-web:
-    build: mod/bbb-web
+    build: 
+      context: mod/bbb-web
+      args:
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+        TAG_COMMON_MESSAGE: {{ .Env.TAG_COMMON_MESSAGE }}
+        TAG_BBB_WEB: {{ .Env.TAG_BBB_WEB }}
+    image: alangecker/bbb-docker-web:{{ .Env.TAG_BBB_WEB }}
     restart: unless-stopped
     depends_on:
         - redis
@@ -62,7 +71,6 @@ services:
     volumes:
       - bigbluebutton:/var/bigbluebutton
       - vol-freeswitch:/var/freeswitch/meetings
-      - vol-kurento:/var/kurento
     networks:
       bbb-net:
         ipv4_address: 10.7.7.2
@@ -94,7 +102,12 @@ services:
 
 
   freeswitch:
-    build: mod/freeswitch
+    container_name: bbb-freeswitch
+    build: 
+      context: mod/freeswitch
+      args:
+        TAG_FS_CONFIG: {{ .Env.TAG_FS_CONFIG }}
+    image: alangecker/bbb-docker-freeswitch:{{ .Env.TAG_FS_CONFIG }}
     restart: unless-stopped
     cap_add:
       - IPC_LOCK
@@ -119,7 +132,11 @@ services:
     network_mode: host
 
   nginx:
-    build: mod/nginx
+    build:
+      context: mod/nginx
+      args:
+        TAG_LEARNING_DASHBOARD: {{ .Env.TAG_LEARNING_DASHBOARD }}
+    image: alangecker/bbb-docker-nginx:1.21-{{ .Env.TAG_PLAYBACK }}-{{ .Env.TAG_LEARNING_DASHBOARD }}
     restart: unless-stopped
     depends_on:
       - etherpad
@@ -134,11 +151,12 @@ services:
       - "host.docker.internal:10.7.7.1"
       - "bbb-web:10.7.7.2"
       - "etherpad:10.7.7.4"
-      - "webrtc-sfu:10.7.7.10"
+      - "webrtc-sfu:10.7.7.1"
       - "html5:10.7.7.11"
 
   etherpad:
     build: mod/etherpad
+    image: alangecker/bbb-docker-etherpad:1.8.18-2
     restart: unless-stopped
     depends_on:
       - redis
@@ -148,8 +166,21 @@ services:
       bbb-net:
         ipv4_address: 10.7.7.4
 
+  bbb-pads:
+    build: mod/bbb-pads
+    image: alangecker/bbb-docker-pads:{{ .Env.TAG_PADS }}
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - etherpad
+    environment:
+      ETHERPAD_API_KEY: ${ETHERPAD_API_KEY}
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.18
+
   redis:
-    image: redis:6.2-alpine
+    image: redis:7.0-alpine
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -161,7 +192,8 @@ services:
         ipv4_address: 10.7.7.5
 
   mongodb:
-    image: mongo:4.4
+    container_name: bbb-mongodb
+    image: mongo:5.0
     restart: unless-stopped
     volumes:
       - ./mod/mongo/mongod.conf:/etc/mongod.conf
@@ -176,51 +208,57 @@ services:
       bbb-net:
         ipv4_address: 10.7.7.6
 
+  #  TODO: remove as soon as not required anymore by webrtc-sfu
   kurento:
-    image: kurento/kurento-media-server:6.16
+    image: kurento/kurento-media-server:6.17
     restart: unless-stopped
-    environment:
-      KMS_STUN_IP: ${STUN_IP}
-      KMS_STUN_PORT: ${STUN_PORT}
-      KMS_MIN_PORT: 24577
-      KMS_MAX_PORT: 32768
-      KMS_TURN_URL:
-      KMS_NETWORK_INTERFACES: ${NETWORK_INTERFACE:-}
-      GST_DEBUG: 3,Kurento*:4,kms*:4,KurentoWebSocketTransport:5
     network_mode: host
     volumes:
       - vol-kurento:/var/kurento
 
   webrtc-sfu:
-    build:  mod/webrtc-sfu
+    build: 
+      context: mod/webrtc-sfu
+      args:
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+    image: alangecker/bbb-docker-webrtc-sfu:{{ .Env.TAG_WEBRTC_SFU }}
     restart: unless-stopped
     depends_on:
       - redis
-      - kurento
+      - freeswitch
     environment:
-      CLIENT_HOST: 0.0.0.0
-      KURENTO_NAME: kurento
-      REDIS_HOST: redis
-      FREESWITCH_IP: host.docker.internal
+      CLIENT_HOST: 10.7.7.1
+      REDIS_HOST: 10.7.7.5
+      FREESWITCH_IP: 10.7.7.1
       FREESWITCH_SIP_IP: ${EXTERNAL_IPv4}
-      ESL_IP: host.docker.internal
+      ESL_IP: 10.7.7.1
       ESL_PASSWORD: ${FSESL_PASSWORD:-ClueCon}
-      LOG_LEVEL: info
-      NODE_CONFIG: '{"kurento":[{"ip":"${EXTERNAL_IPv4}","url":"ws://kurento:8888/kurento"}]}'
-    ports:
-      - "127.0.0.1:3008:3008"
-    extra_hosts:
-      - host.docker.internal:10.7.7.1
-      - kurento:10.7.7.1
-    networks:
-      bbb-net:
-        ipv4_address: 10.7.7.10
+      # TODO: add mediasoup IPv6
+      # TODO: can listen to 0.0.0.0 for nat support? https://github.com/versatica/mediasoup/issues/487
+    {{ if .Env.EXTERNAL_IPv6 }}
+      MS_WEBRTC_LISTEN_IPS: '[{"ip":"{{ .Env.EXTERNAL_IPv6 }}", "announcedIp":"{{ .Env.EXTERNAL_IPv6 }}"}, {"ip":"${EXTERNAL_IPv4}", "announcedIp":"${EXTERNAL_IPv4}"}]'
+    {{else}}
+      MS_WEBRTC_LISTEN_IPS: '[{"ip":"${EXTERNAL_IPv4}", "announcedIp":"${EXTERNAL_IPv4}"}]'
+    {{end}}
+      MS_RTP_LISTEN_IP: '{"ip":"0.0.0.0", "announcedIp":"${EXTERNAL_IPv4}"}'
+    volumes:
+      - vol-mediasoup:/var/mediasoup
+    tmpfs:
+      - /var/log/bbb-webrtc-sfu
+    network_mode: host
 
   fsesl-akka:
-    build: mod/fsesl-akka
+    build: 
+      context: mod/fsesl-akka
+      args:
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+        TAG_COMMON_MESSAGE: {{ .Env.TAG_COMMON_MESSAGE }}
+        TAG_FSESL_AKKA: {{ .Env.TAG_FSESL_AKKA }}
+    image: alangecker/bbb-docker-fsesl-akka:{{ .Env.TAG_FSESL_AKKA }}
     restart: unless-stopped
     depends_on:
       - redis
+      - freeswitch
     environment:
       FSESL_PASSWORD: ${FSESL_PASSWORD:-ClueCon}
     networks:
@@ -228,7 +266,13 @@ services:
         ipv4_address: 10.7.7.14
 
   apps-akka:
-    build: mod/apps-akka
+    build: 
+      context: mod/apps-akka
+      args:
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+        TAG_COMMON_MESSAGE: {{ .Env.TAG_COMMON_MESSAGE }}
+        TAG_APPS_AKKA: {{ .Env.TAG_APPS_AKKA }}
+    image: alangecker/bbb-docker-apps-akka:{{ .Env.TAG_APPS_AKKA }}
     restart: unless-stopped
     depends_on:
       - redis
@@ -243,6 +287,7 @@ services:
 
   jodconverter:
     build: mod/jodconverter
+    image: alangecker/bbb-docker-jodconverter:latest
     restart: unless-stopped
     tmpfs:
       - /tmp
@@ -256,12 +301,14 @@ services:
 
   periodic:
     build: mod/periodic
+    image: alangecker/bbb-docker-periodic:v2.5.0-rc.1
     restart: unless-stopped
     depends_on:
       - mongodb
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - bigbluebutton:/var/bigbluebutton
+      - vol-mediasoup:/var/mediasoup
     tmpfs:
       - /var/log/bigbluebutton
     environment:
@@ -275,15 +322,22 @@ services:
 {{ if isTrue .Env.ENABLE_RECORDING }}
   # recordings
   recordings:
-    build: mod/recordings
+    build: 
+      context: mod/recordings
+      args:
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+        TAG_RECORDINGS: {{ .Env.TAG_RECORDINGS }}
+    image: alangecker/bbb-docker-recordings:{{ .Env.TAG_RECORDINGS }}
     restart: unless-stopped
     depends_on:
       - redis
+      - bbb-pads
     environment:
       DOMAIN: ${DOMAIN}
     volumes:
       - bigbluebutton:/var/bigbluebutton
       - vol-freeswitch:/var/freeswitch/meetings
+      - vol-mediasoup:/var/mediasoup
       - vol-kurento:/var/kurento
     tmpfs:
       - /var/log/bigbluebutton
@@ -297,6 +351,7 @@ services:
   # webhooks
   webhooks:
     build: mod/webhooks
+    image: alangecker/bbb-docker-webhooks:{{ .Env.TAG_WEBHOOKS }}
     restart: unless-stopped
     environment:
       DOMAIN: ${DOMAIN}
@@ -332,7 +387,7 @@ services:
 {{ if isTrue .Env.ENABLE_COTURN }}
   # coturn
   coturn:
-    image: instrumentisto/coturn:4.5
+    image: coturn/coturn:4.5-alpine
     restart: unless-stopped
     command:
       - "--external-ip=${EXTERNAL_IPv4}/${EXTERNAL_IPv4}"
@@ -349,6 +404,7 @@ services:
       - ./mod/coturn/turnserver.conf:/etc/coturn/turnserver.conf
     environment:
       ENABLE_HTTPS_PROXY:
+    user: root
     network_mode: host
 {{end}}
 
@@ -393,7 +449,7 @@ services:
 {{ if isTrue .Env.ENABLE_PROMETHEUS_EXPORTER }}
   # prometheus
   prometheus-exporter:
-    image: greenstatic/bigbluebutton-exporter:v0.7.0-preview2
+    image: greenstatic/bigbluebutton-exporter:latest
     restart: unless-stopped
     environment:
       API_BASE_URL: http://10.7.7.1:48087/bigbluebutton/api/
@@ -413,6 +469,7 @@ volumes:
   bigbluebutton:
   vol-freeswitch:
   vol-kurento:
+  vol-mediasoup:
   html5-static:
 {{ if isTrue .Env.ENABLE_HTTPS_PROXY }}
   ssl_data:

@@ -1,5 +1,13 @@
 # bbb-docker Development
 
+## Basics
+normally people start BBB with the pre-built docker images, but for developing you need to build them by yourself. For that you need to ensure that the submodules are also checked out:
+
+```sh
+$ git submodule update --init
+```
+
+
 ## Running
 you can run bbb-docker locally without any certificate issues with following `.env` configurations:
 
@@ -33,6 +41,8 @@ RAILS_SECRET=SuperRailsSecret
 
 - regenerate `docker-compose.yml` \
   `$ ./scripts/generate-compose`
+- build the images \
+  `$ docker-compose build`
 - you can than start it with \
   `$ docker-compose up -d`
 - view the logs with \
@@ -58,13 +68,14 @@ RAILS_SECRET=SuperRailsSecret
 ## How to do create a new update for a newer BBB release?
 This always consists out of following steps
 1. **Get an understanding about changes that happened and find out what changes to bbb-docker that require.** \
-    * Sometimes there are changes made which are not accessible in the [bigbluebutton/bigbluebutton](https://github.com/bigbluebutton/bigbluebutton) repo, so you should rather look through all the related commits in [alangecker/bbb-packages](https://github.com/alangecker/bbb-packages/commits/master)
-    * Before being overwhelmed: All these compiled `.js`,`.class`,etc. files are irrelevant to check! :)
+    * main source for that are the release notes in https://github.com/bigbluebutton/bigbluebutton/releases
 2. **Apply these changes to this project.** 
-    * Quite often you only need to set `TAG` to the corresponding release tag in [bigbluebutton/bigbluebutton](https://github.com/bigbluebutton/bigbluebutton) like `v2.2.31`. To avoid the unnecessary recreation of images, only change the TAG of those components, which actually received a change.
-    * New config variables are also quite common
-    * don't forget to checkout a newer version of `bbb-webrtc-sfu` if it also happened in the release. you can find out what the current version is [here](https://github.com/alangecker/bbb-packages/blob/v2.3.x/bbb-webrtc-sfu/data/usr/local/bigbluebutton/bbb-webrtc-sfu/package.json)
-    * if available, you can also think about switching to more recent images of kurento, etherpad, nginx, etc.
+    * Often you only need to update the TAGS in `tags.env`
+      * make sure only to switch to a newer tag if there were changes made avoid creating new (partialy big) images unnecessarily
+    * Also update submodules to the new state. 
+      * List of all submodules `git submodule`
+      * for the main submodules you can use `./scripts/checkout-submodules` to checkout the tags specified in `tags.env`
+      
 3. Test everything (with firefox **and** chromium/chrome)
     * Audio
     * Video

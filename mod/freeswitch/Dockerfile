@@ -5,11 +5,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     subversion curl wget ca-certificates gnupg gnupg2 lsb-release unzip
 
-# install dockerize
-ENV DOCKERIZE_VERSION v0.6.1
-RUN wget -q https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+COPY --from=alangecker/bbb-docker-base-java /usr/local/bin/dockerize /usr/local/bin/dockerize
 
 
 # install freeswitch
@@ -47,8 +43,8 @@ RUN wget -q https://gitlab.senfcall.de/senfcall-public/mute-and-unmute-sounds/-/
 # git sparse-checkout is not yet available with buster and there
 # is no other sane way of downloading a single directory via git
 
-ENV TAG v2.3.4
-RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG/bbb-voice-conference/config/freeswitch/conf /etc/freeswitch \
+ARG TAG_FS_CONFIG
+RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_FS_CONFIG/bbb-voice-conference/config/freeswitch/conf /etc/freeswitch \
     && rm -rf /etc/freeswitch/.svn
 
 # the current available freeswitch-mod-opusfile is broken,

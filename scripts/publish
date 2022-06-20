@@ -1,0 +1,51 @@
+#!/bin/bash
+
+set -e
+cd "$(dirname "$0")/.."
+
+# load .env
+if [ -f .env ]
+then
+  # exclude WELCOME_MESSAGE && WELCOME_FOOTER && CLIENT_TITLE because it may contain invalid characters
+  export $(cat .env | sed 's/#.*//g' | grep -v "WELCOME_FOOTER" | grep -v "WELCOME_MESSAGE" | grep -v "CLIENT_TITLE" | xargs)
+fi
+
+if [ -z "$ENABLE_WEBHOOKS" ]; then
+    echo "ERROR: ENABLE_WEBHOOKS must be set to true, otherwise the image would not be built"
+    exit 1
+fi
+
+if [ -z "$ENABLE_RECORDING" ]; then
+    echo "ERROR: ENABLE_RECORDING must be set to true, otherwise the image would not be built"
+    exit 1
+fi
+
+
+# generate compose file
+./scripts/generate-compose
+
+# ensure submodules are matching tags.env
+./scripts/checkout-submodules
+
+# build and push java base image
+docker build -t alangecker/bbb-docker-base-java:latest mod/base-java
+
+# buld and push other images
+docker-compose build
+
+# push images
+docker push alangecker/bbb-docker-base-java:latest
+docker-compose push \
+    html5-backend-1 \
+    bbb-web \
+    freeswitch \
+    apps-akka \
+    bbb-pads \
+    etherpad \
+    fsesl-akka \
+    jodconverter \
+    nginx \
+    periodic \
+    recordings \
+    webhooks \
+    webrtc-sfu
