@@ -7,13 +7,17 @@ This is because the variable **EXTERNAL_IPv4** in .env should be the private ip 
 
 2. Now freeswitch and mediasoup bind to the private ip, and we have port forwarded every needed udp port 16384-32768. The problem now is that Mediasoup have an ***announcedIp*** variable that sould ALWAYS be the Public IP, if not, webrtc won't work
 
-3. To change this, we should edit the docker-compose.yml at these lines:
-`      
+3. To change this, we should edit the `docker-compose.yml` at these lines:
+```    
 MS_WEBRTC_LISTEN_IPS: '[{"ip":"${EXTERNAL_IPv4}", "announcedIp":"x.x.x.x"}]'
-`
-`
 MS_RTP_LISTEN_IP: '{"ip":"0.0.0.0", "announcedIp":"x.x.x.x"}'
-`
+```
 where x.x.x.x is your public ip
+4. As indicated in https://github.com/bigbluebutton/bigbluebutton.github.io/issues/126 these 2 variables in the `vars.xml` of freeswitch should point to the external ip:
+```
+<X-PRE-PROCESS cmd="set" data="external_rtp_ip=autonat:EXTERNAL_IP_ADDRESS"/>
+<X-PRE-PROCESS cmd="set" data="external_sip_ip=autonat:EXTERNAL_IP_ADDRESS"/>
+```
+
 ## Ports
 Also don't forget to forward all necassary ports listed in https://docs.bigbluebutton.org/admin/configure-firewall.html
