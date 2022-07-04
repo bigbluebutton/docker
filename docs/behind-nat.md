@@ -13,6 +13,7 @@ MS_WEBRTC_LISTEN_IPS: '[{"ip":"${EXTERNAL_IPv4}", "announcedIp":"x.x.x.x"}]'
 MS_RTP_LISTEN_IP: '{"ip":"0.0.0.0", "announcedIp":"x.x.x.x"}'
 ```
 where x.x.x.x is your public ip
+
 4. As indicated in https://github.com/bigbluebutton/bigbluebutton.github.io/issues/126 these 2 variables in the `vars.xml` of freeswitch should point to the external ip:
 ```
 <X-PRE-PROCESS cmd="set" data="external_rtp_ip=autonat:EXTERNAL_IP_ADDRESS"/>
