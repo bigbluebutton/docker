@@ -13,7 +13,7 @@ RUN cd /bbb-playback && npm ci && npm run build
 
 # --------------------
 
-FROM nginx:1.21-alpine
+FROM nginx:1.23-alpine
 
 COPY --from=builder /bbb-learning-dashboard/build /www/learning-analytics-dashboard/
 COPY --from=builder /bbb-playback/build /www/playback/presentation/2.3
