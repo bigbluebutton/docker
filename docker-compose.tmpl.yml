@@ -156,7 +156,7 @@ services:
 
   etherpad:
     build: mod/etherpad
-    image: alangecker/bbb-docker-etherpad:1.8.18-2
+    image: alangecker/bbb-docker-etherpad:1.8.18-3
     restart: unless-stopped
     depends_on:
       - redis
@@ -193,7 +193,7 @@ services:
 
   mongodb:
     container_name: bbb-mongodb
-    image: mongo:5.0
+    image: mongo:4.4
     restart: unless-stopped
     volumes:
       - ./mod/mongo/mongod.conf:/etc/mongod.conf
@@ -387,7 +387,7 @@ services:
 {{ if isTrue .Env.ENABLE_COTURN }}
   # coturn
   coturn:
-    image: coturn/coturn:4.5-alpine
+    image: coturn/coturn:4.6-alpine
     restart: unless-stopped
     command:
       - "--external-ip=${EXTERNAL_IPv4}/${EXTERNAL_IPv4}"
