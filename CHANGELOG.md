@@ -1,6 +1,9 @@
 # Changelog
 
 ## Unreleased
+- BBB 2.5.4 @alangecker
+
+## Release v2.5.0 (2022-06-10)
 - BigBlueButton v2.5 @alangecker [#207](https://github.com/bigbluebutton/docker/pull/207)
 - central `tags.env` file with the tag names of most BBB components @alangecker
 - Usage of [official docker build images](https://gitlab.senfcall.de/senfcall-public/docker-bbb-build) for building @alangecker
