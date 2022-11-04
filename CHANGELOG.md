@@ -1,7 +1,8 @@
 # Changelog
 
 ## Unreleased
-- BBB 2.5.4 @alangecker
+- BBB 2.5.8 @alangecker
+
 
 ## Release v2.5.0 (2022-06-10)
 - BigBlueButton v2.5 @alangecker [#207](https://github.com/bigbluebutton/docker/pull/207)
