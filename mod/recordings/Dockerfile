@@ -1,5 +1,5 @@
 
-FROM ruby:2.7-slim-buster
+FROM ruby:2.7-slim-bullseye
 
 # install apt dependencies
 RUN apt-get update && apt-get install -y \
