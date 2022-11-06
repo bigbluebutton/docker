@@ -1,7 +1,7 @@
 # Changelog
 
 ## Unreleased
-- BBB 2.5.4 @alangecker
+- BBB 2.5.8 @alangecker
 - recordings: fix for missing ffmpeg filter @alangecker [#235](https://github.com/bigbluebutton/docker/issues/235) [#230](https://github.com/bigbluebutton/docker/pull/230)
 
 ## Release v2.5.0 (2022-06-10)
