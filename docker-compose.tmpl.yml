@@ -210,7 +210,7 @@ services:
 
   #  TODO: remove as soon as not required anymore by webrtc-sfu
   kurento:
-    image: kurento/kurento-media-server:6.17
+    image: kurento/kurento-media-server:6.18
     restart: unless-stopped
     network_mode: host
     volumes:
@@ -288,6 +288,8 @@ services:
   jodconverter:
     build: mod/jodconverter
     image: alangecker/bbb-docker-jodconverter:latest
+    security_opt:
+      - 'no-new-privileges:true'
     restart: unless-stopped
     tmpfs:
       - /tmp
