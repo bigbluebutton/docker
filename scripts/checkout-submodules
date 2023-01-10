@@ -7,13 +7,18 @@
 set -e
 cd "$(dirname "$0")/.."
 
+git submodule init
+git submodule update
+
 export $(cat tags.env | sed 's/#.*//g' | xargs)
 
 function checkout {
     path=$1
     ref=$2
     pushd $path
+    git fetch
     git checkout $ref
+    echo ""
     popd > /dev/null
 }
 
