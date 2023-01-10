@@ -136,7 +136,7 @@ services:
       context: mod/nginx
       args:
         TAG_LEARNING_DASHBOARD: {{ .Env.TAG_LEARNING_DASHBOARD }}
-    image: alangecker/bbb-docker-nginx:1.21-{{ .Env.TAG_PLAYBACK }}-{{ .Env.TAG_LEARNING_DASHBOARD }}
+    image: alangecker/bbb-docker-nginx:1.23-{{ .Env.TAG_PLAYBACK }}-{{ .Env.TAG_LEARNING_DASHBOARD }}
     restart: unless-stopped
     depends_on:
       - etherpad
