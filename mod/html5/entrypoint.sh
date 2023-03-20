@@ -11,7 +11,7 @@ export BIND_IP=0.0.0.0
 export LANG=en_US.UTF-8
 export INSTANCE_MAX=1
 export ENVIRONMENT_TYPE=production
-export NODE_VERSION=node-v14.19.1-linux-x64
+export NODE_VERSION=node-v14.21.1-linux-x64
 export BBB_HTML5_LOCAL_SETTINGS=/app/bbb-html5.yml
 
 if [ "$DEV_MODE" == true ]; then

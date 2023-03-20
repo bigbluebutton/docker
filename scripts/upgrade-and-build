@@ -17,8 +17,7 @@ else
 
     echo ""
     echo "# pull newest git submodules"
-    git submodule init
-    git submodule update
+    ./scripts/checkout-submodules
 
     echo ""
     echo "# recreate docker-compose.yml"
