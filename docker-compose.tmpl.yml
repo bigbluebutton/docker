@@ -106,7 +106,10 @@ services:
     build: 
       context: mod/freeswitch
       args:
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+        TAG_FS_BUILD_FILES: {{ .Env.TAG_FS_BUILD_FILES }}
         TAG_FS_CONFIG: {{ .Env.TAG_FS_CONFIG }}
+        TAG_FREESWITCH: {{ .Env.TAG_FREESWITCH }}
     image: alangecker/bbb-docker-freeswitch:{{ .Env.TAG_FS_CONFIG }}
     restart: unless-stopped
     cap_add:
