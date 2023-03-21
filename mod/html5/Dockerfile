@@ -21,11 +21,14 @@ RUN sed -i "s/VERSION/$TAG_HTML5/" /app/bundle/programs/web.browser/head.html \
 
 # ------------------------------
 
-FROM node:14.21.1-alpine
+FROM node:14-bullseye-slim
 
-RUN addgroup -g 2000 meteor && \
-    adduser -D -u 2001 -G meteor meteor && \
-    apk add su-exec
+RUN apt-get update && apt-get install -y gosu
+
+# add user & group
+RUN groupadd -g 2000 meteor \
+    && useradd -m -u 2001 -g meteor meteor
+
 COPY --from=alangecker/bbb-docker-base-java /usr/local/bin/dockerize /usr/local/bin/dockerize
 COPY --from=builder --chown=meteor:meteor /app/bundle /app
 COPY entrypoint.sh /entrypoint.sh
