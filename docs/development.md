@@ -30,7 +30,7 @@ TURN_SERVER=turns:localhost:5349?transport=tcp
 TURN_SECRET=SuperTurnSecret
 SHARED_SECRET=SuperSecret
 ETHERPAD_API_KEY=SuperEtherpadKey
-RAILS_SECRET=SuperRailsSecret
+RAILS_SECRET=SuperRailsSecret_SuperRailsSecret
 
 # ====================================
 # CUSTOMIZATION
