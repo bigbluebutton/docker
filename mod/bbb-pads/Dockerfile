@@ -10,7 +10,7 @@ RUN chmod 777 /bbb-pads/config
 FROM node:16-bullseye-slim
 
 RUN apt update && apt install -y jq moreutils \
-    && useradd --uid 2003 --user-group bbb-pads
+    && useradd --uid 2003 --create-home --user-group bbb-pads
 
 COPY --from=builder /bbb-pads /bbb-pads
 USER bbb-pads

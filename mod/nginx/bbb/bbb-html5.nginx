@@ -6,11 +6,12 @@ location @html5client {
 }
 
 location /html5client/locales {
-   alias /html5-static/app/locales;
+  alias /html5-static/app/locales;
 }
 
 location /html5client/compatibility {
-   alias /html5-static/app/compatibility;
+  gzip_static on;
+  alias /html5-static/app/compatibility;
 }
 
 location /html5client/resources {
@@ -25,6 +26,10 @@ location /html5client/fonts {
   alias /html5-static/app/fonts;
 }
 
+location /html5client/files {
+  alias /html5-static/app/files;
+}
+
 location /html5client/wasm {
   types {
     application/wasm wasm;
@@ -33,8 +38,12 @@ location /html5client/wasm {
   alias /html5-static/app/wasm;
 }
 
-location /html5client/ {
+location /html5client {
+  gzip_static on;
   alias /html5-static;
   try_files $uri @html5client;
 }
 
+location /html5client/sockjs {
+  try_files $uri @html5client;
+}

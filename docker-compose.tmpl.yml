@@ -53,6 +53,7 @@ services:
     depends_on:
         - redis
         - etherpad
+        - bbb-pads
     healthcheck:
       test: wget --no-proxy --no-verbose --tries=1 --spider http://10.7.7.2:8090/bigbluebutton/api || exit 1
       start_period: 2m
@@ -138,6 +139,7 @@ services:
     build:
       context: mod/nginx
       args:
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
         TAG_LEARNING_DASHBOARD: {{ .Env.TAG_LEARNING_DASHBOARD }}
     image: alangecker/bbb-docker-nginx:1.23-{{ .Env.TAG_PLAYBACK }}-{{ .Env.TAG_LEARNING_DASHBOARD }}
     restart: unless-stopped
@@ -333,6 +335,7 @@ services:
       args:
         BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
         TAG_RECORDINGS: {{ .Env.TAG_RECORDINGS }}
+        TAG_BBB_PRESENTATION_VIDEO: {{ .Env.TAG_BBB_PRESENTATION_VIDEO }}
     image: alangecker/bbb-docker-recordings:{{ .Env.TAG_RECORDINGS }}
     restart: unless-stopped
     depends_on:
