@@ -38,7 +38,7 @@ RUN unzip -q /bbb-web/build/libs/bigbluebutton-0.10.0.war -d /dist
 # ===================================================
 FROM alangecker/bbb-docker-base-java
 
-# add blank presentation files and allow conversation to pdf/svg
+# add blank presentation files and allow conversion to pdf/svg
 RUN mkdir -p /usr/share/bigbluebutton/blank \
     && cd /usr/share/bigbluebutton/blank \
     && wget \
