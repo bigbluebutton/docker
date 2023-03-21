@@ -53,6 +53,7 @@ docker run  \
     -e TAG_PLAYBACK=${TAG_PLAYBACK} \
     -e TAG_PADS=${TAG_PADS} \
     -e TAG_FREESWITCH=${TAG_FREESWITCH} \
+    -e TAG_GREENLIGHT=${TAG_GREENLIGHT} \
     -e DEV_MODE=${DEV_MODE:-false} \
     -e EXTERNAL_IPv6=${EXTERNAL_IPv6:-} \
     -e ENABLE_RECORDING=${ENABLE_RECORDING:-false} \

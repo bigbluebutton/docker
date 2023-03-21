@@ -156,6 +156,7 @@ services:
       - "etherpad:10.7.7.4"
       - "webrtc-sfu:10.7.7.1"
       - "html5:10.7.7.11"
+      - "greenlight:10.7.7.21"
 
   etherpad:
     build: mod/etherpad
@@ -380,6 +381,10 @@ services:
     {{else}}
       - ./mod/https/site-ipv4only.conf:/etc/nginx/conf.d/bbb-docker.conf
     {{end}}
+    {{ if isTrue .Env.DEV_MODE }}
+      # allow bbb api access without https
+      - ./mod/https/force-https.conf:/usr/local/openresty/nginx/conf/force-https.conf
+    {{end}}
     environment:
       {{ if isTrue .Env.DEV_MODE }}
       ALLOWED_DOMAINS: ""
@@ -417,24 +422,29 @@ services:
 {{ if isTrue .Env.ENABLE_GREENLIGHT }}
   # greenlight
   greenlight:
-    image: bigbluebutton/greenlight:v2
+    image: bigbluebutton/greenlight:{{ .Env.TAG_GREENLIGHT }}-alpine
     restart: unless-stopped
     env_file: .env
+    depends_on:
+      - postgres
+      - redis
+
     environment:
-      DB_ADAPTER: postgresql
-      DB_HOST: postgres
-      DB_NAME: greenlight
-      DB_USERNAME: postgres
-      DB_PASSWORD: ${POSTGRESQL_SECRET:-password}
+      DATABASE_URL: postgres://postgres:${POSTGRESQL_SECRET:-password}@postgres:5432/greenlight
+      REDIS_URL: redis://redis:6379
       {{ if isTrue .Env.DEV_MODE }}
-      BIGBLUEBUTTON_ENDPOINT: http://10.7.7.1:48087/bigbluebutton/api/
+      BIGBLUEBUTTON_ENDPOINT: http://10.7.7.1/bigbluebutton/api
       {{else}}
-      BIGBLUEBUTTON_ENDPOINT: https://${DOMAIN}/bigbluebutton/api/
+      BIGBLUEBUTTON_ENDPOINT: https://${DOMAIN}/bigbluebutton/api
       {{end}}
       BIGBLUEBUTTON_SECRET: ${SHARED_SECRET}
       SECRET_KEY_BASE: ${RAILS_SECRET}
-    ports:
-      - 10.7.7.1:5000:80
+    volumes:
+       - ./greenlight-data:/usr/src/app/storage
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.21
+
   postgres:
     image: postgres:12-alpine
     restart: unless-stopped
@@ -449,6 +459,9 @@ services:
       retries: 5
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.22
 {{end}}
 
 {{ if isTrue .Env.ENABLE_PROMETHEUS_EXPORTER }}
