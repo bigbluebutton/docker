@@ -27,6 +27,7 @@ RUN apt-get update && apt-get install -y \
     poppler-utils \
     imagemagick \
     supervisor \
+    unzip \
     locales \
     locales-all
 # TODO: missing packages
