@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
 cd /app
@@ -39,5 +39,5 @@ fi
 
 dockerize \
     -template /app/bbb-html5.yml.tmpl:/app/bbb-html5.yml \
-    su-exec meteor \
+    gosu meteor \
         node --max-old-space-size=2048 --max_semi_space_size=128 main.js $PARAM

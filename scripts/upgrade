@@ -33,6 +33,6 @@ else
     echo "we are on $COMMIT_HASH ($BRANCH_NAME)"
     echo ""
     echo "use following command for restarting bbb:"
-    echo "    $ docker-compose up -d"
+    echo "    $ docker-compose up -d --no-build"
     echo "-------------------------------------"
 fi

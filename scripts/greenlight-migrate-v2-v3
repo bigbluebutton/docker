@@ -1,0 +1,49 @@
+#!/bin/bash
+
+cd $(dirname $0)/..
+
+# load .env
+if [ -f .env ]
+then
+  export $(cat .env | sed 's/#.*//g' | grep -E "RAILS_SECRET|POSTGRESQL_SECRET" | xargs)
+fi
+
+COMPOSE_PREFIX=$(docker-compose ps | grep postgres | awk '{print $1}' | sed 's/-postgres-1//')
+
+docker kill -s SIGKILL greenlight-v2-tmp 2>/dev/null
+sleep 1
+
+echo "temporarily starting old greenlight v2..."
+docker run  \
+  --rm \
+  --detach --name greenlight-v2-tmp \
+  --network ${COMPOSE_PREFIX}_bbb-net \
+  --env-file .env \
+  -e DB_ADAPTER=postgresql \
+  -e DB_HOST=10.7.7.22 \
+  -e DB_NAME=greenlight \
+  -e DB_USERNAME=postgres \
+  -e DB_PASSWORD=${POSTGRESQL_SECRET:-password} \
+  -e SECRET_KEY_BASE=${RAILS_SECRET} \
+  -e V3_ENDPOINT="http://10.7.7.21:3000" \
+  -e V3_SECRET_KEY_BASE=${RAILS_SECRET} \
+  bigbluebutton/greenlight:v2.14 
+
+docker logs -f greenlight-v2-tmp &
+LOGGING_PID=$!
+
+while ! docker exec greenlight-v2-tmp nc -zw3 127.0.0.1 80
+do
+  echo "Waiting for greenlight v2 to start up ..."
+  sleep 1
+done
+
+echo "greenlight is up! starting migrations"
+
+docker exec -it greenlight-v2-tmp bundle exec rake migrations:roles && \
+docker exec -it greenlight-v2-tmp bundle exec rake migrations:users && \
+docker exec -it greenlight-v2-tmp bundle exec rake migrations:rooms && \
+docker exec -it greenlight-v2-tmp bundle exec rake migrations:settings
+
+kill $LOGGING_PID
+docker kill greenlight-v2-tmp

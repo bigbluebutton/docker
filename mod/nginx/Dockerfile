@@ -1,6 +1,5 @@
-FROM node:14-alpine AS builder
-
-RUN apk add subversion git
+ARG BBB_BUILD_TAG
+FROM gitlab.senfcall.de:5050/senfcall-public/docker-bbb-build:$BBB_BUILD_TAG AS builder
 
 # --------------------
 

@@ -1,6 +1,9 @@
 # Changelog
 
 ## Unreleased
+- **Breaking change:** Greenlight v3 (see [upgrade note](docs/upgrading.md) @alangecker [#255](https://github.com/bigbluebutton/docker/pull/255) 
+- BigBlueButton v2.6 @alangecker [#255](https://github.com/bigbluebutton/docker/pull/255) 
+- self building freeswitch (applying patches and independent from external apt repos) @alangecker
 
 ## Release v2.5.8 (2022-11-06)
 - BBB 2.5.8 @alangecker [#238](https://github.com/bigbluebutton/docker/pull/238)

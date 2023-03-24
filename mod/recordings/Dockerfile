@@ -16,11 +16,18 @@ RUN apt-get update && apt-get install -y \
     python3-lxml \
     python3-icu \
     python3-pyinotify \
+    python3-sortedcollections \
+    python3-packaging \
     gir1.2-pangocairo-1.0 \
+    gir1.2-poppler-0.18 \
+    gir1.2-gtk-3.0 \
+    gir1.2-gdkpixbuf-2.0 \
+    fonts-croscore \
     ffmpeg \
     poppler-utils \
     imagemagick \
     supervisor \
+    unzip \
     locales \
     locales-all
 # TODO: missing packages
@@ -53,7 +60,13 @@ RUN  wget -q https://github.com/mikefarah/yq/releases/download/3.4.1/yq_linux_am
 RUN mkdir -p \
     /usr/local/bigbluebutton \
     /usr/local/bigbluebutton/core \
-    /etc/bigbluebutton
+    /etc/bigbluebutton \
+    /etc/bigbluebutton/recording
+
+# dependency for bbb-presentation-video
+RUN wget -q -O /tmp/python3-perfect-freehand.deb https://github.com/bigbluebutton/perfect-freehand-python/releases/download/1.2.0/python3-perfect-freehand_1.2.0_all.deb && \
+    dpkg -i /tmp/python3-perfect-freehand.deb && \
+    rm /tmp/python3-perfect-freehand.deb
 
 ARG TAG_RECORDINGS
 
@@ -76,7 +89,11 @@ RUN cd /tmp \
 RUN cd /usr/local/bigbluebutton/core \
     && gem install builder \
     && gem install bundler --no-document \
-    && /usr/local/bin/bundle
+    && bundle config set --local deployment true \
+    && bundle install \
+    && bundle clean \
+    && rm -r vendor/bundle/ruby/*/cache \
+    && find vendor/bundle -name '*.o' -delete
 
 # log to file instead of journald
 RUN sed -i 's|Journald::Logger\.new.*|Logger.new("/var/log/bigbluebutton/recording.log")|g' /usr/local/bigbluebutton/core/lib/recordandplayback.rb && \
@@ -103,8 +120,15 @@ RUN groupadd -g 998 bigbluebutton && useradd -m -u 998 -g bigbluebutton bigblueb
 # https://github.com/alangecker/bigbluebutton-docker/issues/63
 RUN chown -R 998:998 /usr/local/bigbluebutton
 
+ARG TAG_BBB_PRESENTATION_VIDEO
+RUN cd /tmp/ && \
+    wget -q -O bbb-presentation-video.zip "https://github.com/bigbluebutton/bbb-presentation-video/releases/download/${TAG_BBB_PRESENTATION_VIDEO}/ubuntu-20.04.zip" && \
+    unzip -o bbb-presentation-video.zip -d bbb-presentation-video && \
+    dpkg -i bbb-presentation-video/bbb-presentation-video*.deb && \
+    rm -rf /tmp/*
+
 COPY bbb-web.properties /etc/bigbluebutton/bbb-web.properties.tmpl
-COPY bigbluebutton.yml /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml.tmpl
+COPY recording.yml /etc/bigbluebutton/recording/recording.yml.tmpl
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY entrypoint.sh /entrypoint.sh
 
