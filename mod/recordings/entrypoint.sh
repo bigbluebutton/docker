@@ -2,6 +2,7 @@
 
 touch /var/log/bigbluebutton/recording.log
 touch /var/log/bigbluebutton/bbb-web.log
+touch /var/log/bigbluebutton/sanity.log
 mkdir -p /var/log/bigbluebutton/presentation
 chown -R bigbluebutton:bigbluebutton /var/log/bigbluebutton
 
