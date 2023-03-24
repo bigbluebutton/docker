@@ -33,6 +33,10 @@ server {
   # Include specific rules for record and playback
   include /etc/nginx/bbb/*.nginx;
 
+  # redirect old greenlight v2 room links
+  location ~ "/b/([a-z0-9\-]+)" {
+    return 302 /rooms/$1;
+  }
 
   location / {
     proxy_pass          http://greenlight:3000;
