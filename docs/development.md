@@ -53,7 +53,7 @@ RAILS_SECRET=SuperRailsSecret_SuperRailsSecret
 
 
 ## Notes
-- Joining a room via Greenlight currently leads to a "401 session not found" error (see https://github.com/alangecker/bigbluebutton-docker/issues/66). Use the API Mate instead
+- Due to the self signed ssl certificate it is currently not possible to notify greenlight about recordings in dev mode
 
 ## Changes
 - After doing some changes you usually must...
