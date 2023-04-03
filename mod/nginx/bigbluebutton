@@ -38,6 +38,11 @@ server {
     return 302 /rooms/$1;
   }
 
+  # serve default.pdf from /www/
+  location = /default.pdf {
+    try_files $uri =404;
+  }
+
   location / {
     proxy_pass          http://greenlight:3000;
     proxy_set_header    Host              $host;
