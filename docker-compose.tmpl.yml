@@ -134,6 +134,12 @@ services:
       - ./conf/dialplan_public:/etc/freeswitch/dialplan/public_docker
       - vol-freeswitch:/var/freeswitch/meetings
     network_mode: host
+    logging:
+      # reduce logs to a minimum, so `docker-compose logs -f` still works
+      driver: "local"
+      options:
+        max-size: "10k"
+        max-file: "1"
 
   nginx:
     build:
