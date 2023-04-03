@@ -23,12 +23,12 @@ RUN cd /app \
 
 
 # =============================
-FROM node:14.19.1-bullseye-slim
+FROM node:16-bullseye-slim
 RUN useradd --uid 2004 --user-group webrtc-sfu 
 ENV NODE_ENV production
 
 COPY --from=builder /app /app
-RUN chown -R webrtc-sfu:webrtc-sfu /app/config
+RUN mkdir /home/webrtc-sfu && chown -R webrtc-sfu:webrtc-sfu /app/config /home/webrtc-sfu
 
 USER webrtc-sfu
 WORKDIR /app

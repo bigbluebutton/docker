@@ -1,6 +1,5 @@
-FROM node:14-alpine AS builder
-
-RUN apk add subversion git
+ARG BBB_BUILD_TAG
+FROM gitlab.senfcall.de:5050/senfcall-public/docker-bbb-build:$BBB_BUILD_TAG AS builder
 
 # --------------------
 
@@ -13,7 +12,7 @@ RUN cd /bbb-playback && npm ci && npm run build
 
 # --------------------
 
-FROM nginx:1.21-alpine
+FROM nginx:1.23-alpine
 
 COPY --from=builder /bbb-learning-dashboard/build /www/learning-analytics-dashboard/
 COPY --from=builder /bbb-playback/build /www/playback/presentation/2.3

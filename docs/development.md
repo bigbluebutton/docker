@@ -30,7 +30,7 @@ TURN_SERVER=turns:localhost:5349?transport=tcp
 TURN_SECRET=SuperTurnSecret
 SHARED_SECRET=SuperSecret
 ETHERPAD_API_KEY=SuperEtherpadKey
-RAILS_SECRET=SuperRailsSecret
+RAILS_SECRET=SuperRailsSecret_SuperRailsSecret
 
 # ====================================
 # CUSTOMIZATION
@@ -53,7 +53,7 @@ RAILS_SECRET=SuperRailsSecret
 
 
 ## Notes
-- Joining a room via Greenlight currently leads to a "401 session not found" error (see https://github.com/alangecker/bigbluebutton-docker/issues/66). Use the API Mate instead
+- Due to the self signed ssl certificate it is currently not possible to notify greenlight about recordings in dev mode
 
 ## Changes
 - After doing some changes you usually must...
