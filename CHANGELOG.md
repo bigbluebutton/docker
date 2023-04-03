@@ -1,9 +1,13 @@
 # Changelog
 
 ## Unreleased
+
+## Release v2.6.0 (2023-04-03)
 - **Breaking change:** Greenlight v3 (see [upgrade note](docs/upgrading.md) @alangecker [#255](https://github.com/bigbluebutton/docker/pull/255) 
 - BigBlueButton v2.6 @alangecker [#255](https://github.com/bigbluebutton/docker/pull/255) 
+- Set client_max_body_size for greenlight @nr23730 [#252](https://github.com/bigbluebutton/docker/pull/252)
 - self building freeswitch (applying patches and independent from external apt repos) @alangecker
+- reduce amount of logs with senstivie data @alangecker
 
 ## Release v2.5.8 (2022-11-06)
 - BBB 2.5.8 @alangecker [#238](https://github.com/bigbluebutton/docker/pull/238)
