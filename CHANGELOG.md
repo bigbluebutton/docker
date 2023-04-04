@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## Release v2.6.0-2 (2023-04-04)
+- hotfix for broken freeswitch container due to enabled compresion with max file count == 1 [#260](https://github.com/bigbluebutton/docker/issues/260)
+
 ## Release v2.6.0 (2023-04-03)
 - **Breaking change:** Greenlight v3 (see [upgrade note](docs/upgrading.md) @alangecker [#255](https://github.com/bigbluebutton/docker/pull/255) 
 - BigBlueButton v2.6 @alangecker [#255](https://github.com/bigbluebutton/docker/pull/255) 
