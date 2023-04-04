@@ -140,6 +140,7 @@ services:
       options:
         max-size: "10k"
         max-file: "1"
+        compress: "false"
 
   nginx:
     build:
