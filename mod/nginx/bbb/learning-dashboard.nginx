@@ -1,5 +1,5 @@
 location ~ /learning-analytics-dashboard/([0-9a-f]+-[0-9]+)/(.*) {
-    root /var/bigbluebutton/learning-analytics-dashboard/;
+    alias /var/bigbluebutton/learning-dashboard/$1/$2;
     autoindex off;
 }
 
