@@ -353,6 +353,7 @@ services:
       - bbb-pads
     environment:
       DOMAIN: ${DOMAIN}
+      SHARED_SECRET: ${SHARED_SECRET}
     volumes:
       - bigbluebutton:/var/bigbluebutton
       - vol-freeswitch:/var/freeswitch/meetings
