@@ -23,5 +23,5 @@ docker exec -t docker_postgres_1 pg_dumpall -c -U postgres > /root/greenlight_`d
 ./scripts/upgrade
 
 # restart updated services
-docker-compose up -d
+docker compose up -d
 ```

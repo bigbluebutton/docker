@@ -17,15 +17,15 @@ Version: 2.6.0 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigblue
 - bbb-lti
 
 ## Install
-1. Install docker-ce & docker-compose
+1. Install docker-ce & docker-compose-plugin
     1. follow instructions
         * Debian: https://docs.docker.com/engine/install/debian/
         * CentOS: https://docs.docker.com/engine/install/centos/
         * Fedora: https://docs.docker.com/engine/install/fedora/
         * Ubuntu: https://docs.docker.com/engine/install/ubuntu/
     2. Ensure docker works with `$ docker run hello-world`
-    3. Install docker-compose: https://docs.docker.com/compose/install/
-    4. Ensure docker-compose works and that you use a version ≥ 1.28 : `$ docker-compose --version`
+    3. Install docker compose V2: https://docs.docker.com/compose/install/
+    4. Ensure docker compose works and that you use a version ≥ 1.28 : `$ docker compose --version`
 2. Clone this repository
    ```sh
    $ git clone --recurse-submodules https://github.com/bigbluebutton/docker.git bbb-docker
@@ -46,11 +46,11 @@ Version: 2.6.0 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigblue
    ```
 5. Start containers:
     ```bash
-    $ docker-compose up -d
+    $ docker compose up -d
     ```
 6. If you use greenlight, you can create an admin account with:
     ```bash
-    $ docker-compose exec greenlight bundle exec rake admin:create
+    $ docker compose exec greenlight bundle exec rake admin:create
     ```
 
 ## Further How-To's

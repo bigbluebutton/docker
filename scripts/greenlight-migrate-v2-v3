@@ -8,7 +8,7 @@ then
   export $(cat .env | sed 's/#.*//g' | grep -E "RAILS_SECRET|POSTGRESQL_SECRET" | xargs)
 fi
 
-COMPOSE_PREFIX=$(docker-compose ps | grep postgres | awk '{print $1}' | sed 's/-postgres-1//')
+COMPOSE_PREFIX=$(docker compose ps | grep postgres | awk '{print $1}' | sed 's/-postgres-1//')
 
 docker kill -s SIGKILL greenlight-v2-tmp 2>/dev/null
 sleep 1
