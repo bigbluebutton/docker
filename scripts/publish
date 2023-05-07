@@ -31,11 +31,11 @@ fi
 docker build -t alangecker/bbb-docker-base-java:latest mod/base-java
 
 # buld and push other images
-docker-compose build
+docker compose build
 
 # push images
 docker push alangecker/bbb-docker-base-java:latest
-docker-compose push \
+docker compose push \
     html5-backend-1 \
     bbb-web \
     freeswitch \
