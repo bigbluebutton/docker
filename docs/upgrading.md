@@ -1,7 +1,7 @@
 # How To Upgrade bbb-docker
 
 
-### Upgrading `v2.5.x` -> `v2.6.x`
+### Upgrading from `v2.5.x`
 
 - *Breaking change:* Greenlight got fully rewritten
     * it is starting as a fresh installation. you can migrate your data with `./scripts/greenlight-migrate-v2-v3`
@@ -10,7 +10,7 @@
 
 apart from that follow the guide below.
 
-### within `v2.6.x`
+### from `v2.6.x` or within `v2.7.x`
 #### Backup
 if you use greenlight, create a database backup first
 ```bash

@@ -13,6 +13,12 @@ Version: 2.7.0 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigblue
 - Full IPv6 support
 - Runs on any major linux distributon (Debian, Ubuntu, CentOS,...)
 
+## Requirements
+- 4GB of RAM
+- Linux (it will not work under WSL)
+- Root access (bbb-docker uses host networking, so it won't work with Kubernetes, any "CaaS"-Service, etc.)
+- Public IPv4 (expect issues with a firewall / NAT)
+
 ## What is not implemented yet
 - bbb-lti
 
