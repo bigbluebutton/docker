@@ -1,4 +1,4 @@
-FROM openjdk:11-jre-slim-bullseye
+FROM eclipse-temurin:17-jre-jammy
 
 RUN apt-get update && apt-get install -y \
         wget unzip gosu locales \

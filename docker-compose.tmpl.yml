@@ -169,7 +169,7 @@ services:
 
   etherpad:
     build: mod/etherpad
-    image: alangecker/bbb-docker-etherpad:1.8.18-3
+    image: alangecker/bbb-docker-etherpad:1.9.1
     restart: unless-stopped
     depends_on:
       - redis
@@ -193,7 +193,7 @@ services:
         ipv4_address: 10.7.7.18
 
   redis:
-    image: redis:7.0-alpine
+    image: redis:7.2-alpine
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -239,11 +239,14 @@ services:
     depends_on:
       - redis
       - freeswitch
+      - kurento
     environment:
       CLIENT_HOST: 10.7.7.1
       REDIS_HOST: 10.7.7.5
       FREESWITCH_IP: 10.7.7.1
       FREESWITCH_SIP_IP: ${EXTERNAL_IPv4}
+      MCS_HOST: 0.0.0.0
+      MCS_ADDRESS: 127.0.0.1
       ESL_IP: 10.7.7.1
       ESL_PASSWORD: ${FSESL_PASSWORD:-ClueCon}
       # TODO: add mediasoup IPv6
@@ -316,7 +319,7 @@ services:
 
   periodic:
     build: mod/periodic
-    image: alangecker/bbb-docker-periodic:v2.5.0-rc.1
+    image: alangecker/bbb-docker-periodic:v2.7.0
     restart: unless-stopped
     depends_on:
       - mongodb

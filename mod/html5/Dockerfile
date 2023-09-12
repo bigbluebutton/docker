@@ -24,7 +24,7 @@ RUN sed -i "s/VERSION/$TAG_HTML5/" /app/bundle/programs/web.browser/head.html \
 
 # ------------------------------
 
-FROM node:14-bullseye-slim
+FROM node:14.21-bullseye-slim
 
 RUN apt-get update && apt-get install -y gosu
 

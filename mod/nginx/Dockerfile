@@ -8,11 +8,11 @@ RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_LEARNI
 RUN cd /bbb-learning-dashboard && npm ci && npm run build
 
 COPY ./bbb-playback /bbb-playback
-RUN cd /bbb-playback && npm ci && npm run build
+RUN cd /bbb-playback && npm install && npm run-script build
 
 # --------------------
 
-FROM nginx:1.23-alpine
+FROM nginx:1.25-alpine
 
 COPY --from=builder /bbb-learning-dashboard/build /www/learning-analytics-dashboard/
 COPY --from=builder /bbb-playback/build /www/playback/presentation/2.3
