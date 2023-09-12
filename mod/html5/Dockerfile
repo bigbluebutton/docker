@@ -37,4 +37,8 @@ COPY --from=builder --chown=meteor:meteor /app/bundle /app
 COPY entrypoint.sh /entrypoint.sh
 COPY bbb-html5.yml /app/bbb-html5.yml.tmpl
 
+# expose TAG_HTML5 in container for the version display
+ARG TAG_HTML5
+ENV TAG_HTML5 $TAG_HTML5
+
 ENTRYPOINT ["/entrypoint.sh"]
