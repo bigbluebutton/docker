@@ -42,11 +42,11 @@ RAILS_SECRET=SuperRailsSecret_SuperRailsSecret
 - regenerate `docker-compose.yml` \
   `$ ./scripts/generate-compose`
 - build the images \
-  `$ docker-compose build`
+  `$ docker compose build`
 - you can than start it with \
-  `$ docker-compose up -d`
+  `$ docker compose up -d`
 - view the logs with \
-  `$ docker-compose logs -f`
+  `$ docker compose logs -f`
 - and access the API via \
   https://mconf.github.io/api-mate/#server=https://10.7.7.1/bigbluebutton/api&sharedSecret=SuperSecret
     * At some point your browser will warn you about an invalid certificate, but you can press _"Accept the Risk and Continue" / "Proceed to 10.7.7.1 (unsafe)"_
@@ -60,9 +60,9 @@ RAILS_SECRET=SuperRailsSecret_SuperRailsSecret
   - recreate `docker-compose.yml` \
     `$ ./scripts/generate-compose`
   * rebuild the image(s): \
-    `$ docker-compose build [containername]`
+    `$ docker compose build [containername]`
   * restart changes image(s): \
-    `$ docker-compose up -d`
+    `$ docker compose up -d`
 
 
 ## How to do create a new update for a newer BBB release?
