@@ -1,7 +1,14 @@
 # Changelog
 
 ## Unreleased
-- BigBlueButton v2.7 @alangecker
+
+
+## Release v2.7.0 (2023-09)
+- BigBlueButton 2.7.0 @alangecker [#291](https://github.com/bigbluebutton/docker/pull/291)
+- Update to ComposeV2 @leonidas-o [#271](https://github.com/bigbluebutton/docker/pull/271)
+- recordings: fix for missing `SHARED_SECRET` @ichdasich [#274](https://github.com/bigbluebutton/docker/issues/274) [#268](https://github.com/bigbluebutton/docker/issues/268)
+- Add RESOLVER_ADDRESS to env for docker-nginx-auto-ssl @pkolmann [#277](https://github.com/bigbluebutton/docker/pull/277)
+- Fix learning-dashboard @yanus [#262](https://github.com/bigbluebutton/docker/pull/262)
 
 ## Release v2.6.0-2 (2023-04-04)
 - hotfix for broken freeswitch container due to enabled compresion with max file count == 1 [#260](https://github.com/bigbluebutton/docker/issues/260)
