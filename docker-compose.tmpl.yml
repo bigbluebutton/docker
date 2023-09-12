@@ -401,6 +401,9 @@ services:
       {{else}}
       ALLOWED_DOMAINS: ${DOMAIN}
       {{end}}
+      {{ if .Env.RESOLVER_ADDRESS }}
+      RESOLVER_ADDRESS: ${RESOLVER_ADDRESS}
+      {{end}}
     network_mode: host
 {{end}}
 
