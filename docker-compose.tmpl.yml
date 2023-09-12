@@ -435,7 +435,7 @@ services:
 {{ if isTrue .Env.ENABLE_GREENLIGHT }}
   # greenlight
   greenlight:
-    image: bigbluebutton/greenlight:{{ .Env.TAG_GREENLIGHT }}-alpine
+    image: bigbluebutton/greenlight:{{ .Env.TAG_GREENLIGHT }}
     restart: unless-stopped
     env_file: .env
     depends_on:
@@ -452,6 +452,7 @@ services:
       {{end}}
       BIGBLUEBUTTON_SECRET: ${SHARED_SECRET}
       SECRET_KEY_BASE: ${RAILS_SECRET}
+      RELATIVE_URL_ROOT: /
     volumes:
        - ./greenlight-data:/usr/src/app/storage
     networks:
