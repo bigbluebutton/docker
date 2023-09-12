@@ -1,5 +1,5 @@
 ARG BBB_BUILD_TAG
-FROM gitlab.senfcall.de:5050/senfcall-public/docker-bbb-build:$BBB_BUILD_TAG AS builder
+FROM bigbluebutton/bbb-build:$BBB_BUILD_TAG AS builder
 
 
 RUN useradd --uid 2004 --user-group webrtc-sfu 
@@ -23,7 +23,7 @@ RUN cd /app \
 
 
 # =============================
-FROM node:16-bullseye-slim
+FROM node:18-bullseye-slim
 RUN useradd --uid 2004 --user-group webrtc-sfu 
 ENV NODE_ENV production
 

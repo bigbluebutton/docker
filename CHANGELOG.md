@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- BigBlueButton v2.7 @alangecker
 
 ## Release v2.6.0-2 (2023-04-04)
 - hotfix for broken freeswitch container due to enabled compresion with max file count == 1 [#260](https://github.com/bigbluebutton/docker/issues/260)

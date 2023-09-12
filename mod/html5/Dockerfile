@@ -1,5 +1,5 @@
 ARG BBB_BUILD_TAG
-FROM gitlab.senfcall.de:5050/senfcall-public/docker-bbb-build:$BBB_BUILD_TAG AS builder
+FROM bigbluebutton/bbb-build:$BBB_BUILD_TAG AS builder
 
 # RUN groupadd -g 2000 meteor && useradd -m -u 2001 -g meteor meteor
 # USER meteor
@@ -24,7 +24,7 @@ RUN sed -i "s/VERSION/$TAG_HTML5/" /app/bundle/programs/web.browser/head.html \
 
 # ------------------------------
 
-FROM node:14-bullseye-slim
+FROM node:14.21-bullseye-slim
 
 RUN apt-get update && apt-get install -y gosu
 

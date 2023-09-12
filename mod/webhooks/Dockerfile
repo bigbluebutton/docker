@@ -1,4 +1,4 @@
-FROM node:16-bullseye-slim AS builder
+FROM node:18-bullseye-slim AS builder
 
 
 RUN apt-get update && apt-get install -y git wget
@@ -12,7 +12,7 @@ RUN cd /bbb-webhooks && npm install --production
 RUN chmod 777 /bbb-webhooks/config
 # ------------------------------
 
-FROM node:16-bullseye-slim
+FROM node:18-bullseye-slim
 RUN useradd --uid 2004 --user-group bbb-webhooks
 
 COPY --from=builder /usr/bin/yq /usr/bin/yq
