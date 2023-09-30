@@ -22,6 +22,23 @@ where x.x.x.x is your public ip
 where x.x.x.x is your public ip
 
 5. In the `docker-compose.yml` file comment the image line of freeswitch in order to build it locally when you run docker compose up -d
+```
+freeswitch:
+    container_name: bbb-freeswitch
+    build:
+      context: mod/freeswitch
+      args:
+        BBB_BUILD_TAG: v2022-12-29-grails-524
+        TAG_FS_BUILD_FILES: v2.6.0
+        TAG_FS_CONFIG: v2.6.0
+        TAG_FREESWITCH: v1.10.9
+    #image: alangecker/bbb-docker-freeswitch:v2.6.0
+    restart: unless-stopped
+    cap_add:
+      - IPC_LOCK
+      - NET_ADMIN
+      - NET_RAW
+```
 
 ## Ports
 Also don't forget to forward all necassary ports listed in https://docs.bigbluebutton.org/admin/configure-firewall.html
