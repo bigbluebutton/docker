@@ -14,11 +14,14 @@ MS_RTP_LISTEN_IP: '{"ip":"0.0.0.0", "announcedIp":"x.x.x.x"}'
 ```
 where x.x.x.x is your public ip
 
-4. As indicated in https://github.com/bigbluebutton/bigbluebutton.github.io/issues/126 these 2 variables in the `vars.xml` of freeswitch should point to the external ip:
+4. As indicated in https://github.com/bigbluebutton/bigbluebutton.github.io/issues/126 these 2 variables in `bbb-docker/mod/freeswitch/conf/vars.xml` file of freeswitch should point to the external ip:
 ```
-<X-PRE-PROCESS cmd="set" data="external_rtp_ip=autonat:EXTERNAL_IP_ADDRESS"/>
-<X-PRE-PROCESS cmd="set" data="external_sip_ip=autonat:EXTERNAL_IP_ADDRESS"/>
+<X-PRE-PROCESS cmd="set" data="external_rtp_ip=autonat:x.x.x.x"/>
+<X-PRE-PROCESS cmd="set" data="external_sip_ip=autonat:x.x.x.x"/>
 ```
+where x.x.x.x is your public ip
+
+5. In the `docker-compose.yml` file comment the image line of freeswitch in order to build it locally when you run docker compose up -d
 
 ## Ports
 Also don't forget to forward all necassary ports listed in https://docs.bigbluebutton.org/admin/configure-firewall.html
