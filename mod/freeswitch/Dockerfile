@@ -66,9 +66,9 @@ RUN apt-get update && \
         libfreetype6 libcurl4 libspeex1 libspeexdsp1 libopus0 libsndfile1 libopusfile0 liblua5.2-0 libjbig0 libldns2 libedit2 libtiff5 libpng16-16 \
     && \
 # install libopusenc0
-    wget -O /tmp/libopusenc0_0.2.1-1bbb1_amd64.deb https://launchpad.net/~bigbluebutton/+archive/ubuntu/support/+files/libopusenc0_0.2.1-1bbb1_amd64.deb \
-    && dpkg -i /tmp/libopusenc0_0.2.1-1bbb1_amd64.deb \
-    && rm /tmp/libopusenc0_0.2.1-1bbb1_amd64.deb
+    wget -O /tmp/libopusenc0_0.2.1-1bbb2_amd64.deb https://launchpad.net/~bigbluebutton/+archive/ubuntu/support/+files/libopusenc0_0.2.1-1bbb2_amd64.deb \
+    && dpkg -i /tmp/libopusenc0_0.2.1-1bbb2_amd64.deb \
+    && rm /tmp/libopusenc0_0.2.1-1bbb2_amd64.deb
 
 # add dockerize
 COPY --from=alangecker/bbb-docker-base-java /usr/local/bin/dockerize /usr/local/bin/dockerize
