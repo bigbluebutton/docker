@@ -70,12 +70,8 @@ This always consists out of following steps
 1. **Get an understanding about changes that happened and find out what changes to bbb-docker that require.** \
     * main source for that are the release notes in https://github.com/bigbluebutton/bigbluebutton/releases
 2. **Apply these changes to this project.** 
-    * Often you only need to update the TAGS in `tags.env`
-      * make sure only to switch to a newer tag if there were changes made avoid creating new (partialy big) images unnecessarily
-    * Also update submodules to the new state. 
-      * List of all submodules `git submodule`
-      * for the main submodules you can use `./scripts/checkout-submodules` to checkout the tags specified in `tags.env`
-      
+    * Often you only need to checkout the git submodules to the specific release tag
+      * List of all submodules: `git submodule`   
 3. Test everything (with firefox **and** chromium/chrome)
     * Audio
     * Video

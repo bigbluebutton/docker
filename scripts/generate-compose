@@ -33,28 +33,24 @@ if [ "$ENABLE_COTURN" == true ]; then
   fi
 fi
 
-export $(cat tags.env | sed 's/#.*//g' | xargs)
+function get_tag {
+  git --git-dir=$1/.git describe --tags --always
+}
 
 docker run  \
     --rm  \
     -v $(pwd)/docker-compose.tmpl.yml:/docker-compose.tmpl.yml \
-    -e BBB_BUILD_TAG=${BBB_BUILD_TAG} \
-    -e TAG_COMMON_MESSAGE=${TAG_COMMON_MESSAGE} \
-    -e TAG_APPS_AKKA=${TAG_APPS_AKKA} \
-    -e TAG_FSESL_AKKA=${TAG_FSESL_AKKA} \
-    -e TAG_BBB_WEB=${TAG_BBB_WEB} \
-    -e TAG_HTML5=${TAG_HTML5} \
-    -e TAG_FS_CONFIG=${TAG_FS_CONFIG} \
-    -e TAG_FS_BUILD_FILES=${TAG_FS_BUILD_FILES} \
-    -e TAG_LEARNING_DASHBOARD=${TAG_LEARNING_DASHBOARD} \
-    -e TAG_RECORDINGS=${TAG_RECORDINGS} \
-    -e TAG_WEBRTC_SFU=${TAG_WEBRTC_SFU} \
-    -e TAG_WEBHOOKS=${TAG_WEBHOOKS} \
-    -e TAG_PLAYBACK=${TAG_PLAYBACK} \
-    -e TAG_PADS=${TAG_PADS} \
-    -e TAG_FREESWITCH=${TAG_FREESWITCH} \
+    -e TAG_BBB=$(get_tag repos/bigbluebutton) \
+    -e TAG_FREESWITCH=$(get_tag repos/freeswitch) \
+    -e TAG_WEBRTC_SFU=$(get_tag repos/bbb-webrtc-sfu) \
+    -e TAG_WEBHOOKS=$(get_tag repos/bbb-webhooks) \
+    -e TAG_PLAYBACK=$(get_tag repos/bbb-playback) \
+    -e TAG_PADS=$(get_tag repos/bbb-pads) \
     -e TAG_BBB_PRESENTATION_VIDEO=${TAG_BBB_PRESENTATION_VIDEO} \
     -e TAG_GREENLIGHT=${TAG_GREENLIGHT} \
+    -e TAG_ETHERPAD=${TAG_ETHERPAD} \
+    -e COMMIT_ETHERPAD_SKIN=$(get_tag repos/bbb-etherpad-skin) \
+    -e COMMIT_ETHERPAD_PLUGIN=$(get_tag repos/bbb-etherpad-plugin) \
     -e DEV_MODE=${DEV_MODE:-false} \
     -e EXTERNAL_IPv6=${EXTERNAL_IPv6:-} \
     -e ENABLE_RECORDING=${ENABLE_RECORDING:-false} \

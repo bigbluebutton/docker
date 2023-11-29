@@ -1,18 +1,24 @@
-[submodule "bbb-webrtc-sfu"]
-	path = mod/webrtc-sfu/bbb-webrtc-sfu
-	url = https://github.com/bigbluebutton/bbb-webrtc-sfu.git
-[submodule "mod/etherpad/bbb-etherpad-skin"]
-	path = mod/etherpad/bbb-etherpad-skin
+[submodule "repos/bbb-etherpad-skin"]
+	path = repos/bbb-etherpad-skin
 	url = https://github.com/alangecker/bbb-etherpad-skin
-[submodule "mod/etherpad/bbb-etherpad-plugin"]
-	path = mod/etherpad/bbb-etherpad-plugin
+[submodule "repos/bbb-etherpad-plugin"]
+	path = repos/bbb-etherpad-plugin
 	url = https://github.com/alangecker/bbb-etherpad-plugin
-[submodule "mod/bbb-pads/bbb-pads"]
-	path = mod/bbb-pads/bbb-pads
-	url = https://github.com/bigbluebutton/bbb-pads
-[submodule "mod/webhooks/bbb-webhooks"]
-	path = mod/webhooks/bbb-webhooks
+[submodule "repos/bbb-webhooks"]
+	path = repos/bbb-webhooks
 	url = https://github.com/bigbluebutton/bbb-webhooks
-[submodule "mod/nginx/bbb-playback"]
-	path = mod/nginx/bbb-playback
+[submodule "repos/bbb-playback"]
+	path = repos/bbb-playback
 	url = https://github.com/bigbluebutton/bbb-playback
+[submodule "repos/freeswitch"]
+	path = repos/freeswitch
+	url = https://github.com/signalwire/freeswitch.git
+[submodule "repos/bigbluebutton"]
+	path = repos/bigbluebutton
+	url = https://github.com/bigbluebutton/bigbluebutton.git
+[submodule "repos/bbb-webrtc-sfu"]
+	path = repos/bbb-webrtc-sfu
+	url = https://github.com/bigbluebutton/bbb-webrtc-sfu.git
+[submodule "repos/bbb-pads"]
+	path = repos/bbb-pads
+	url = https://github.com/bigbluebutton/bbb-pads.git

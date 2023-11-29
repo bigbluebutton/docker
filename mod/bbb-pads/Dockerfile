@@ -1,6 +1,6 @@
 FROM node:18-bullseye-slim AS builder
 
-COPY ./bbb-pads /bbb-pads
+COPY --from=src / /bbb-pads
 RUN cd /bbb-pads && rm -r .git && npm install --production
 
 

@@ -4,17 +4,12 @@ FROM bigbluebutton/bbb-build:$BBB_BUILD_TAG AS builder
 
 RUN useradd --uid 2004 --user-group webrtc-sfu 
 
-ADD ./bbb-webrtc-sfu /app
-
+COPY --from=source / /app
 
 ENV NODE_ENV production
 
-# due to the git submodule npm install crashes with following error:
-# npm ERR! fatal: Not a git repository: ../.git/modules/bbb-webrtc-sfu
-# we simply delete the .git file
 RUN cd /app \
  && cp config/default.example.yml config/production.yml \
- && rm .git \
  && npm install --unsafe-perm \
  && npm cache clear --force \
  && rm -rf node_modules/mediasoup/worker/out/Release/subprojects \

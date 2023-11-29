@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y git wget
 RUN  wget -q https://github.com/mikefarah/yq/releases/download/v4.25.1/yq_linux_amd64 -O /usr/bin/yq \
     && chmod +x /usr/bin/yq
 
-COPY ./bbb-webhooks /bbb-webhooks
+COPY --from=src / /bbb-webhooks
 RUN cd /bbb-webhooks && npm install --production
 
 RUN chmod 777 /bbb-webhooks/config
