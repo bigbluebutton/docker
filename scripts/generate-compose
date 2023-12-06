@@ -4,11 +4,8 @@ set -e
 cd $(dirname $0)/..
 
 # load .env
-if [ -f .env ]
-then
-  # exclude WELCOME_MESSAGE && WELCOME_FOOTER && CLIENT_TITLE because it may contain invalid characters
-  export $(cat .env | sed 's/#.*//g' | grep -v "WELCOME_FOOTER" | grep -v "WELCOME_MESSAGE" | grep -v "CLIENT_TITLE" | xargs)
-fi
+. scripts/functions.sh
+load_env
 
 # check for non-optional environment variables,
 # which got introduced later and may miss in existing
@@ -34,7 +31,13 @@ if [ "$ENABLE_COTURN" == true ]; then
 fi
 
 function get_tag {
-  git --git-dir=$1/.git describe --tags --always
+  # is submodule checked out?
+  if [ -f "$1/.git" ]; then
+    git --git-dir=$1/.git describe --tags --always
+  else
+    # get cached tag name from repos/tags
+    grep "$1" repos/tags | awk '{print $2}'
+  fi
 }
 
 docker run  \

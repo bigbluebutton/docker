@@ -4,11 +4,8 @@ set -e
 cd "$(dirname "$0")/.."
 
 # load .env
-if [ -f .env ]
-then
-  # exclude WELCOME_MESSAGE && WELCOME_FOOTER && CLIENT_TITLE because it may contain invalid characters
-  export $(cat .env | sed 's/#.*//g' | grep -v "WELCOME_FOOTER" | grep -v "WELCOME_MESSAGE" | grep -v "CLIENT_TITLE" | xargs)
-fi
+. functions.sh
+load_env
 
 if [ -z "$ENABLE_WEBHOOKS" ]; then
     echo "ERROR: ENABLE_WEBHOOKS must be set to true, otherwise the image would not be built"

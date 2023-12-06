@@ -4,11 +4,8 @@ set -e
 cd $(dirname $0)/..
 
 # load .env
-if [ -f .env ]
-then
-  # exclude WELCOME_FOOTER because it may contain invalid characters
-  export $(cat .env | sed 's/#.*//g' | grep -v "WELCOME_FOOTER" | grep -v "WELCOME_MESSAGE" | xargs)
-fi
+. functions.sh
+load_env
 
 if [ ! "$ENABLE_RECORDING" == true ]; then
   echo "Error: recording is disabled why can't use bbb-record"
