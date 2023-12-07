@@ -432,9 +432,7 @@ services:
       {{else}}
       ALLOWED_DOMAINS: ${DOMAIN}
       {{end}}
-      {{ if .Env.RESOLVER_ADDRESS }}
-      RESOLVER_ADDRESS: ${RESOLVER_ADDRESS}
-      {{end}}
+      RESOLVER_ADDRESS: ${RESOLVER_ADDRESS:-9.9.9.9}
     network_mode: host
 {{end}}
 
