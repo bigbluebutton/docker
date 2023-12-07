@@ -498,6 +498,11 @@ services:
     volumes:
       - bigbluebutton:/var/bigbluebutton:ro
     {{end}}
+
+    # the exporter requires /etc/bigbluebutton/bigbluebutton-release
+    tmpfs:
+      - /etc/bigbluebutton
+    entrypoint: sh -c 'echo "BIGBLUEBUTTON_RELEASE=2.7.3" > /etc/bigbluebutton/bigbluebutton-release && python server.py'
 {{end}}
 
 
