@@ -4,8 +4,6 @@ FROM bigbluebutton/bbb-build:$BBB_BUILD_TAG AS builder
 # RUN groupadd -g 2000 meteor && useradd -m -u 2001 -g meteor meteor
 # USER meteor
 
-ARG TAG_HTML5
-
 COPY --from=source ./ /source
 RUN cd /source && meteor npm ci --production \
     && METEOR_DISABLE_OPTIMISTIC_CACHING=1 meteor build --architecture os.linux.x86_64 --allow-superuser  --directory /app \
@@ -17,6 +15,7 @@ RUN cd /app/bundle/programs/server \
 RUN mkdir -p /app/bundle/programs/web.browser/app/files && \
     cp /app/bundle/programs/server/npm/node_modules/@fontsource/*/files/*.woff* /app/bundle/programs/web.browser/app/files/
 
+ARG TAG_BBB
 RUN sed -i "s/VERSION/$TAG_BBB/" /app/bundle/programs/web.browser/head.html \
     && find /app/bundle/programs/web.browser -name '*.js' -exec gzip -k -f -9 '{}' \; \
     && find /app/bundle/programs/web.browser -name '*.css' -exec gzip -k -f -9 '{}' \; \

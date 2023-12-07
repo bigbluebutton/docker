@@ -81,6 +81,34 @@ services:
         ipv4_address: 10.7.7.2
 
 
+{{ if isTrue .Env.DEV_HTML5 }}
+  html5-dev:
+    build: 
+      context: mod/html5
+      dockerfile: Dockerfile.dev
+      args:
+        BBB_BUILD_TAG: bbb27-2023-06-13-java17
+    user: ${BBB_DOCKER_USER}
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - mongodb
+      - etherpad
+    volumes:
+      - ./repos/bigbluebutton/bigbluebutton-html5:/app/:rw
+      - ./.cache/npm:/tmp/.npm:rw
+      - ./.cache/meteor:/tmp/.meteor:rw
+      - ./mod/html5/bbb-html5.yml:/tmp/bbb-html5.yml.tmpl
+    environment:
+      <<: *html5backend-env
+      HOME: /tmp
+      BBB_HTML5_ROLE: ""
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.200
+
+
+{{ else }}
 {{ range $i := loop 0 (atoi .Env.NUMBER_OF_BACKEND_NODEJS_PROCESSES) }}
   html5-backend-{{ add $i 1 }}:
     <<: *html5backend
@@ -104,6 +132,8 @@ services:
       bbb-net:
         ipv4_address: 10.7.7.{{ add 200 $i }}
 {{end}}
+
+{{ end }}
 
 
   freeswitch:
@@ -160,11 +190,20 @@ services:
     depends_on:
       - etherpad
       - webrtc-sfu
+      {{ if isTrue .Env.DEV_HTML5 }}
+      - html5-dev
+      {{ else }}
       - html5-backend-1
+      {{ end }}
     volumes:
       - bigbluebutton:/var/bigbluebutton
       - html5-static:/html5-static:ro
       - ${DEFAULT_PRESENTATION:-/dev/null}:/www/default.pdf
+
+      {{ if isTrue .Env.DEV_HTML5 }}
+      # don't let nginx directly serve static files
+      - ./mod/nginx/bbb-html5.dev.nginx:/etc/nginx/bbb/bbb-html5.nginx:ro
+      {{ end }}
     network_mode: host
     extra_hosts:
       - "host.docker.internal:10.7.7.1"

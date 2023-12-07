@@ -1,7 +1,7 @@
 public:
   app:
-    html5ClientBuild: {{ .Env.TAG_HTML5 }}
-    bbbServerVersion: {{ .Env.TAG_HTML5 }}-docker
+    html5ClientBuild: {{ .Env.TAG_BBB }}
+    bbbServerVersion: {{ .Env.TAG_BBB }}-docker
     listenOnlyMode: {{ .Env.LISTEN_ONLY_MODE }}
     skipCheck: {{ .Env.DISABLE_ECHO_TEST }}
     clientTitle: {{ .Env.CLIENT_TITLE }}

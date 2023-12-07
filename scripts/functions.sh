@@ -1,15 +1,5 @@
 function load_env {
-    FILE=.env
-    if [ "$BBB_DOCKER_DEV" = "1" ]; then
-        FILE=dev.env
-    else
-        FILE=.env
-    fi
-
-    if [ -f $FILE ]
-    then
-        export $(cat $FILE | sed 's/#.*//g' | grep -v "WELCOME_FOOTER" | grep -v "WELCOME_MESSAGE" | grep -v "CLIENT_TITLE" | xargs)
-    fi
+    export $(cat .env | sed 's/#.*//g' | grep -v "WELCOME_FOOTER" | grep -v "WELCOME_MESSAGE" | grep -v "CLIENT_TITLE" | xargs)
 }
 
 function ensure_submodules {

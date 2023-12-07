@@ -1,0 +1,76 @@
+#!/bin/bash
+
+set -e
+cd "$(dirname "$0")/.."
+. scripts/functions.sh
+
+if [ -f ".env" ]; then
+    load_env
+    if [[ "$DEV_MODE" == "" ]]; then
+        echo "Error: .env is not configured as a development environment"
+        echo ""
+        read -r -p "Should .env be automatically overwritten with a predefined .env? [Y/n]" response
+        response=${response,,} # tolower
+        if [[ $response =~ ^(y| ) ]] || [[ -z $response ]]; then
+            cp .env .env.bak
+            cp dev.env .env
+        else
+            echo "we can't continue with a .env file configured as a development environment"
+            exit 1
+        fi
+    fi
+else
+    echo "# creating a .env for the dev setup"
+    cp dev.env .env
+fi
+
+# to avoid any file permission issues we want to run some containers with the same
+# UID and GID as the current user
+export BBB_DOCKER_USER="$(id -u):$(id -g)"
+
+# also add it to ~/.zshrc and/or ~/.bashrc so
+# that people can also use commands like `docker compose up`
+# without that variable being missing
+function add_permanent_env {
+    STR='export BBB_DOCKER_USER="$(id -u):$(id -g)"'
+    if [ -z "$(grep "$STR" "$1")" ]; then
+        echo "append"
+        echo "" >> $1
+        echo "# following line got added by bbb-docker" >> $1
+        echo "$STR" >> $1 
+    fi
+}
+if [ -f "$(realpath ~/.zshrc)" ]; then
+    add_permanent_env "$(realpath ~/.zshrc)"
+fi
+if [ -f "$(realpath ~/.bashrc)" ]; then
+    add_permanent_env "$(realpath ~/.bashrc)"
+fi
+
+
+echo ""
+echo "# ensure submodules are checked out"
+ensure_submodules
+
+echo ""
+echo "# recreating docker-compose.yml"
+./scripts/generate-compose
+
+echo ""
+echo "# rebuilding images"
+docker compose build
+
+
+echo ""
+echo "============================================"
+echo "BBB Development server"
+echo "============================================"
+echo "API Mate: https://mconf.github.io/api-mate/#server=https://10.7.7.1/bigbluebutton/api&sharedSecret=SuperSecret"
+echo "Greenlight: https://10.7.7.1/"
+echo "Check containers:     docker-compose ps"
+echo "Rebuilding container: docker-compose up --build CONTAINERNAME"
+echo "============================================"
+
+sleep 1
+
+docker compose up

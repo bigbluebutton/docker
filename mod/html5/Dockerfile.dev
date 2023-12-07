@@ -1,0 +1,16 @@
+ARG BBB_BUILD_TAG
+FROM bigbluebutton/bbb-build:$BBB_BUILD_TAG AS builder
+
+
+RUN curl https://install.meteor.com/\?release\=2.13 | sh
+
+
+COPY --from=alangecker/bbb-docker-base-java /usr/local/bin/dockerize /usr/local/bin/dockerize
+
+# make /root/.meteor accessible for user
+RUN chmod 777 /root /root/.meteor
+
+COPY entrypoint.dev.sh /entrypoint.dev.sh
+
+ENTRYPOINT ["/entrypoint.dev.sh"]
+

@@ -1,50 +1,29 @@
 # bbb-docker Development
 
 ## Basics
-normally people start BBB with the pre-built docker images, but for developing you need to build them by yourself. For that you need to ensure that the submodules are also checked out:
+normally people start BBB with the pre-built docker images, but for developing you need to build them by yourself. For that you need to ensure that the submodules are also checked out
 
 ```sh
-$ git submodule update --init
+$ git clone --recurse-submodules https://github.com/bigbluebutton/docker.git bbb-dev
+$ cd bbb-dev
 ```
-
 
 ## Running
-you can run bbb-docker locally without any certificate issues with following `.env` configurations:
+you can now run bbb-docker locally by simply starting
 
-```
-DEV_MODE=true
-
-ENABLE_HTTPS_PROXY=true
-#ENABLE_COTURN=true
-#ENABLE_GREENLIGHT=true
-#ENABLE_WEBHOOKS=true
-#ENABLE_PROMETHEUS_EXPORTER=true
-#ENABLE_RECORDING=true
-
-DOMAIN=10.7.7.1
-EXTERNAL_IPv4=10.7.7.1
-STUN_IP=216.93.246.18
-STUN_PORT=3478
-TURN_SERVER=turns:localhost:5349?transport=tcp
-
-TURN_SECRET=SuperTurnSecret
-SHARED_SECRET=SuperSecret
-ETHERPAD_API_KEY=SuperEtherpadKey
-RAILS_SECRET=SuperRailsSecret_SuperRailsSecret
-
-# ====================================
-# CUSTOMIZATION
-# ====================================
-
-[... add rest of sample.env here ...]
+```sh
+$ ./scripts/dev
 ```
 
-- regenerate `docker-compose.yml` \
+### Hints
+- the html5 component will watch and automatically reload on any changes 🚀
+- if you change anything in the other components, you need to
+  * manually rebuilt it \
+    `$ docker compose build CONTAINERNAME`
+  * restart it \
+    `$ docker compose up -d CONTAINERNAME`
+- if you change any variable in .env, always run following to rebuild the `docker-compose.yml``
   `$ ./scripts/generate-compose`
-- build the images \
-  `$ docker compose build`
-- you can than start it with \
-  `$ docker compose up -d`
 - view the logs with \
   `$ docker compose logs -f`
 - and access the API via \
@@ -54,16 +33,6 @@ RAILS_SECRET=SuperRailsSecret_SuperRailsSecret
 
 ## Notes
 - Due to the self signed ssl certificate it is currently not possible to notify greenlight about recordings in dev mode
-
-## Changes
-- After doing some changes you usually must...
-  - recreate `docker-compose.yml` \
-    `$ ./scripts/generate-compose`
-  * rebuild the image(s): \
-    `$ docker compose build [containername]`
-  * restart changes image(s): \
-    `$ docker compose up -d`
-
 
 ## How to do create a new update for a newer BBB release?
 This always consists out of following steps

@@ -14,5 +14,9 @@ docker-compose.override.yml
 
 # App generated
 .env
+.env.bak
 postgres-data
 greenlight-data
+
+.cache/*/**
+!.cache/*/.gitkeep
