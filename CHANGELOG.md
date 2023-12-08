@@ -1,10 +1,13 @@
 # Changelog
 
 ## Unreleased
-- BigBlueButton 2.7.3 @alangecker
 
+## Release v2.7.3 (2023-12-08)
 
-## Release v2.7.0 (2023-09)
+**Breaking change!** make sure to read the [upgrading notes](https://github.com/bigbluebutton/docker/blob/develop/docs/upgrading.md)
+
+- BigBlueButton 2.7.3 @alangecker [#304](https://github.com/bigbluebutton/docker/pull/304)
+- use local sources instead of pulling inside container @alangecker [#307](https://github.com/bigbluebutton/docker/pull/307)
 - BigBlueButton 2.7.0 @alangecker [#291](https://github.com/bigbluebutton/docker/pull/291)
 - Update to ComposeV2 @leonidas-o [#271](https://github.com/bigbluebutton/docker/pull/271)
 - recordings: fix for missing `SHARED_SECRET` @ichdasich [#274](https://github.com/bigbluebutton/docker/issues/274) [#268](https://github.com/bigbluebutton/docker/issues/268)
