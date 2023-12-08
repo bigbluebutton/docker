@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 src="$8"
 dest="$(echo $8 | sed -E -e 's/html|odt/'$7'/')"
 convertTo="$7"

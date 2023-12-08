@@ -42,11 +42,11 @@ RAILS_SECRET=SuperRailsSecret_SuperRailsSecret
 - regenerate `docker-compose.yml` \
   `$ ./scripts/generate-compose`
 - build the images \
-  `$ docker-compose build`
+  `$ docker compose build`
 - you can than start it with \
-  `$ docker-compose up -d`
+  `$ docker compose up -d`
 - view the logs with \
-  `$ docker-compose logs -f`
+  `$ docker compose logs -f`
 - and access the API via \
   https://mconf.github.io/api-mate/#server=https://10.7.7.1/bigbluebutton/api&sharedSecret=SuperSecret
     * At some point your browser will warn you about an invalid certificate, but you can press _"Accept the Risk and Continue" / "Proceed to 10.7.7.1 (unsafe)"_
@@ -60,9 +60,9 @@ RAILS_SECRET=SuperRailsSecret_SuperRailsSecret
   - recreate `docker-compose.yml` \
     `$ ./scripts/generate-compose`
   * rebuild the image(s): \
-    `$ docker-compose build [containername]`
+    `$ docker compose build [containername]`
   * restart changes image(s): \
-    `$ docker-compose up -d`
+    `$ docker compose up -d`
 
 
 ## How to do create a new update for a newer BBB release?
@@ -70,12 +70,8 @@ This always consists out of following steps
 1. **Get an understanding about changes that happened and find out what changes to bbb-docker that require.** \
     * main source for that are the release notes in https://github.com/bigbluebutton/bigbluebutton/releases
 2. **Apply these changes to this project.** 
-    * Often you only need to update the TAGS in `tags.env`
-      * make sure only to switch to a newer tag if there were changes made avoid creating new (partialy big) images unnecessarily
-    * Also update submodules to the new state. 
-      * List of all submodules `git submodule`
-      * for the main submodules you can use `./scripts/checkout-submodules` to checkout the tags specified in `tags.env`
-      
+    * Often you only need to checkout the git submodules to the specific release tag
+      * List of all submodules: `git submodule`   
 3. Test everything (with firefox **and** chromium/chrome)
     * Audio
     * Video

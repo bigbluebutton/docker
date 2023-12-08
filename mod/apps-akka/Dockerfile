@@ -1,20 +1,16 @@
 ARG BBB_BUILD_TAG
-FROM gitlab.senfcall.de:5050/senfcall-public/docker-bbb-build:$BBB_BUILD_TAG AS builder
+FROM bigbluebutton/bbb-build:$BBB_BUILD_TAG AS builder
 
-ARG TAG_COMMON_MESSAGE
+COPY --from=src-common-message / /bbb-common-message
 
-# download bbb-common-message
-RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_COMMON_MESSAGE/bbb-common-message /bbb-common-message \
-    && cd /bbb-common-message \
-    && ./deploy.sh \
-    && rm -rf /bbb-common-message
+# build bbb-common-message
+RUN cd /bbb-common-message && ./deploy.sh
 
 # ===================================================
 
 ARG TAG_APPS_AKKA
 
-RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_APPS_AKKA/akka-bbb-apps /source \
-    && rm -rf /source/.svn
+COPY --from=src-apps-akka / /source
 
 # compile and unzip bin
 RUN cd /source \

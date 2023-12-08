@@ -1,24 +1,16 @@
 ARG BBB_BUILD_TAG
-FROM gitlab.senfcall.de:5050/senfcall-public/docker-bbb-build:$BBB_BUILD_TAG AS builder
+FROM bigbluebutton/bbb-build:$BBB_BUILD_TAG AS builder
 
-ARG TAG_COMMON_MESSAGE
+COPY --from=src-common-message / /bbb-common-message
 
-# download bbb-common-message
-RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_COMMON_MESSAGE/bbb-common-message /bbb-common-message \
-    && cd /bbb-common-message \
-    && ./deploy.sh \
-    && rm -rf /bbb-common-message
+# build bbb-common-message
+RUN cd /bbb-common-message && ./deploy.sh
 
 # ===================================================
-ARG TAG_FSESL_AKKA
-RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_FSESL_AKKA/bbb-fsesl-client /bbb-fsesl-client \
-    && rm -rf /bbb-fsesl-client/.svn
+COPY --from=src-fsesl-client / /bbb-fsesl-client
+RUN cd /bbb-fsesl-client && ./deploy.sh
 
-RUN cd /bbb-fsesl-client \
-    && ./deploy.sh
-
-RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_FSESL_AKKA/akka-bbb-fsesl /source \
-    && rm -rf /source/.svn
+COPY --from=src-fsesl-akka / /source
 
 # compile and unzip bin
 RUN cd /source \

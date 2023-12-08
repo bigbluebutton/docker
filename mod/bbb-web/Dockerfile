@@ -1,29 +1,19 @@
 ARG BBB_BUILD_TAG
-FROM gitlab.senfcall.de:5050/senfcall-public/docker-bbb-build:$BBB_BUILD_TAG AS builder
+FROM bigbluebutton/bbb-build:$BBB_BUILD_TAG AS builder
 
-ARG TAG_COMMON_MESSAGE
+COPY --from=src-common-message / /bbb-common-message
 
-# download bbb-common-message
-RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_COMMON_MESSAGE/bbb-common-message /bbb-common-message \
-    && cd /bbb-common-message \
-    && ./deploy.sh \
-    && rm -rf /bbb-common-message
+# build bbb-common-message
+RUN cd /bbb-common-message && ./deploy.sh
 
 # ===================================================
 
-ARG TAG_BBB_WEB
 
-# download bbb-common-web
-RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_BBB_WEB/bbb-common-web /bbb-common-web \
-    && rm -rf /bbb-common-message/.svn
+COPY --from=src-common-web / /bbb-common-web
+# build bbb-common-web
+RUN cd /bbb-common-web && ./deploy.sh
 
-# compile bbb-common-web
-RUN cd /bbb-common-web \
- && ./deploy.sh
-
-# download bbb-web
-RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_BBB_WEB/bigbluebutton-web /bbb-web \
-    && rm -rf /bbb-web/.svn
+COPY --from=src-web / /bbb-web
 
 # compile bbb-web
 RUN cd /bbb-web && grails assemble

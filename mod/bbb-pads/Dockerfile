@@ -1,13 +1,13 @@
-FROM node:16-bullseye-slim AS builder
+FROM node:18-bullseye-slim AS builder
 
-COPY ./bbb-pads /bbb-pads
+COPY --from=src / /bbb-pads
 RUN cd /bbb-pads && rm -r .git && npm install --production
 
 
 RUN chmod 777 /bbb-pads/config
 # ------------------------------
 
-FROM node:16-bullseye-slim
+FROM node:18-bullseye-slim
 
 RUN apt update && apt install -y jq moreutils \
     && useradd --uid 2003 --create-home --user-group bbb-pads

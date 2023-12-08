@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 echo $ETHERPAD_API_KEY > /tmp/apikey
 export NODE_ENV=production
 

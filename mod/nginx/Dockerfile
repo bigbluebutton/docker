@@ -1,18 +1,17 @@
 ARG BBB_BUILD_TAG
-FROM gitlab.senfcall.de:5050/senfcall-public/docker-bbb-build:$BBB_BUILD_TAG AS builder
+FROM bigbluebutton/bbb-build:$BBB_BUILD_TAG AS builder
 
 # --------------------
 
-ARG TAG_LEARNING_DASHBOARD
-RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_LEARNING_DASHBOARD/bbb-learning-dashboard /bbb-learning-dashboard && rm -r /bbb-learning-dashboard/.svn
+COPY --from=src-learning-dashboard / /bbb-learning-dashboard
 RUN cd /bbb-learning-dashboard && npm ci && npm run build
 
-COPY ./bbb-playback /bbb-playback
-RUN cd /bbb-playback && npm ci && npm run build
+COPY --from=src-playback / /bbb-playback
+RUN cd /bbb-playback && npm install && npm run-script build
 
 # --------------------
 
-FROM nginx:1.23-alpine
+FROM nginx:1.25-alpine
 
 COPY --from=builder /bbb-learning-dashboard/build /www/learning-analytics-dashboard/
 COPY --from=builder /bbb-playback/build /www/playback/presentation/2.3
