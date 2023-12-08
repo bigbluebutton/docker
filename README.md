@@ -52,7 +52,7 @@ Version: 2.7.3 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigblue
    ```
 5. Start containers:
     ```bash
-    $ docker compose up -d
+    $ docker compose up -d --no-build
     ```
 6. If you use greenlight, you can create an admin account with:
     ```bash
