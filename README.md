@@ -34,7 +34,7 @@ Version: 2.7.3 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigblue
     4. Ensure docker compose works and that you use a version ≥ 1.28 : `$ docker compose --version`
 2. Clone this repository
    ```sh
-   $ git clone --recurse-submodules https://github.com/bigbluebutton/docker.git bbb-docker
+   $ git clone https://github.com/bigbluebutton/docker.git bbb-docker
    $ cd bbb-docker
 
    # use the more stable main branch (sometimes older)
@@ -52,7 +52,7 @@ Version: 2.7.3 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigblue
    ```
 5. Start containers:
     ```bash
-    $ docker compose up -d
+    $ docker compose up -d --no-build
     ```
 6. If you use greenlight, you can create an admin account with:
     ```bash

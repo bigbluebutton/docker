@@ -70,20 +70,10 @@ RUN wget -q -O /tmp/python3-perfect-freehand.deb https://github.com/bigbluebutto
 
 ARG TAG_RECORDINGS
 
-# add bbb-record-core (lib, scripts and Gemfile)
-RUN cd /usr/local/bigbluebutton/core \
-    && svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_RECORDINGS/record-and-playback/core/lib \
-    && svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_RECORDINGS/record-and-playback/core/scripts \
-    && rm -rf /usr/local/bigbluebutton/core/*/.svn \
-    && wget https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/$TAG_RECORDINGS/record-and-playback/core/Gemfile.lock \
-    && wget https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/$TAG_RECORDINGS/record-and-playback/core/Gemfile \
-    && wget https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/$TAG_RECORDINGS/record-and-playback/core/Rakefile
+COPY --from=record-core / /usr/local/bigbluebutton/core
 
 # add bbb-playback-presentation scripts
-RUN cd /tmp \
-    && svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_RECORDINGS/record-and-playback/presentation/scripts \
-    && rsync -av /tmp/scripts/ /usr/local/bigbluebutton/core/scripts/ \
-    && rm -rf /tmp/scripts
+COPY --from=presentation /scripts /usr/local/bigbluebutton/core/scripts/ 
 
 # install ruby dependencies
 RUN cd /usr/local/bigbluebutton/core \
@@ -105,8 +95,8 @@ RUN sed -i 's|Journald::Logger\.new.*|Logger.new("/var/log/bigbluebutton/recordi
     sed -i 's|Logger\.new.*|Logger.new("/var/log/bigbluebutton/recording.log")|g' /usr/local/bigbluebutton/core/scripts/process/presentation.rb
 
 # add bbb-record with some adjustments so bbb-record works in this environment
+COPY --from=bbb-conf /bin/bbb-record /usr/bin/bbb-record
 RUN cd /usr/bin \
-    && wget https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/$TAG_RECORDINGS/bigbluebutton-config/bin/bbb-record \
     && chmod +x /usr/bin/bbb-record \
     && sed -i 's/^BBB_WEB.*/BBB_WEB=""/' /usr/bin/bbb-record \
     && sed -i 's/systemctl.*//' /usr/bin/bbb-record \

@@ -1,13 +1,7 @@
 ARG BBB_BUILD_TAG
 FROM bigbluebutton/bbb-build:$BBB_BUILD_TAG AS builder
 
-ARG TAG_FREESWITCH
-RUN mkdir -p /build/freeswitch && \
-    cd /build/freeswitch && \
-    git init && \
-    git remote add origin https://github.com/signalwire/freeswitch.git && \
-    git fetch --depth 1 origin $TAG_FREESWITCH && \
-    git checkout FETCH_HEAD
+COPY --from=freeswitch / /build/freeswitch
 
 # install most recent git version for proper sparse-checkout support
 # https://stackoverflow.com/questions/72223738/failed-to-initialize-sparse-checkout
@@ -17,12 +11,7 @@ RUN echo 'deb https://ppa.launchpadcontent.net/git-core/ppa/ubuntu focal main' >
     apt-get install -y git
 
 # get build files for bbb-freeswitch (build/packages-template/bbb-freeswitch-core/)
-ARG TAG_FS_BUILD_FILES
-RUN git clone -b $TAG_FS_BUILD_FILES  --depth 1 --filter=blob:none --sparse https://github.com/bigbluebutton/bigbluebutton.git /bbb && \
-    cd /bbb && \
-    git sparse-checkout set build/packages-template/bbb-freeswitch-core/ && \
-    cp build/packages-template/bbb-freeswitch-core/* /build/ && \
-    rm -rf /bbb
+COPY --from=build-files / /build/
 
 # mock files expected by build.sh
 RUN mkdir -p /build/bbb-voice-conference/config/freeswitch/conf/ && \
@@ -33,7 +22,7 @@ RUN mkdir -p /build/bbb-voice-conference/config/freeswitch/conf/ && \
         && \
     echo "" > /usr/local/bin/fpm
 
-
+# build freeswitch
 RUN cd /build && ./build.sh
 
 
@@ -48,13 +37,7 @@ RUN mkdir -p /build/staging/opt/freeswitch/share/freeswitch && \
 
 # add bigblugbutton config
 ARG TAG_FS_CONFIG
-RUN git clone -b $TAG_FS_CONFIG  --depth 1 --filter=blob:none --sparse https://github.com/bigbluebutton/bigbluebutton.git /bbb && \
-    cd /bbb && \
-    git sparse-checkout set bbb-voice-conference/config/freeswitch/conf/ && \
-    cp -r /bbb/bbb-voice-conference/config/freeswitch/conf/* /build/staging/opt/freeswitch/etc/freeswitch/
-
-
-
+COPY --from=fs-config / /build/staging/opt/freeswitch/etc/freeswitch/
 
 # ===============================================
 

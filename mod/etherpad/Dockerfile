@@ -1,4 +1,5 @@
-FROM etherpad/etherpad:1.9.4
+ARG TAG_ETHERPAD
+FROM etherpad/etherpad:$TAG_ETHERPAD
 
 USER root
 
@@ -16,10 +17,10 @@ RUN npm install \
     && rm package-lock.json package.json
 
 # add skin from git submodule
-COPY --chown=etherpad:0 ./bbb-etherpad-skin /opt/etherpad-lite/src/static/skins/bigbluebutton
+COPY --chown=etherpad:0 --from=skin / /opt/etherpad-lite/src/static/skins/bigbluebutton
 
 # add plugin from git submodule
-COPY --chown=etherpad:0 ./bbb-etherpad-plugin /opt/etherpad-lite/node_modules/ep_bigbluebutton_patches
+COPY --chown=etherpad:0 --from=plugin / /opt/etherpad-lite/node_modules/ep_bigbluebutton_patches
 
 COPY settings.json /opt/etherpad-lite/settings.json
 COPY etherpad-export.sh /etherpad-export.sh

@@ -9,10 +9,12 @@ version: '3.6'
 x-html5-backend: &html5backend
   build: 
     context: mod/html5
+    additional_contexts:
+      - source=./repos/bigbluebutton/bigbluebutton-html5
     args:
-      BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
-      TAG_HTML5: {{ .Env.TAG_HTML5 }}
-  image: alangecker/bbb-docker-html5:{{ .Env.TAG_HTML5 }}
+      BBB_BUILD_TAG: bbb27-2023-06-13-java17
+      TAG_BBB: {{ .Env.TAG_BBB }}
+  image: alangecker/bbb-docker-html5:{{ .Env.TAG_BBB }}
   restart: unless-stopped
   depends_on:
     - redis
@@ -44,11 +46,13 @@ services:
   bbb-web:
     build: 
       context: mod/bbb-web
+      additional_contexts:
+        - src-web=./repos/bigbluebutton/bigbluebutton-web
+        - src-common-message=./repos/bigbluebutton/bbb-common-message
+        - src-common-web=./repos/bigbluebutton/bbb-common-web
       args:
-        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
-        TAG_COMMON_MESSAGE: {{ .Env.TAG_COMMON_MESSAGE }}
-        TAG_BBB_WEB: {{ .Env.TAG_BBB_WEB }}
-    image: alangecker/bbb-docker-web:{{ .Env.TAG_BBB_WEB }}
+        BBB_BUILD_TAG: bbb27-2023-06-13-java17
+    image: alangecker/bbb-docker-web:{{ .Env.TAG_BBB }}
     restart: unless-stopped
     depends_on:
         - redis
@@ -106,12 +110,13 @@ services:
     container_name: bbb-freeswitch
     build: 
       context: mod/freeswitch
+      additional_contexts:
+        - freeswitch=./repos/freeswitch/
+        - build-files=./repos/bigbluebutton/build/packages-template/bbb-freeswitch-core/
+        - fs-config=./repos/bigbluebutton/bbb-voice-conference/config/freeswitch/conf/
       args:
-        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
-        TAG_FS_BUILD_FILES: {{ .Env.TAG_FS_BUILD_FILES }}
-        TAG_FS_CONFIG: {{ .Env.TAG_FS_CONFIG }}
-        TAG_FREESWITCH: {{ .Env.TAG_FREESWITCH }}
-    image: alangecker/bbb-docker-freeswitch:{{ .Env.TAG_FS_CONFIG }}
+        BBB_BUILD_TAG: bbb27-2023-06-13-java17
+    image: alangecker/bbb-docker-freeswitch:{{ .Env.TAG_FREESWITCH }}-{{ .Env.TAG_BBB }}
     restart: unless-stopped
     cap_add:
       - IPC_LOCK
@@ -145,10 +150,12 @@ services:
   nginx:
     build:
       context: mod/nginx
+      additional_contexts:
+        - src-learning-dashboard=./repos/bigbluebutton/bbb-learning-dashboard
+        - src-playback=./repos/bbb-playback
       args:
-        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
-        TAG_LEARNING_DASHBOARD: {{ .Env.TAG_LEARNING_DASHBOARD }}
-    image: alangecker/bbb-docker-nginx:1.23-{{ .Env.TAG_PLAYBACK }}-{{ .Env.TAG_LEARNING_DASHBOARD }}
+        BBB_BUILD_TAG: bbb27-2023-06-13-java17
+    image: alangecker/bbb-docker-nginx:1.23-{{ .Env.TAG_PLAYBACK }}-{{ .Env.TAG_BBB }}
     restart: unless-stopped
     depends_on:
       - etherpad
@@ -168,8 +175,14 @@ services:
       - "greenlight:10.7.7.21"
 
   etherpad:
-    build: mod/etherpad
-    image: alangecker/bbb-docker-etherpad:1.9.1
+    build: 
+      context: mod/etherpad
+      additional_contexts:
+        - plugin=./repos/bbb-etherpad-plugin
+        - skin=./repos/bbb-etherpad-skin
+      args:
+        TAG_ETHERPAD: "1.9.1"
+    image: alangecker/bbb-docker-etherpad:1.9.1-s{{ .Env.COMMIT_ETHERPAD_SKIN }}-p{{ .Env.COMMIT_ETHERPAD_PLUGIN }}
     restart: unless-stopped
     depends_on:
       - redis
@@ -180,7 +193,10 @@ services:
         ipv4_address: 10.7.7.4
 
   bbb-pads:
-    build: mod/bbb-pads
+    build: 
+      context: mod/bbb-pads
+      additional_contexts:
+        - src=./repos/bbb-pads
     image: alangecker/bbb-docker-pads:{{ .Env.TAG_PADS }}
     restart: unless-stopped
     depends_on:
@@ -232,8 +248,10 @@ services:
   webrtc-sfu:
     build: 
       context: mod/webrtc-sfu
+      additional_contexts:
+        - source=./repos/bbb-webrtc-sfu
       args:
-        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+        BBB_BUILD_TAG: bbb27-2023-06-13-java17
     image: alangecker/bbb-docker-webrtc-sfu:{{ .Env.TAG_WEBRTC_SFU }}
     restart: unless-stopped
     depends_on:
@@ -266,11 +284,13 @@ services:
   fsesl-akka:
     build: 
       context: mod/fsesl-akka
+      additional_contexts:
+        - src-common-message=./repos/bigbluebutton/bbb-common-message
+        - src-fsesl-client=./repos/bigbluebutton/bbb-fsesl-client
+        - src-fsesl-akka=./repos/bigbluebutton/akka-bbb-fsesl
       args:
-        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
-        TAG_COMMON_MESSAGE: {{ .Env.TAG_COMMON_MESSAGE }}
-        TAG_FSESL_AKKA: {{ .Env.TAG_FSESL_AKKA }}
-    image: alangecker/bbb-docker-fsesl-akka:{{ .Env.TAG_FSESL_AKKA }}
+        BBB_BUILD_TAG: bbb27-2023-06-13-java17
+    image: alangecker/bbb-docker-fsesl-akka:{{ .Env.TAG_BBB }}
     restart: unless-stopped
     depends_on:
       - redis
@@ -284,11 +304,12 @@ services:
   apps-akka:
     build: 
       context: mod/apps-akka
+      additional_contexts:
+        - src-common-message=./repos/bigbluebutton/bbb-common-message
+        - src-apps-akka=./repos/bigbluebutton/akka-bbb-apps
       args:
-        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
-        TAG_COMMON_MESSAGE: {{ .Env.TAG_COMMON_MESSAGE }}
-        TAG_APPS_AKKA: {{ .Env.TAG_APPS_AKKA }}
-    image: alangecker/bbb-docker-apps-akka:{{ .Env.TAG_APPS_AKKA }}
+        BBB_BUILD_TAG: bbb27-2023-06-13-java17
+    image: alangecker/bbb-docker-apps-akka:{{ .Env.TAG_BBB }}
     restart: unless-stopped
     depends_on:
       - redis
@@ -342,11 +363,14 @@ services:
   recordings:
     build: 
       context: mod/recordings
+      additional_contexts:
+        - record-core=./repos/bigbluebutton/record-and-playback/core
+        - presentation=./repos/bigbluebutton/record-and-playback/presentation
+        - bbb-conf=./repos/bigbluebutton/bigbluebutton-config
       args:
-        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
-        TAG_RECORDINGS: {{ .Env.TAG_RECORDINGS }}
-        TAG_BBB_PRESENTATION_VIDEO: {{ .Env.TAG_BBB_PRESENTATION_VIDEO }}
-    image: alangecker/bbb-docker-recordings:{{ .Env.TAG_RECORDINGS }}
+        BBB_BUILD_TAG: bbb27-2023-06-13-java17
+        TAG_BBB_PRESENTATION_VIDEO: "4.0.3"
+    image: alangecker/bbb-docker-recordings:{{ .Env.TAG_BBB }}
     restart: unless-stopped
     depends_on:
       - redis
@@ -370,7 +394,10 @@ services:
 {{ if isTrue .Env.ENABLE_WEBHOOKS }}
   # webhooks
   webhooks:
-    build: mod/webhooks
+    build: 
+      context: mod/webhooks
+      additional_contexts:
+        - src=./repos/bbb-webhooks
     image: alangecker/bbb-docker-webhooks:{{ .Env.TAG_WEBHOOKS }}
     restart: unless-stopped
     environment:
@@ -405,9 +432,7 @@ services:
       {{else}}
       ALLOWED_DOMAINS: ${DOMAIN}
       {{end}}
-      {{ if .Env.RESOLVER_ADDRESS }}
-      RESOLVER_ADDRESS: ${RESOLVER_ADDRESS}
-      {{end}}
+      RESOLVER_ADDRESS: ${RESOLVER_ADDRESS:-9.9.9.9}
     network_mode: host
 {{end}}
 
@@ -439,7 +464,7 @@ services:
 {{ if isTrue .Env.ENABLE_GREENLIGHT }}
   # greenlight
   greenlight:
-    image: bigbluebutton/greenlight:{{ .Env.TAG_GREENLIGHT }}
+    image: bigbluebutton/greenlight:v3.0.6.1
     restart: unless-stopped
     env_file: .env
     depends_on:

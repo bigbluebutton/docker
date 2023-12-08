@@ -3,11 +3,10 @@ FROM bigbluebutton/bbb-build:$BBB_BUILD_TAG AS builder
 
 # --------------------
 
-ARG TAG_LEARNING_DASHBOARD
-RUN svn checkout https://github.com/bigbluebutton/bigbluebutton/tags/$TAG_LEARNING_DASHBOARD/bbb-learning-dashboard /bbb-learning-dashboard && rm -r /bbb-learning-dashboard/.svn
+COPY --from=src-learning-dashboard / /bbb-learning-dashboard
 RUN cd /bbb-learning-dashboard && npm ci && npm run build
 
-COPY ./bbb-playback /bbb-playback
+COPY --from=src-playback / /bbb-playback
 RUN cd /bbb-playback && npm install && npm run-script build
 
 # --------------------
