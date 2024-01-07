@@ -19,6 +19,30 @@ else
     echo "# recreate docker-compose.yml"
     ./scripts/generate-compose
 
+
+    echo ""
+    echo "# checking for old volumes & migrate them"
+    COMPOSE_PREFIX=$(docker compose config | grep '^name:' | awk '{print $2}')
+    
+    function migrate {
+        VOLUME=${COMPOSE_PREFIX}_${1}
+        EXISTING=$(docker volume ls | grep $VOLUME | tail -n1 | awk '{print $2}')
+        if [ -n "$EXISTING" ]; then
+            # ensure volume is not used
+            docker compose down --remove-orphans
+            
+            echo "Migrating $VOLUME to $2"
+            docker run --rm -v $VOLUME:/src -v $2:/dest --entrypoint /bin/sh eeacms/rsync -c 'rsync -av /src/ /dest'
+            docker volume rm $EXISTING
+        fi  
+    }
+    migrate bigbluebutton ./data/bigbluebutton
+    migrate vol-freeswitch ./data/freeswitch-meetings
+    migrate vol-mediasoup ./data/mediasoup
+
+    # TODO: migrate postgres database
+    # TODO: migrate greenlight-data
+
     echo ""
     echo "# pull newest images"
     docker compose pull --ignore-pull-failures

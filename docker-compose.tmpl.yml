@@ -74,8 +74,8 @@ services:
       ENABLE_LEARNING_DASHBOARD: ${ENABLE_LEARNING_DASHBOARD:-true}
       NUMBER_OF_BACKEND_NODEJS_PROCESSES: {{ .Env.NUMBER_OF_BACKEND_NODEJS_PROCESSES }}
     volumes:
-      - bigbluebutton:/var/bigbluebutton
-      - vol-freeswitch:/var/freeswitch/meetings
+      - ./data/bigbluebutton:/var/bigbluebutton
+      - ./data/freeswitch-meetings:/var/freeswitch/meetings
     networks:
       bbb-net:
         ipv4_address: 10.7.7.2
@@ -167,7 +167,7 @@ services:
     volumes:
       - ./conf/sip_profiles:/etc/freeswitch/sip_profiles/external
       - ./conf/dialplan_public:/etc/freeswitch/dialplan/public_docker
-      - vol-freeswitch:/var/freeswitch/meetings
+      - ./data/freeswitch-meetings:/var/freeswitch/meetings
     network_mode: host
     logging:
       # reduce logs to a minimum, so `docker compose logs -f` still works
@@ -308,7 +308,7 @@ services:
     {{end}}
       MS_RTP_LISTEN_IP: '{"ip":"0.0.0.0", "announcedIp":"${EXTERNAL_IPv4}"}'
     volumes:
-      - vol-mediasoup:/var/mediasoup
+      - ./data/mediasoup:/var/mediasoup
     tmpfs:
       - /var/log/bbb-webrtc-sfu
     network_mode: host
@@ -446,8 +446,8 @@ services:
       - mongodb
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - bigbluebutton:/var/bigbluebutton
-      - vol-mediasoup:/var/mediasoup
+      - ./data/bigbluebutton:/var/bigbluebutton
+      - ./data/mediasoup:/var/mediasoup
     tmpfs:
       - /var/log/bigbluebutton
     environment:
@@ -479,10 +479,9 @@ services:
       DOMAIN: ${DOMAIN}
       SHARED_SECRET: ${SHARED_SECRET}
     volumes:
-      - bigbluebutton:/var/bigbluebutton
-      - vol-freeswitch:/var/freeswitch/meetings
-      - vol-mediasoup:/var/mediasoup
-      - vol-kurento:/var/kurento
+      - ./data/bigbluebutton:/var/bigbluebutton
+      - ./data/freeswitch-meetings:/var/freeswitch/meetings
+      - ./data/mediasoup:/var/mediasoup
     tmpfs:
       - /var/log/bigbluebutton
       - /tmp
@@ -583,10 +582,11 @@ services:
       SECRET_KEY_BASE: ${RAILS_SECRET}
       RELATIVE_URL_ROOT: /
     volumes:
-       - ./greenlight-data:/usr/src/app/storage
+       - ./data/greenlight:/usr/src/app/storage
     networks:
       bbb-net:
         ipv4_address: 10.7.7.21
+{{end}}
 
   postgres:
     image: postgres:16-alpine
@@ -601,6 +601,7 @@ services:
       timeout: 5s
       retries: 5
     volumes:
+      - ./data/postgres:/var/lib/postgresql/data
       - ./mod/postgres/initdb.sh:/docker-entrypoint-initdb.d/initdb.sh
     networks:
       bbb-net:
@@ -620,7 +621,7 @@ services:
         ipv4_address: 10.7.7.33
     {{ if isTrue .Env.ENABLE_PROMETHEUS_EXPORTER_OPTIMIZATION }}
     volumes:
-      - bigbluebutton:/var/bigbluebutton:ro
+      - ./data/bigbluebutton:/var/bigbluebutton:ro
     {{end}}
 
     # the exporter requires /etc/bigbluebutton/bigbluebutton-release
@@ -631,10 +632,6 @@ services:
 
 
 volumes:
-  bigbluebutton:
-  vol-freeswitch:
-  vol-kurento:
-  vol-mediasoup:
   html5-static:
 {{ if isTrue .Env.ENABLE_HTTPS_PROXY }}
   ssl_data:
