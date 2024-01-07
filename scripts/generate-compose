@@ -40,6 +40,9 @@ function get_tag {
   fi
 }
 
+# https://hub.docker.com/r/bigbluebutton/bbb-build
+BBB_BUILD_TAG=v3.0.x-release--2023-09-26-152524
+
 docker run  \
     --rm  \
     -v $(pwd)/docker-compose.tmpl.yml:/docker-compose.tmpl.yml \
@@ -48,11 +51,12 @@ docker run  \
     -e TAG_WEBRTC_SFU=$(get_tag repos/bbb-webrtc-sfu) \
     -e TAG_WEBHOOKS=$(get_tag repos/bbb-webhooks) \
     -e TAG_PLAYBACK=$(get_tag repos/bbb-playback) \
+    -e TAG_WEBRTC_RECORDER=$(get_tag repos/bbb-webrtc-recorder) \
     -e TAG_PADS=$(get_tag repos/bbb-pads) \
     -e COMMIT_ETHERPAD_SKIN=$(get_tag repos/bbb-etherpad-skin) \
     -e COMMIT_ETHERPAD_PLUGIN=$(get_tag repos/bbb-etherpad-plugin) \
+    -e BBB_BUILD_TAG=${BBB_BUILD_TAG} \
     -e DEV_MODE=${DEV_MODE:-false} \
-    -e DEV_HTML5=${DEV_HTML5:-false} \
     -e EXTERNAL_IPv6=${EXTERNAL_IPv6:-} \
     -e ENABLE_RECORDING=${ENABLE_RECORDING:-false} \
     -e ENABLE_HTTPS_PROXY=${ENABLE_HTTPS_PROXY:-false} \

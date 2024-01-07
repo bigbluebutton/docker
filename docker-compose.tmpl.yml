@@ -12,7 +12,7 @@ x-html5-backend: &html5backend
     additional_contexts:
       - source=./repos/bigbluebutton/bigbluebutton-html5
     args:
-      BBB_BUILD_TAG: bbb27-2023-06-13-java17
+      BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
       TAG_BBB: {{ .Env.TAG_BBB }}
   image: alangecker/bbb-docker-html5:{{ .Env.TAG_BBB }}
   restart: unless-stopped
@@ -51,7 +51,7 @@ services:
         - src-common-message=./repos/bigbluebutton/bbb-common-message
         - src-common-web=./repos/bigbluebutton/bbb-common-web
       args:
-        BBB_BUILD_TAG: bbb27-2023-06-13-java17
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
     image: alangecker/bbb-docker-web:{{ .Env.TAG_BBB }}
     restart: unless-stopped
     depends_on:
@@ -87,7 +87,7 @@ services:
       context: mod/html5
       dockerfile: Dockerfile.dev
       args:
-        BBB_BUILD_TAG: bbb27-2023-06-13-java17
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
     user: ${BBB_DOCKER_USER}
     restart: unless-stopped
     depends_on:
@@ -145,7 +145,7 @@ services:
         - build-files=./repos/bigbluebutton/build/packages-template/bbb-freeswitch-core/
         - fs-config=./repos/bigbluebutton/bbb-voice-conference/config/freeswitch/conf/
       args:
-        BBB_BUILD_TAG: bbb27-2023-06-13-java17
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
     image: alangecker/bbb-docker-freeswitch:{{ .Env.TAG_FREESWITCH }}-{{ .Env.TAG_BBB }}
     restart: unless-stopped
     cap_add:
@@ -184,7 +184,7 @@ services:
         - src-learning-dashboard=./repos/bigbluebutton/bbb-learning-dashboard
         - src-playback=./repos/bbb-playback
       args:
-        BBB_BUILD_TAG: bbb27-2023-06-13-java17
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
     image: alangecker/bbb-docker-nginx:1.23-{{ .Env.TAG_PLAYBACK }}-{{ .Env.TAG_BBB }}
     restart: unless-stopped
     depends_on:
@@ -290,13 +290,12 @@ services:
       additional_contexts:
         - source=./repos/bbb-webrtc-sfu
       args:
-        BBB_BUILD_TAG: bbb27-2023-06-13-java17
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
     image: alangecker/bbb-docker-webrtc-sfu:{{ .Env.TAG_WEBRTC_SFU }}
     restart: unless-stopped
     depends_on:
       - redis
       - freeswitch
-      - kurento
     environment:
       CLIENT_HOST: 10.7.7.1
       REDIS_HOST: 10.7.7.5
@@ -328,7 +327,7 @@ services:
         - src-fsesl-client=./repos/bigbluebutton/bbb-fsesl-client
         - src-fsesl-akka=./repos/bigbluebutton/akka-bbb-fsesl
       args:
-        BBB_BUILD_TAG: bbb27-2023-06-13-java17
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
     image: alangecker/bbb-docker-fsesl-akka:{{ .Env.TAG_BBB }}
     restart: unless-stopped
     depends_on:
@@ -347,7 +346,7 @@ services:
         - src-common-message=./repos/bigbluebutton/bbb-common-message
         - src-apps-akka=./repos/bigbluebutton/akka-bbb-apps
       args:
-        BBB_BUILD_TAG: bbb27-2023-06-13-java17
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
     image: alangecker/bbb-docker-apps-akka:{{ .Env.TAG_BBB }}
     restart: unless-stopped
     depends_on:
@@ -407,7 +406,7 @@ services:
         - presentation=./repos/bigbluebutton/record-and-playback/presentation
         - bbb-conf=./repos/bigbluebutton/bigbluebutton-config
       args:
-        BBB_BUILD_TAG: bbb27-2023-06-13-java17
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
         TAG_BBB_PRESENTATION_VIDEO: "4.0.3"
     image: alangecker/bbb-docker-recordings:{{ .Env.TAG_BBB }}
     restart: unless-stopped
