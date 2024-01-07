@@ -1,0 +1,14 @@
+ARG BBB_BUILD_TAG
+FROM bigbluebutton/bbb-build:$BBB_BUILD_TAG AS builder
+
+RUN apt-get update && apt-get install -y gosu
+
+# allow any user to use node in /root/.nvm
+RUN chmod 755 /root
+
+COPY dev-entrypoint.sh /dev-entrypoint.sh
+ENTRYPOINT [ "/dev-entrypoint.sh" ]
+
+WORKDIR /app
+ENV SERVER_HOST 0.0.0.0
+CMD [ "npm install && npm start" ]

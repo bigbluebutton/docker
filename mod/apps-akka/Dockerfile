@@ -26,5 +26,6 @@ COPY bbb-apps-akka.conf /etc/bigbluebutton/bbb-apps-akka.conf.tmpl
 COPY logback.xml /bbb-apps-akka/conf/logback.xml
 COPY entrypoint.sh /entrypoint.sh
 
+COPY settings.yml /usr/share/meteor/bundle/programs/server/assets/app/config/settings.yml
 USER bigbluebutton
 ENTRYPOINT /entrypoint.sh

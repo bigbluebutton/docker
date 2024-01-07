@@ -260,8 +260,7 @@ services:
         ipv4_address: 10.7.7.5
 
   mongodb:
-    container_name: bbb-mongodb
-    image: mongo:4.4
+    image: mongo:6.0
     restart: unless-stopped
     volumes:
       - ./mod/mongo/mongod.conf:/etc/mongod.conf
@@ -275,14 +274,6 @@ services:
     networks:
       bbb-net:
         ipv4_address: 10.7.7.6
-
-  #  TODO: remove as soon as not required anymore by webrtc-sfu
-  kurento:
-    image: kurento/kurento-media-server:6.18
-    restart: unless-stopped
-    network_mode: host
-    volumes:
-      - vol-kurento:/var/kurento
 
   webrtc-sfu:
     build: 
@@ -302,9 +293,12 @@ services:
       FREESWITCH_IP: 10.7.7.1
       FREESWITCH_SIP_IP: ${EXTERNAL_IPv4}
       MCS_HOST: 0.0.0.0
-      MCS_ADDRESS: 127.0.0.1
+      MCS_ADDRESS: 0.0.0.0
       ESL_IP: 10.7.7.1
       ESL_PASSWORD: ${FSESL_PASSWORD:-ClueCon}
+      RECORDING_ADAPTER: bbb-webrtc-recorder
+      RECORD_WEBCAMS: "true"
+      KURENTO: '[]' 
       # TODO: add mediasoup IPv6
       # TODO: can listen to 0.0.0.0 for nat support? https://github.com/versatica/mediasoup/issues/487
     {{ if .Env.EXTERNAL_IPv6 }}
@@ -351,14 +345,82 @@ services:
     restart: unless-stopped
     depends_on:
       - redis
+      - postgres
     environment:
       DOMAIN: ${DOMAIN}
       SHARED_SECRET: ${SHARED_SECRET}
+      POSTGRES_PASSWORD: ${POSTGRESQL_SECRET:-password}
     volumes:
-      - vol-freeswitch:/var/freeswitch/meetings
+      - ./data/freeswitch-meetings:/var/freeswitch/meetings
+      - ./conf/settings.yml:/etc/bigbluebutton/bbb-html5.yml:ro
     networks:
       bbb-net:
         ipv4_address: 10.7.7.15
+
+  bbb-graphql-server:
+    build:
+      context: mod/bbb-graphql-server
+      additional_contexts:
+        - src=./repos/bigbluebutton/bbb-graphql-server
+      args:
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRESQL_SECRET:-password}
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.31
+
+    extra_hosts:
+      - "bbb-web:10.7.7.2"
+      - "bbb-graphql-actions:10.7.7.30"
+
+  bbb-graphql-actions:
+    build:
+      context: mod/bbb-graphql-actions
+      {{ if isTrue .Env.DEV_MODE }}
+      dockerfile: Dockerfile.dev
+      {{ else }}
+      additional_contexts:
+        - src=./repos/bigbluebutton/bbb-graphql-actions
+      {{ end }}
+      args:
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+    restart: unless-stopped
+    depends_on:
+      - redis
+    environment:
+      BBB_REDIS_HOST: redis
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.30
+    {{ if isTrue .Env.DEV_MODE }}
+    volumes:
+      - ./repos/bigbluebutton/bbb-graphql-actions:/app/:rw
+      - ./.cache/npm:/tmp/.npm:rw
+    {{ end }}
+
+  bbb-graphql-middleware:
+    build:
+      context: mod/bbb-graphql-middleware
+      additional_contexts:
+        - src=./repos/bigbluebutton/bbb-graphql-middleware
+      args:
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+    restart: unless-stopped
+    depends_on:
+      - bbb-graphql-server
+      - redis
+    environment:
+      BBB_GRAPHQL_MIDDLEWARE_LISTEN_PORT: 8378
+      BBB_GRAPHQL_MIDDLEWARE_REDIS_ADDRESS: 10.7.7.5:6379 
+      BBB_GRAPHQL_MIDDLEWARE_HASURA_WS: ws://bbb-graphql-server:8080/v1/graphql
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.32
 
   jodconverter:
     build: mod/jodconverter
@@ -527,10 +589,10 @@ services:
         ipv4_address: 10.7.7.21
 
   postgres:
-    image: postgres:12-alpine
+    image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: greenlight-v3
+      POSTGRES_MULTIPLE_DATABASES: bbb_graphql,hasura_app,greenlight
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${POSTGRESQL_SECRET:-password}
     healthcheck:
@@ -539,11 +601,10 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+      - ./mod/postgres/initdb.sh:/docker-entrypoint-initdb.d/initdb.sh
     networks:
       bbb-net:
         ipv4_address: 10.7.7.22
-{{end}}
 
 {{ if isTrue .Env.ENABLE_PROMETHEUS_EXPORTER }}
   # prometheus

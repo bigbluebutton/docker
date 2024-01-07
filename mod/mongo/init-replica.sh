@@ -15,12 +15,12 @@ mongod --oplogSize 8 --replSet rs0 --noauth \
    --pidfilepath /tmp/docker-entrypoint-temp-mongod.pid --fork
 
 # init replset with defaults
-mongo 10.7.7.6 --eval "rs.initiate({
+mongosh 10.7.7.6 --eval "rs.initiate({
    _id: 'rs0',
    members: [ { _id: 0, host: '10.7.7.6:27017' } ]
 })"
 
 echo "Waiting to become a master"
-echo 'while (!db.isMaster().ismaster) { sleep(100); }' | mongo
+echo 'while (!db.isMaster().ismaster) { sleep(100); }' | mongosh
 
 echo "I'm the master!"

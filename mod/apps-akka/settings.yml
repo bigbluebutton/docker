@@ -1,0 +1,7 @@
+# just the default values required for gettting apps-akka running
+
+# use ./conf/sertings.yml for modifying anything
+public:
+  plugins: []
+  userReaction:
+    expire: 30
