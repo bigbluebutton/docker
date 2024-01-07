@@ -4,7 +4,7 @@ set -e
 cd $(dirname $0)/..
 
 # load .env
-. functions.sh
+. ./scripts/functions.sh
 load_env
 
 docker compose exec freeswitch /opt/freeswitch/bin/fs_cli -H 10.7.7.1 -p "$FSESL_PASSWORD"
