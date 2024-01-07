@@ -14,11 +14,6 @@ export ENVIRONMENT_TYPE=production
 export NODE_VERSION=node-v14.21.1-linux-x64
 export BBB_HTML5_LOCAL_SETTINGS=/app/bbb-html5.yml
 
-if [ "$DEV_MODE" == true ]; then
-    echo "DEV_MODE=true, disable TLS certificate rejecting"
-    export NODE_TLS_REJECT_UNAUTHORIZED=0
-fi
-
 if [ "$BBB_HTML5_ROLE" == "backend" ]; then
     PARAM=NODEJS_BACKEND_INSTANCE_ID=$INSTANCE_ID
 fi

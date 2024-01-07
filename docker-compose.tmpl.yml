@@ -81,7 +81,7 @@ services:
         ipv4_address: 10.7.7.2
 
 
-{{ if isTrue .Env.DEV_HTML5 }}
+{{ if isTrue .Env.DEV_MODE }}
   html5-dev:
     build: 
       context: mod/html5
@@ -190,17 +190,17 @@ services:
     depends_on:
       - etherpad
       - webrtc-sfu
-      {{ if isTrue .Env.DEV_HTML5 }}
+      {{ if isTrue .Env.DEV_MODE }}
       - html5-dev
       {{ else }}
       - html5-backend-1
       {{ end }}
     volumes:
-      - bigbluebutton:/var/bigbluebutton
+      - ./data/bigbluebutton:/var/bigbluebutton
       - html5-static:/html5-static:ro
       - ${DEFAULT_PRESENTATION:-/dev/null}:/www/default.pdf
 
-      {{ if isTrue .Env.DEV_HTML5 }}
+      {{ if isTrue .Env.DEV_MODE }}
       # don't let nginx directly serve static files
       - ./mod/nginx/bbb-html5.dev.nginx:/etc/nginx/bbb/bbb-html5.nginx:ro
       {{ end }}
