@@ -482,12 +482,28 @@ services:
       - ./data/bigbluebutton:/var/bigbluebutton
       - ./data/freeswitch-meetings:/var/freeswitch/meetings
       - ./data/mediasoup:/var/mediasoup
+      - ./data/bbb-webrtc-recorder:/var/lib/bbb-webrtc-recorder
     tmpfs:
       - /var/log/bigbluebutton
       - /tmp
     networks:
       bbb-net:
         ipv4_address: 10.7.7.16
+
+  bbb-webrtc-recorder:
+    build:
+      context: mod/bbb-webrtc-recorder
+      additional_contexts:
+        - src=./repos/bbb-webrtc-recorder
+    image: alangecker/bbb-docker-webrtc-recorder:{{ .Env.TAG_WEBRTC_RECORDER }}
+    depends_on:
+      - redis
+    volumes: 
+      - ./mod/bbb-webrtc-recorder/bbb-webrtc-recorder.yml:/etc/bbb-webrtc-recorder/bbb-webrtc-recorder.yml
+      - ./data/bbb-webrtc-recorder:/var/lib/bbb-webrtc-recorder
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.19
 {{end}}
 
 {{ if isTrue .Env.ENABLE_WEBHOOKS }}
