@@ -23,7 +23,7 @@ RUN sed -i "s/VERSION/$TAG_BBB/" /app/bundle/programs/web.browser/head.html \
 
 # ------------------------------
 
-FROM node:14.21-bullseye-slim
+FROM node:18-bookworm-slim
 
 RUN apt-get update && apt-get install -y gosu
 

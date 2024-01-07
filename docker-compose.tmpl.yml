@@ -185,7 +185,7 @@ services:
         - src-playback=./repos/bbb-playback
       args:
         BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
-    image: alangecker/bbb-docker-nginx:1.23-{{ .Env.TAG_PLAYBACK }}-{{ .Env.TAG_BBB }}
+    image: alangecker/bbb-docker-nginx:1.25-{{ .Env.TAG_PLAYBACK }}-{{ .Env.TAG_BBB }}
     restart: unless-stopped
     depends_on:
       - etherpad
