@@ -27,6 +27,14 @@ while [[ ! $greenlight =~ ^(y|n)$ ]]; do
     read -p "Should greenlight be included? (y/n): " greenlight
 done
 
+keycloak=""
+if [ "$greenlight" = "y" ]
+then
+    while [[ ! $keycloak =~ ^(y|n)$ ]]; do
+        read -p "Should Keycloak as external Authenficator be included? (y/n): " keycloak
+    done
+fi
+
 https_proxy=""
 while [[ ! $https_proxy =~ ^(y|n)$ ]]; do
     read -p "Should an automatic HTTPS Proxy be included? (y/n): " https_proxy
@@ -141,6 +149,15 @@ then
     sed -i "s/ENABLE_GREENLIGHT.*/#ENABLE_GREENLIGHT=true/" .env
 fi
 
+if [ "$keycloak" == "y" ]
+then
+    sed -i "s/.*ENABLE_KEYCLOAK=.*/ENABLE_KEYCLOAK=true/" .env
+    sed -i "s/.*KEYCLOAK_ADMIN=.*/KEYCLOAK_ADMIN=admin/" .env
+    KEYCLOAK_SECRET=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
+    sed -i "s/.*KEYCLOAK_ADMIN_PASSWORD=.*/KEYCLOAK_ADMIN_PASSWORD=$KEYCLOAK_SECRET/" .env
+    sed -i "s/.*KEYCLOAK_HOSTNAME_STRICT=.*/KEYCLOAK_HOSTNAME_STRICT=false/" .env
+fi
+
 if [ ! "$https_proxy" == "y" ]
 then
     sed -i "s/ENABLE_HTTPS_PROXY.*/#ENABLE_HTTPS_PROXY=true/" .env
@@ -206,6 +223,12 @@ echo "  $ nano .env"
 echo ""
 echo "make sure to recreate the docker-compose.yml after each change"
 echo "  $ ./scripts/generate-compose"
+if [ "$keycloak" == "y" ]
+then
+  echo ""
+  echo "make sure to create the keycloak database before you start the container"
+  echo "  $ ./scripts/setup-keycloak-database"
+fi
 echo ""
 echo "to start bigbluebutton run"
 echo "  $ docker compose up -d"

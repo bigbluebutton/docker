@@ -173,6 +173,7 @@ services:
       - "webrtc-sfu:10.7.7.1"
       - "html5:10.7.7.11"
       - "greenlight:10.7.7.21"
+      - "keycloak:10.7.7.23"
 
   etherpad:
     build: 
@@ -505,6 +506,32 @@ services:
     networks:
       bbb-net:
         ipv4_address: 10.7.7.22
+
+  {{ if isTrue .Env.ENABLE_KEYCLOAK }}
+  # keycloak Authentification provider
+  keycloak:
+    command: start
+    image: quay.io/keycloak/keycloak:23.0
+    restart: unless-stopped
+    environment:
+      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN:-admin}
+      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD:-password}
+      - KC_DB=postgres
+      - KC_DB_URL_HOST=postgres
+      - KC_DB_USERNAME=postgres
+      - KC_DB_URL_DATABASE=keycloakdb
+      - KC_DB_PASSWORD=${POSTGRESQL_SECRET:-password}
+      - KC_HOSTNAME_STRICT=${KEYCLOAK_HOSTNAME_STRICT:-false}
+      - KC_HTTP_RELATIVE_PATH=/keycloak
+      - KC_PROXY=edge
+    logging:
+      driver: journald
+    depends_on:
+      - postgres
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.23
+  {{end}}
 {{end}}
 
 {{ if isTrue .Env.ENABLE_PROMETHEUS_EXPORTER }}
