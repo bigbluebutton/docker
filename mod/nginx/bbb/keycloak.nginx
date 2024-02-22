@@ -1,7 +1,7 @@
 ### Keycloak:
 
 location /keycloak {
-    proxy_pass         http://keycloak:5151;
+    proxy_pass         http://keycloak:8080;
     proxy_set_header   Host $host;
     proxy_set_header   X-Forwarded-Host  $http_host;
     proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
