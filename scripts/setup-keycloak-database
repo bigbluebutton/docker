@@ -1,0 +1,39 @@
+#!/bin/bash
+
+cd $(dirname $0)/..
+
+function create_database {
+  while ! docker exec $1 nc -zw3 127.0.0.1 5432
+  do
+    echo "Waiting for postgres to start up ..."
+    sleep 1
+  done
+  DATABASE_EXISTS=$(docker exec -u postgres $1 psql -c '\l' | grep "$2")
+  if [ -z "$DATABASE_EXISTS" ]
+  then
+    docker exec -u postgres $1 psql -c "CREATE DATABASE $2;"
+  fi
+}
+
+# load .env
+. scripts/functions.sh
+load_env
+
+KEYCLOAK_DATABASE='keycloakdb'
+
+COMPOSE_PREFIX=$(docker compose ps | grep postgres | awk '{print $1}' | sed 's/-postgres-1//')
+
+if [ -z "$COMPOSE_PREFIX" ]
+then
+  docker run \
+    --rm \
+    --detach --name postgres_tmp \
+    -e POSTGRES_DB=greenlight-v3 \
+    -e POSTGRES_USER=postgres \
+    -e POSTGRES_PASSWORD=${POSTGRESQL_SECRET:-password} \
+    --volume ./postgres-data:/var/lib/postgresql/data \
+    postgres:12-alpine
+  create_database 'postgres_tmp' "$KEYCLOAK_DATABASE" && docker stop postgres_tmp
+else
+  create_database $(docker compose ps | grep postgres | awk '{print $1}') "$KEYCLOAK_DATABASE"
+fi

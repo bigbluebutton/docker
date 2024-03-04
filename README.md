@@ -62,4 +62,5 @@ Version: 2.7.3 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigblue
 ## Further How-To's
 - [Running behind NAT](docs/behind-nat.md)
 - [Integration into an existing web server](docs/existing-web-server.md)
+- [Integration of addition authentication providers](docs/additional-authentication-providers.md)
 
