@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- BigBlueButton 2.7.9
 
 ## Release v2.7.3 (2023-12-08)
 
