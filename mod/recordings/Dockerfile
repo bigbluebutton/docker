@@ -78,7 +78,7 @@ COPY --from=presentation /scripts /usr/local/bigbluebutton/core/scripts/
 # install ruby dependencies
 RUN cd /usr/local/bigbluebutton/core \
     && gem install builder \
-    && gem install bundler --no-document \
+    && gem install bundler -v 2.4.22 --no-document \
     && bundle config set --local deployment true \
     && bundle install \
     && bundle clean \
