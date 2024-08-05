@@ -1,6 +1,0 @@
-#!/bin/bash
-set -e
-
-cd $(dirname $0)/..
-
-docker-compose exec freeswitch fs_cli -H 10.7.7.1

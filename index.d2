@@ -1,0 +1,24 @@
+direction: right
+
+lb: "lb" {
+  shape: image
+  icon: https://icon.icepanel.io/AWS/svg/Networking-Content-Delivery/Elastic-Load-Balancing.svg
+  width: 100
+  height: 100
+}
+
+ec2: "web" {
+  shape: image
+  icon: https://icons.terrastruct.com/aws%2FCompute%2FAmazon-EC2_light-bg.svg
+  width: 100
+  height: 100
+}
+
+db: "db" {
+  shape: image
+  icon: https://icons.terrastruct.com/aws%2FDatabase%2FAmazon-RDS.svg
+  width: 100
+  height: 100
+}
+
+lb -> ec2 -> db

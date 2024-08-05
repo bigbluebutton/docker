@@ -1,9 +1,0 @@
-[submodule "bbb-webrtc-sfu"]
-	path = mod/webrtc-sfu/bbb-webrtc-sfu
-	url = https://github.com/bigbluebutton/bbb-webrtc-sfu.git
-[submodule "mod/etherpad/bbb-etherpad-skin"]
-	path = mod/etherpad/bbb-etherpad-skin
-	url = https://github.com/alangecker/bbb-etherpad-skin
-[submodule "mod/etherpad/bbb-etherpad-plugin"]
-	path = mod/etherpad/bbb-etherpad-plugin
-	url = https://github.com/alangecker/bbb-etherpad-plugin
