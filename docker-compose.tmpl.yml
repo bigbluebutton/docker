@@ -19,6 +19,7 @@ services:
         - redis
         - etherpad
         - bbb-pads
+        - collabora
     healthcheck:
       test: wget --no-proxy --no-verbose --tries=1 --spider http://10.7.7.2:8090/bigbluebutton/api || exit 1
       start_period: 2m
@@ -298,21 +299,18 @@ services:
       bbb-net:
         ipv4_address: 10.7.7.32
 
-  jodconverter:
-    build: mod/jodconverter
-    image: alangecker/bbb-docker-jodconverter:latest
-    security_opt:
-      - 'no-new-privileges:true'
+  collabora:
+    image: collabora/code:latest
     restart: unless-stopped
     tmpfs:
       - /tmp
-    deploy:
-      resources:
-        limits:
-          memory: 512M
     networks:
       bbb-net:
         ipv4_address: 10.7.7.20
+    # disable logging (way to verbose)
+    logging:
+      driver: none
+
 
   periodic:
     build: mod/periodic
