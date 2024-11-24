@@ -22,3 +22,5 @@ greenlight-data
 !.cache/*/.gitkeep
 data/*
 !data/.gitkeep
+
+conf/bbb-html5.yml
