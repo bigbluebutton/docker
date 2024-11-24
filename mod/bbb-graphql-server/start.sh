@@ -1,12 +1,13 @@
 #!/bin/bash
+set -e
 
 cd /app/
 
 # patch database url
-# TODO: this should be possible via an environment variable
-yq e -i '.[1].configuration.connection_info.database_url.connection_parameters.host = "postgres"' metadata/databases/databases.yaml
-yq e -i ".[1].configuration.connection_info.database_url.connection_parameters.password = \"${POSTGRES_PASSWORD}\"" metadata/databases/databases.yaml
+# TODO: this should be possible upstream in BBB via an environment variable
+yq e -i ".[1].configuration.connection_info.database_url = \"$HASURA_GRAPHQL_BBB_DATABASE_URL\"" metadata/databases/databases.yaml
 
+sed -i "s/^admin_secret: .*/admin_secret: $HASURA_GRAPHQL_ADMIN_SECRET/g" /app/config.yaml
 
 echo "SELECT 'CREATE DATABASE hasura_app' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'hasura_app')\gexec" | psql
 
@@ -27,13 +28,12 @@ sleep 1
 
 
 #Check if Hasura is ready before applying metadata
-HASURA_PORT=8080
-while ! netstat -tuln | grep ":$HASURA_PORT " > /dev/null; do
-    echo "Waiting for Hasura's port ($HASURA_PORT) to be ready..."
+while ! netstat -tuln | grep ":$HASURA_GRAPHQL_SERVER_PORT " > /dev/null; do
+    echo "Waiting for Hasura's port ($HASURA_GRAPHQL_SERVER_PORT) to be ready..."
     sleep 1
 done
 
 echo "Applying new metadata to Hasura"
-/usr/local/bin/hansura metadata apply --skip-update-check
+/usr/local/bin/hasura metadata apply --skip-update-check
 
 wait "$PID"

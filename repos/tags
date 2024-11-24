@@ -5,9 +5,9 @@
 
 repos/bbb-etherpad-plugin 068ded5
 repos/bbb-etherpad-skin 8328b77
-repos/bbb-pads v1.5.2
-repos/bbb-playback v5.0.2
-repos/bbb-webhooks v2.6.1
-repos/bbb-webrtc-sfu v2.12.0
-repos/bigbluebutton v2.7.3
-repos/freeswitch v1.10.10
+repos/bbb-pads v1.5.3
+repos/bbb-playback v5.1.3
+repos/bbb-webhooks v3.3.0
+repos/bbb-webrtc-sfu v2.17.0-alpha.1
+repos/bigbluebutton v3.0.0-beta.5
+repos/freeswitch v1.10.12

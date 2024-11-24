@@ -4,6 +4,15 @@ set -e
 cd "$(dirname "$0")/.."
 . scripts/functions.sh
 
+ensure_bbbhtml5yml
+
+create_dev_env () {
+    cp dev.env .env
+    sed -i "s/BBB_DEV_UID=.*/BBB_DEV_UID=$(id -u)/" .env 
+    sed -i "s/BBB_DEV_GID=.*/BBB_DEV_GID=$(id -g)/" .env
+    load_env
+}
+
 if [ -f ".env" ]; then
     load_env
     if [[ "$DEV_MODE" == "" ]]; then
@@ -13,7 +22,7 @@ if [ -f ".env" ]; then
         response=${response,,} # tolower
         if [[ $response =~ ^(y| ) ]] || [[ -z $response ]]; then
             cp .env .env.bak
-            cp dev.env .env
+            create_dev_env
         else
             echo "we can't continue with a .env file configured as a development environment"
             exit 1
@@ -21,30 +30,7 @@ if [ -f ".env" ]; then
     fi
 else
     echo "# creating a .env for the dev setup"
-    cp dev.env .env
-fi
-
-# to avoid any file permission issues we want to run some containers with the same
-# UID and GID as the current user
-export BBB_DOCKER_USER="$(id -u):$(id -g)"
-
-# also add it to ~/.zshrc and/or ~/.bashrc so
-# that people can also use commands like `docker compose up`
-# without that variable being missing
-function add_permanent_env {
-    STR='export BBB_DOCKER_USER="$(id -u):$(id -g)"'
-    if [ -z "$(grep "$STR" "$1")" ]; then
-        echo "append"
-        echo "" >> $1
-        echo "# following line got added by bbb-docker" >> $1
-        echo "$STR" >> $1 
-    fi
-}
-if [ -f "$(realpath ~/.zshrc)" ]; then
-    add_permanent_env "$(realpath ~/.zshrc)"
-fi
-if [ -f "$(realpath ~/.bashrc)" ]; then
-    add_permanent_env "$(realpath ~/.bashrc)"
+    create_dev_env
 fi
 
 

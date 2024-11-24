@@ -18,6 +18,7 @@ then
   exit 1
 fi
 
+ensure_bbbhtml5yml
 
 EXTERNAL_IPv4=$(curl -4 -s https://icanhazip.com)
 EXTERNAL_IPv6=$(curl -6 -s -m 10 https://icanhazip.com || true)

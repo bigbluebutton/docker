@@ -7,7 +7,7 @@ RUN  wget -q https://github.com/mikefarah/yq/releases/download/v4.25.1/yq_linux_
     && chmod +x /usr/bin/yq
 
 COPY --from=src / /bbb-webhooks
-RUN cd /bbb-webhooks && npm install --production
+RUN cd /bbb-webhooks && npm ci --omit=dev && rm -rf /bbb-webhooks./.git
 
 RUN chmod 777 /bbb-webhooks/config
 # ------------------------------

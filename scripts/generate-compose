@@ -7,6 +7,8 @@ cd $(dirname $0)/..
 . scripts/functions.sh
 load_env
 
+ensure_bbbhtml5yml
+
 # check for non-optional environment variables,
 # which got introduced later and may miss in existing
 # .env files during upgrades
@@ -41,7 +43,7 @@ function get_tag {
 }
 
 # https://hub.docker.com/r/bigbluebutton/bbb-build
-BBB_BUILD_TAG=v3.0.x-release--2023-09-26-152524
+BBB_BUILD_TAG=v3.0.x-release--2024-08-30-014114
 
 docker run  \
     --rm  \
@@ -65,7 +67,5 @@ docker run  \
     -e ENABLE_GREENLIGHT=${ENABLE_GREENLIGHT:-false} \
     -e ENABLE_PROMETHEUS_EXPORTER=${ENABLE_PROMETHEUS_EXPORTER:-false} \
     -e ENABLE_PROMETHEUS_EXPORTER_OPTIMIZATION=${ENABLE_PROMETHEUS_EXPORTER_OPTIMIZATION:-false} \
-    -e NUMBER_OF_BACKEND_NODEJS_PROCESSES=${NUMBER_OF_BACKEND_NODEJS_PROCESSES:-1} \
-    -e NUMBER_OF_FRONTEND_NODEJS_PROCESSES=${NUMBER_OF_FRONTEND_NODEJS_PROCESSES:-1} \
     jwilder/dockerize -template /docker-compose.tmpl.yml \
     > docker-compose.yml

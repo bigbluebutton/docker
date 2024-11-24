@@ -28,7 +28,7 @@ RUN cd /build && ./build.sh
 
 # add english sounds
 RUN mkdir -p /build/staging/opt/freeswitch/share/freeswitch && \
-    wget http://bigbluebutton.org/downloads/sounds.tar.gz -O sounds.tar.gz && \
+    wget https://ubuntu.bigbluebutton.org/sounds.tar.gz -O sounds.tar.gz && \
     tar xvfz sounds.tar.gz -C /build/staging/opt/freeswitch/share/freeswitch && \
     wget https://gitlab.senfcall.de/senfcall-public/mute-and-unmute-sounds/-/archive/master/mute-and-unmute-sounds-master.zip && \
     unzip mute-and-unmute-sounds-master.zip && \

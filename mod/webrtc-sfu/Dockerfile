@@ -27,4 +27,10 @@ RUN mkdir /home/webrtc-sfu && chown -R webrtc-sfu:webrtc-sfu /app/config /home/w
 
 USER webrtc-sfu
 WORKDIR /app
+
+
+COPY config.yaml /etc/bigbluebutton/bbb-webrtc-sfu/production.yml
+ENV NODE_ENV=production
+ENV NODE_CONFIG_DIR=/app/config/:/etc/bigbluebutton/bbb-webrtc-sfu/
+ENV ALLOW_CONFIG_MUTATIONS=true
 CMD [ "npm", "start" ]

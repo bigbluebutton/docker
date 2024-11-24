@@ -1,5 +1,5 @@
 version: 3
-endpoint: http://localhost:8080
+endpoint: http://localhost:8085
 admin_secret: bigbluebutton
 metadata_directory: metadata
 actions:

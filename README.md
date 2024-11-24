@@ -3,7 +3,7 @@
 
 # 📦 BigBlueButton 3.0 Docker
 
-Version: 3.0.0-alpha.1 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigbluebutton/docker/issues) | [Upgrading](docs/upgrading.md) | [Development](docs/development.md)
+Version: 3.0.0-beta.5 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigbluebutton/docker/issues) | [Upgrading](docs/upgrading.md) | [Development](docs/development.md)
 
 ## Features
 - Easy installation
@@ -18,9 +18,7 @@ Version: 3.0.0-alpha.1 | [Changelog](CHANGELOG.md) | [Issues](https://github.com
 - Linux (it will not work under Windows/WSL)
 - Root access (bbb-docker uses host networking, so it won't work with Kubernetes, any "CaaS"-Service, etc.)
 - Public IPv4 (expect issues with a firewall / NAT)
-
-## What is not implemented yet
-- bbb-lti
+- firewall allows internal networking (e.g. for ufw: `ufw allow 10.7.7.0/24`)
 
 ## Install
 1. Ensure the requirements above are fulfilled (it really doesn't work without them)

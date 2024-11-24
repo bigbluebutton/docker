@@ -1,0 +1,40 @@
+kurento: []
+redisHost: 10.7.7.5
+clientHost: 10.7.7.1
+recordingAdapter: bbb-webrtc-recorder
+
+mcs-host: 10.7.7.1
+mcs-address: 10.7.7.1
+freeswitch:
+  ip: 10.7.7.10
+  sip_ip: 10.7.7.10
+  port: 5066
+  esl_ip: 10.7.7.10
+  esl_port: 8021
+
+log:
+  # trace|debug|info|warn|error
+  level: debug
+  # Whether to log to stdout
+  stdout: true
+  # Whether to log to a file
+  file: false
+
+mediasoup:
+  dedicatedMediaTypeWorkers:
+    audio: auto
+  workerBalancing:
+    strategy: least-loaded
+
+  webrtc:
+    # announcedIP => it's the host public IPv4 in case the machine is
+    # behind a 1:1 NAT
+    # ip => the address on which mediasoup will bind its RTC sockets
+    listenIps:
+      - ip: "10.7.7.1"
+        announcedIp: "10.7.7.1"
+
+  plainRtp:
+    listenIp:
+      ip: "0.0.0.0"
+      announcedIp: "10.7.7.1"

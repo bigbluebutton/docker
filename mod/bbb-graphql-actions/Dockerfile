@@ -16,7 +16,7 @@ RUN cd /src/dist && \
 
 
 # ------------------------------
-FROM node:18-bookworm-slim
+FROM node:22-bookworm-slim
 
 COPY --from=builder /src/dist /app
 
@@ -28,5 +28,7 @@ USER app
 WORKDIR /app
 
 ENV SERVER_HOST 0.0.0.0
+
+ENV NODE_ENV=production
 
 CMD [ "node", "/app/bbb-graphql-actions.js" ]

@@ -47,12 +47,10 @@ COPY --from=builder /dist /usr/share/bbb-web
 COPY --from=builder /bbb-web/pres-checker/lib /usr/share/prescheck/lib
 COPY --from=builder /bbb-web/pres-checker/run.sh /usr/share/prescheck/prescheck.sh
 
-COPY mocked-ps /usr/bin/ps
-
 # add entrypoint and templates
 COPY entrypoint.sh /entrypoint.sh
 COPY bbb-web.properties /etc/bigbluebutton/bbb-web.properties.tmpl
-COPY turn-stun-servers.xml /usr/share/bbb-web/WEB-INF/classes/spring/turn-stun-servers.xml.tmpl
+COPY turn-stun-servers.xml /etc/bigbluebutton/turn-stun-servers.xml.tmpl
 COPY logback.xml /usr/share/bbb-web/WEB-INF/classes/logback.xml
 COPY office-convert.sh /usr/share/bbb-libreoffice-conversion/convert.sh
 
