@@ -439,7 +439,7 @@ services:
 {{ if isTrue .Env.ENABLE_GREENLIGHT }}
   # greenlight
   greenlight:
-    image: bigbluebutton/greenlight:v3.0.6.1
+    image: bigbluebutton/greenlight:v3.4.1
     restart: unless-stopped
     env_file: .env
     depends_on:
@@ -450,7 +450,7 @@ services:
       DATABASE_URL: postgres://postgres:${POSTGRESQL_SECRET:-password}@postgres:5432/greenlight-v3
       REDIS_URL: redis://redis:6379
       {{ if isTrue .Env.DEV_MODE }}
-      BIGBLUEBUTTON_ENDPOINT: http://10.7.7.1/bigbluebutton/api
+      BIGBLUEBUTTON_ENDPOINT: http://10.7.7.1:48083/bigbluebutton/api
       {{else}}
       BIGBLUEBUTTON_ENDPOINT: https://${DOMAIN}/bigbluebutton/api
       {{end}}
