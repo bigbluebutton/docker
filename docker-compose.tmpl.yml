@@ -129,6 +129,7 @@ services:
     restart: unless-stopped
     depends_on:
       - redis
+      - collabora
     environment:
       ETHERPAD_API_KEY: ${ETHERPAD_API_KEY}
     networks:
@@ -377,11 +378,12 @@ services:
     depends_on:
       - redis
     volumes: 
-      - ./mod/bbb-webrtc-recorder/bbb-webrtc-recorder.yml:/etc/bbb-webrtc-recorder/bbb-webrtc-recorder.yml
       - ./data/bbb-webrtc-recorder:/var/lib/bbb-webrtc-recorder
-    networks:
-      bbb-net:
-        ipv4_address: 10.7.7.19
+    # WebRTC connection to bbb-webrtc-sfu seem to 
+    # only to work via the external IP
+    network_mode: host
+    extra_hosts:
+      - "redis:10.7.7.5"
 {{end}}
 
 {{ if isTrue .Env.ENABLE_WEBHOOKS }}

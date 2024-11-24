@@ -2,6 +2,9 @@
 set -e
 
 # create recording directory structure if it doesn't exist yet
+mkdir -p /var/bigbluebutton/recording/status
+mkdir -p /var/bigbluebutton/events
+mkdir -p /var/bigbluebutton/recording
 mkdir -p /var/bigbluebutton/recording/raw
 mkdir -p /var/bigbluebutton/recording/process
 mkdir -p /var/bigbluebutton/recording/publish
@@ -9,16 +12,13 @@ mkdir -p /var/bigbluebutton/recording/status/recorded
 mkdir -p /var/bigbluebutton/recording/status/archived
 mkdir -p /var/bigbluebutton/recording/status/processed
 mkdir -p /var/bigbluebutton/recording/status/sanity
-mkdir -p /var/bigbluebutton/recording/status/ended
 mkdir -p /var/bigbluebutton/recording/status/published
-mkdir -p /var/bigbluebutton/captions/inbox
+mkdir -p /var/bigbluebutton/captions
 mkdir -p /var/bigbluebutton/published
-mkdir -p /var/bigbluebutton/published/notes
 mkdir -p /var/bigbluebutton/deleted
 mkdir -p /var/bigbluebutton/unpublished
+mkdir -p /var/bigbluebutton/basic_stats
 chown -R bigbluebutton:bigbluebutton /var/bigbluebutton
-
-echo "$NUMBER_OF_BACKEND_NODEJS_PROCESSES" > /tmp/NUMBER_OF_BACKEND_NODEJS_PROCESSES
 
 cd /usr/share/bbb-web/
 dockerize \

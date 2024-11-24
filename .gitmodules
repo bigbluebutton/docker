@@ -24,4 +24,4 @@
 	url = https://github.com/bigbluebutton/bbb-pads.git
 [submodule "repos/bbb-webrtc-recorder"]
 	path = repos/bbb-webrtc-recorder
-	url = https://github.com/bigbluebutton/bbb-webrtc-recorder
+	url = https://github.com/bigbluebutton/bbb-webrtc-recorder.git
