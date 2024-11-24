@@ -26,14 +26,6 @@ mediasoup:
   workerBalancing:
     strategy: least-loaded
 
-  webrtc:
-    # announcedIP => it's the host public IPv4 in case the machine is
-    # behind a 1:1 NAT
-    # ip => the address on which mediasoup will bind its RTC sockets
-    listenIps:
-      - ip: "10.7.7.1"
-        announcedIp: "10.7.7.1"
-
   plainRtp:
     listenIp:
       ip: "0.0.0.0"

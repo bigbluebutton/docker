@@ -177,6 +177,11 @@ services:
       - freeswitch
     environment:
       ESL_PASSWORD: ${FSESL_PASSWORD:-ClueCon}
+      {{ if .Env.EXTERNAL_IPv6 }}
+      MS_WEBRTC_LISTEN_IPS: '[{"ip":"::", "announcedIp":"{{ .Env.EXTERNAL_IPv6 }}"}, {"ip":"0.0.0.0", "announcedIp":"${EXTERNAL_IPv4}"}]'
+      {{else}}
+      MS_WEBRTC_LISTEN_IPS: '[{"ip":"0.0.0.0", "announcedIp":"${EXTERNAL_IPv4}"}]'
+      {{end}}
     volumes:
       - ./data/mediasoup:/var/mediasoup
     tmpfs:
