@@ -1,6 +1,12 @@
 server {
+  # proxied from HAProxy
+  listen 48082 http2 proxy_protocol;
+  listen 48081 proxy_protocol;
+
+  # optional ports for other reverse proxies
   listen 48087 default_server;
   listen [::]:48087 default_server;
+
   server_name _;
   access_log /dev/stdout;
   absolute_redirect off;

@@ -31,8 +31,10 @@ services:
       WELCOME_MESSAGE: ${WELCOME_MESSAGE:-}
       WELCOME_FOOTER: ${WELCOME_FOOTER}
       STUN_SERVER: stun:${STUN_IP}:${STUN_PORT}
-      TURN_SERVER: ${TURN_SERVER:-}
+      ENABLE_HTTPS_PROXY: ${ENABLE_HTTPS_PROXY:-false}
       TURN_SECRET: ${TURN_SECRET:-}
+      TURN_EXT_SERVER: ${TURN_EXT_SERVER:-}
+      TURN_EXT_SECRET: ${TURN_EXT_SECRET:-}
       ENABLE_LEARNING_DASHBOARD: ${ENABLE_LEARNING_DASHBOARD:-true}
       NUMBER_OF_BACKEND_NODEJS_PROCESSES: {{ .Env.NUMBER_OF_BACKEND_NODEJS_PROCESSES }}
     volumes:
@@ -406,32 +408,20 @@ services:
 {{end}}
 
 {{ if isTrue .Env.ENABLE_HTTPS_PROXY }}
-  # https
-  https_proxy:
-    image: valian/docker-nginx-auto-ssl
-    restart: unless-stopped
+
+  haproxy:
+    build: mod/haproxy
+    image: alangecker/bbb-haproxy:2.8.10
     volumes:
-      - ssl_data:/etc/resty-auto-ssl
-    {{ if .Env.EXTERNAL_IPv6 }}
-      - ./mod/https/site.conf:/etc/nginx/conf.d/bbb-docker.conf
-    {{else}}
-      - ./mod/https/site-ipv4only.conf:/etc/nginx/conf.d/bbb-docker.conf
-    {{end}}
-    {{ if isTrue .Env.DEV_MODE }}
-      # allow bbb api access without https
-      - ./mod/https/force-https.conf:/usr/local/openresty/nginx/conf/force-https.conf
-    {{end}}
+      - ./data/haproxy/letsencrypt:/etc/letsencrypt
+      - ./mod/haproxy/haproxy.cfg:/etc/haproxy/haproxy.cfg
     environment:
-      {{ if isTrue .Env.DEV_MODE }}
-      ALLOWED_DOMAINS: ""
-      {{else}}
-      ALLOWED_DOMAINS: ${DOMAIN}
-      {{end}}
-      RESOLVER_ADDRESS: ${RESOLVER_ADDRESS:-9.9.9.9}
+      - CERT1=${DOMAIN}
+      - STAGING=true
+      - EMAIL=test@chandi.it
     network_mode: host
 {{end}}
 
-{{ if isTrue .Env.ENABLE_COTURN }}
   # coturn
   coturn:
     image: coturn/coturn:4.6-alpine
@@ -440,20 +430,10 @@ services:
       - "--external-ip=${EXTERNAL_IPv4}/${EXTERNAL_IPv4}"
       - "--external-ip=${EXTERNAL_IPv6:-::1}/${EXTERNAL_IPv6:-::1}"
       - "--static-auth-secret=${TURN_SECRET}"
+      - "--allowed-peer-ip=${EXTERNAL_IPv4}"
     volumes:
-      {{ if isTrue .Env.ENABLE_HTTPS_PROXY }}
-      - ssl_data:/etc/resty-auto-ssl
-      {{else}}
-      - ${COTURN_TLS_CERT_PATH}:/tmp/cert.pem
-      - ${COTURN_TLS_KEY_PATH}:/tmp/key.pem
-      {{end}}
-      - ./mod/coturn/entrypoint.sh:/usr/local/bin/docker-entrypoint.sh
       - ./mod/coturn/turnserver.conf:/etc/coturn/turnserver.conf
-    environment:
-      ENABLE_HTTPS_PROXY:
-    user: root
     network_mode: host
-{{end}}
 
 
 {{ if isTrue .Env.ENABLE_GREENLIGHT }}
@@ -524,12 +504,6 @@ services:
     tmpfs:
       - /etc/bigbluebutton:mode=777
     entrypoint: sh -c 'echo "BIGBLUEBUTTON_RELEASE=2.7.3" > /etc/bigbluebutton/bigbluebutton-release && python server.py'
-{{end}}
-
-
-volumes:
-{{ if isTrue .Env.ENABLE_HTTPS_PROXY }}
-  ssl_data:
 {{end}}
 
 networks:

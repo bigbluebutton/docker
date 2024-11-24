@@ -33,10 +33,6 @@ while [[ ! $https_proxy =~ ^(y|n)$ ]]; do
     read -p "Should an automatic HTTPS Proxy be included? (y/n): " https_proxy
 done
 
-coturn=""
-while [[ ! $coturn =~ ^(y|n)$ ]]; do
-    read -p "Should a coturn be included? (y/n): " coturn
-done
 if [ "$coturn" == "y" ] && [ ! "$https_proxy" == "y" ]
 then
     echo "Coturn needs TLS to function properly."
@@ -136,6 +132,7 @@ cp sample.env .env
 sed -i "s/EXTERNAL_IPv4=.*/EXTERNAL_IPv4=$EXTERNAL_IPv4/" .env
 sed -i "s/EXTERNAL_IPv6=.*/EXTERNAL_IPv6=$EXTERNAL_IPv6/" .env
 sed -i "s/DOMAIN=.*/DOMAIN=$DOMAIN/" .env
+sed -i "s/.*STUN_IP=.*/STUN_IP=$EXTERNAL_IPv4/" .env
 
 if [ ! "$greenlight" == "y" ]
 then
@@ -158,15 +155,6 @@ then
     sed -i "s/#RECORDING_MAX_AGE_DAYS=.*/RECORDING_MAX_AGE_DAYS=$recording_max_age_days/" .env
 fi
 
-if [ "$coturn" == "y" ]
-then
-    sed -i "s/.*TURN_SERVER=.*/TURN_SERVER=turns:$DOMAIN:5349?transport=tcp/" .env
-    TURN_SECRET=$(head /dev/urandom | tr -dc A-Za-f0-9 | head -c 32)
-    sed -i "s/.*TURN_SECRET=.*/TURN_SECRET=$TURN_SECRET/" .env
-    sed -i "s/.*STUN_IP=.*/STUN_IP=$EXTERNAL_IPv4/" .env
-else
-    sed -i "s/ENABLE_COTURN.*/#ENABLE_COTURN=true/" .env
-fi
 
 if [ -n "$CERTPATH" ] && [ -n "$KEYPATH" ]
 then
@@ -190,12 +178,16 @@ RANDOM_2=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
 RANDOM_3=$(head /dev/urandom | tr -dc a-f0-9 | head -c 128)
 RANDOM_4=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
 RANDOM_5=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
+TURN_SECRET=$(head /dev/urandom | tr -dc A-Za-f0-9 | head -c 32)
+
 
 sed -i "s/SHARED_SECRET=.*/SHARED_SECRET=$RANDOM_1/" .env
 sed -i "s/ETHERPAD_API_KEY=.*/ETHERPAD_API_KEY=$RANDOM_2/" .env
 sed -i "s/RAILS_SECRET=.*/RAILS_SECRET=$RANDOM_3/" .env
 sed -i "s/FSESL_PASSWORD=.*/FSESL_PASSWORD=$RANDOM_4/" .env
 sed -i "s/POSTGRESQL_SECRET=.*/POSTGRESQL_SECRET=$RANDOM_5/" .env
+sed -i "s/.*TURN_SECRET=.*/TURN_SECRET=$TURN_SECRET/" .env
+
 
 ./scripts/generate-compose
 
