@@ -14,7 +14,7 @@
         <constructor-arg index="2" value="86400"/>
     </bean>
 
-    {{if and (isTrue .Env.ENABLE_HTTPS_PROXY) (ne .Env.DOMAIN "10.7.7.1")  }}
+    {{if and (isTrue .Env.ENABLE_HTTPS_PROXY) (not (isTrue .Env.DEV_MODE))  }}
     {{/* ignore when using a self signed certificate in dev mode */}}
     <bean id="turn1" class="org.bigbluebutton.web.services.turn.TurnServer">
         <constructor-arg index="0" value="{{ .Env.TURN_SECRET }}"/>
@@ -42,7 +42,7 @@
             <set>
                 <ref bean="turn0" />
                 
-                {{if and (isTrue .Env.ENABLE_HTTPS_PROXY) (ne .Env.DOMAIN "10.7.7.1")  }}
+                {{if and (isTrue .Env.ENABLE_HTTPS_PROXY) (not (isTrue .Env.DEV_MODE))  }}
                 <ref bean="turn1" />
                 {{end}}
 

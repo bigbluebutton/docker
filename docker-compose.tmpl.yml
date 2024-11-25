@@ -181,9 +181,9 @@ services:
     environment:
       ESL_PASSWORD: ${FSESL_PASSWORD:-ClueCon}
       {{ if .Env.EXTERNAL_IPv6 }}
-      MS_WEBRTC_LISTEN_IPS: '[{"ip":"::", "announcedIp":"{{ .Env.EXTERNAL_IPv6 }}"}, {"ip":"0.0.0.0", "announcedIp":"${EXTERNAL_IPv4}"}]'
+      MS_WEBRTC_LISTEN_IPS: '[{"ip":"::", "announcedIp":"${EXTERNAL_IPv6}"}, {"ip":"${EXTERNAL_IPv4}", "announcedIp":"${EXTERNAL_IPv4}"}]'
       {{else}}
-      MS_WEBRTC_LISTEN_IPS: '[{"ip":"0.0.0.0", "announcedIp":"${EXTERNAL_IPv4}"}]'
+      MS_WEBRTC_LISTEN_IPS: '[{"ip":"${EXTERNAL_IPv4}", "announcedIp":"${EXTERNAL_IPv4}"}]'
       {{end}}
     volumes:
       - ./data/mediasoup:/var/mediasoup
@@ -416,6 +416,7 @@ services:
       - ./data/haproxy/letsencrypt:/etc/letsencrypt
       - ./mod/haproxy/haproxy.cfg:/etc/haproxy/haproxy.cfg
     environment:
+      - DEV_MODE=${DEV_MODE:-}
       - CERT1=${DOMAIN}
       - STAGING=true
       - EMAIL=test@chandi.it
@@ -431,6 +432,8 @@ services:
       - "--external-ip=${EXTERNAL_IPv6:-::1}/${EXTERNAL_IPv6:-::1}"
       - "--static-auth-secret=${TURN_SECRET}"
       - "--allowed-peer-ip=${EXTERNAL_IPv4}"
+      - "--relay-ip=${EXTERNAL_IPv4}"
+      - "--relay-ip=${EXTERNAL_IPv6:-::1}"
     volumes:
       - ./mod/coturn/turnserver.conf:/etc/coturn/turnserver.conf
     network_mode: host

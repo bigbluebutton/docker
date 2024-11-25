@@ -7,8 +7,7 @@ set -e
 
 declare -p | grep -Ev '^declare -[[:alpha:]]*r' > /container.env
 
-
-if [ "x$CERT1" = "x10.7.7.1" ]; then
+if [ "$DEV_MODE" ]; then
     # use self signed certificate
     if [ ! -f /etc/haproxy/certs/haproxy-10.7.7.1.pem ]; then
         mkdir -p /etc/haproxy/certs
