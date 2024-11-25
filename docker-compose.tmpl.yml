@@ -307,8 +307,12 @@ services:
   bbb-graphql-middleware:
     build:
       context: mod/bbb-graphql-middleware
+      {{ if isTrue .Env.DEV_MODE }}
+      dockerfile: Dockerfile.dev
+      {{ else }}
       additional_contexts:
         - src=./repos/bigbluebutton/bbb-graphql-middleware
+      {{ end }}
       args:
         BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
     restart: unless-stopped
@@ -320,6 +324,16 @@ services:
     networks:
       bbb-net:
         ipv4_address: 10.7.7.32
+
+    {{ if isTrue .Env.DEV_MODE }}
+    user: ${BBB_DEV_UID}:${BBB_DEV_GID}
+    volumes:
+      - ./repos/bigbluebutton/bbb-graphql-middleware:/app/:ro
+      - ./repos/bigbluebutton/bbb-graphql-middleware/config/config.yml:/usr/share/bbb-graphql-middleware/config.yml:ro
+      - ./mod/bbb-graphql-middleware/config.yml:/etc/bigbluebutton/bbb-graphql-middleware.yml:ro
+      - ./.cache/go:/gopath:rw
+      - ./.cache/go-build:/.cache/go-build:rw
+    {{ end }}
 
   collabora:
     image: collabora/code:latest
