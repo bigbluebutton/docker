@@ -6,6 +6,20 @@
 {{ $ignore_tls_cert_errors :=  or (isTrue .Env.DEV_MODE) (isTrue .Env.IGNORE_TLS_CERT_ERRORS)}}
 
 services:
+  {{ if isTrue .Env.DEV_MODE }}
+  html5-dev:
+    build: 
+      context: mod/html5-dev
+      args:
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+    user: ${BBB_DEV_UID}:${BBB_DEV_GID}
+    restart: unless-stopped
+    volumes:
+      - ./repos/bigbluebutton/bigbluebutton-html5:/app/:rw
+      - ./.cache/npm:/tmp/.npm:rw
+    network_mode: host
+  {{ end }}
+
   bbb-web:
     build: 
       context: mod/bbb-web
@@ -105,6 +119,10 @@ services:
       - ./data/bigbluebutton:/var/bigbluebutton
       - ${DEFAULT_PRESENTATION:-/dev/null}:/www/default.pdf
 
+      {{ if isTrue .Env.DEV_MODE }}
+      # overwrite html5 config 
+      - ./mod/nginx/bbb-html5.dev.nginx:/etc/nginx/bbb/bbb-html5.nginx:ro
+      {{ end }}
     tmpfs:
      - /tmp
     network_mode: host
