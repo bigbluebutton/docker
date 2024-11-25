@@ -45,6 +45,7 @@ docker run  \
     -e COMMIT_ETHERPAD_PLUGIN=$(get_tag repos/bbb-etherpad-plugin) \
     -e BBB_BUILD_TAG=${BBB_BUILD_TAG} \
     -e DEV_MODE=${DEV_MODE:-false} \
+    -e IGNORE_TLS_CERT_ERRORS=${IGNORE_TLS_CERT_ERRORS:-} \
     -e EXTERNAL_IPv6=${EXTERNAL_IPv6:-} \
     -e ENABLE_RECORDING=${ENABLE_RECORDING:-false} \
     -e ENABLE_HTTPS_PROXY=${ENABLE_HTTPS_PROXY:-false} \

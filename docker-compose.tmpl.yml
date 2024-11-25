@@ -3,6 +3,8 @@
 # don't edit this directly.
 {{/* -------- */}}
 
+{{ $ignore_tls_cert_errors :=  or (isTrue .Env.DEV_MODE) (isTrue .Env.IGNORE_TLS_CERT_ERRORS)}}
+
 services:
   bbb-web:
     build: 
@@ -24,7 +26,7 @@ services:
       test: wget --no-proxy --no-verbose --tries=1 --spider http://10.7.7.2:8090/bigbluebutton/api || exit 1
       start_period: 2m
     environment:
-      DEV_MODE: ${DEV_MODE:-}
+      IGNORE_TLS_CERT_ERRORS: {{ $ignore_tls_cert_errors }}
       DOMAIN: ${DOMAIN}
       ENABLE_RECORDING: ${ENABLE_RECORDING:-false}
       SHARED_SECRET: ${SHARED_SECRET}
@@ -36,7 +38,6 @@ services:
       TURN_EXT_SERVER: ${TURN_EXT_SERVER:-}
       TURN_EXT_SECRET: ${TURN_EXT_SECRET:-}
       ENABLE_LEARNING_DASHBOARD: ${ENABLE_LEARNING_DASHBOARD:-true}
-      NUMBER_OF_BACKEND_NODEJS_PROCESSES: {{ .Env.NUMBER_OF_BACKEND_NODEJS_PROCESSES }}
     volumes:
       - ./data/bigbluebutton:/var/bigbluebutton
       - ./data/freeswitch-meetings:/var/freeswitch/meetings
@@ -413,7 +414,7 @@ services:
       - ./data/haproxy/letsencrypt:/etc/letsencrypt
       - ./mod/haproxy/haproxy.cfg:/etc/haproxy/haproxy.cfg
     environment:
-      - DEV_MODE=${DEV_MODE:-}
+      - IGNORE_TLS_CERT_ERRORS={{$ignore_tls_cert_errors}}
       - CERT1=${DOMAIN}
       - STAGING=true
       - EMAIL=test@chandi.it
@@ -449,7 +450,7 @@ services:
     environment:
       DATABASE_URL: postgres://postgres:${POSTGRESQL_SECRET:-password}@postgres:5432/greenlight-v3
       REDIS_URL: redis://redis:6379
-      {{ if isTrue .Env.DEV_MODE }}
+      {{ if $ignore_tls_cert_errors }}
       BIGBLUEBUTTON_ENDPOINT: http://10.7.7.1:48083/bigbluebutton/api
       {{else}}
       BIGBLUEBUTTON_ENDPOINT: https://${DOMAIN}/bigbluebutton/api
