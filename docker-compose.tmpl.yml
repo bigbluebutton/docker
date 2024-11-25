@@ -100,9 +100,6 @@ services:
         TAG_BBB: {{ .Env.TAG_BBB }}
     image: alangecker/bbb-docker-nginx:{{ .Env.TAG_BBB }}-{{ .Env.TAG_PLAYBACK }}-1.25
     restart: unless-stopped
-    depends_on:
-      - etherpad
-      - webrtc-sfu
     volumes:
       - ./data/bigbluebutton:/var/bigbluebutton
       - ${DEFAULT_PRESENTATION:-/dev/null}:/www/default.pdf
