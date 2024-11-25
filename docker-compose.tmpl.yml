@@ -295,8 +295,6 @@ services:
     depends_on:
       - redis
       - apps-akka
-    environment:
-      BBB_REDIS_HOST: redis
     networks:
       bbb-net:
         ipv4_address: 10.7.7.30

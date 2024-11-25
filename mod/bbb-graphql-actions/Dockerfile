@@ -18,8 +18,6 @@ RUN cd /src/dist && \
 # ------------------------------
 FROM node:22-bookworm-slim
 
-COPY --from=builder /src/dist /app
-
 RUN groupadd -g 2062 app \
     && useradd -m -u 2063 -g app app
 
@@ -28,7 +26,9 @@ USER app
 WORKDIR /app
 
 ENV SERVER_HOST 0.0.0.0
-
+ENV BBB_REDIS_HOST redis
 ENV NODE_ENV=production
+
+COPY --from=builder /src/dist /app
 
 CMD [ "node", "/app/bbb-graphql-actions.js" ]

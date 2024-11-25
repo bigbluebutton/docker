@@ -11,4 +11,6 @@ ENTRYPOINT [ "/dev-entrypoint.sh" ]
 
 WORKDIR /app
 ENV SERVER_HOST 0.0.0.0
+ENV BBB_REDIS_HOST redis
+
 CMD [ "npm install && npm start" ]
