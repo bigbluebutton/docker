@@ -446,8 +446,7 @@ services:
     environment:
       - IGNORE_TLS_CERT_ERRORS={{$ignore_tls_cert_errors}}
       - CERT1=${DOMAIN}
-      - STAGING=true
-      - EMAIL=test@chandi.it
+      - EMAIL=${LETSENCRYPT_EMAIL}
     network_mode: host
 {{end}}
 

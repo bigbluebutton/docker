@@ -18,6 +18,13 @@ if [ -z "$EXTERNAL_IPv4" ]; then
     exit 1
 fi
 
+if [ "$ENABLE_HTTPS_PROXY" ] && [ -z "$LETSENCRYPT_EMAIL" ]; then
+    echo "ERROR: LETSENCRYPT_EMAIL is not set in .env"
+    echo "you need to specify an email adress, otherwise the certificate"
+    echo "retrieval will fail"
+    exit 1
+fi
+
 function get_tag {
   # is submodule checked out?
   if [ -f "$1/.git" ]; then

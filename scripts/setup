@@ -18,6 +18,7 @@ then
   exit 1
 fi
 
+. scripts/functions.sh
 ensure_bbbhtml5yml
 
 EXTERNAL_IPv4=$(curl -4 -s https://icanhazip.com)
@@ -29,21 +30,15 @@ while [[ ! $greenlight =~ ^(y|n)$ ]]; do
 done
 
 https_proxy=""
+LETSENCRYPT_EMAIL=""
 while [[ ! $https_proxy =~ ^(y|n)$ ]]; do
     read -p "Should an automatic HTTPS Proxy be included? (y/n): " https_proxy
 done
 
-if [ "$coturn" == "y" ] && [ ! "$https_proxy" == "y" ]
+if [ "$https_proxy" == "y" ]
 then
-    echo "Coturn needs TLS to function properly."
-    echo "   Since automatic HTTPS Proxy is disabled,"
-    echo "   you must provide a relative or absolute path"
-    echo "   to your certificates."
-    while [[ -z "$CERTPATH" ]]; do
-        read -p "Please enter path to cert.pem: " CERTPATH
-    done
-    while [[ -z "$KEYPATH" ]]; do
-        read -p "Please enter path to key.pem: " KEYPATH
+    while [[ ! $LETSENCRYPT_EMAIL =~ ^.+@.+\..+$ ]]; do
+        read -p "Please enter an Email adress for the Let's Encrypt notifications: " LETSENCRYPT_EMAIL
     done
 fi
 
@@ -142,6 +137,7 @@ fi
 if [ ! "$https_proxy" == "y" ]
 then
     sed -i "s/ENABLE_HTTPS_PROXY.*/#ENABLE_HTTPS_PROXY=true/" .env
+    sed -i "s/LETSENCRYPT_EMAIL=.*/LETSENCRYPT_EMAIL=$LETSENCRYPT_EMAIL/" .env
 fi
 
 if [ "$recording" == "y" ]
@@ -155,12 +151,6 @@ then
     sed -i "s/#RECORDING_MAX_AGE_DAYS=.*/RECORDING_MAX_AGE_DAYS=$recording_max_age_days/" .env
 fi
 
-
-if [ -n "$CERTPATH" ] && [ -n "$KEYPATH" ]
-then
-    sed -i "s,#COTURN_TLS_CERT_PATH=.*,COTURN_TLS_CERT_PATH=$CERTPATH," .env
-    sed -i "s,#COTURN_TLS_KEY_PATH=.*,COTURN_TLS_KEY_PATH=$KEYPATH," .env
-fi
 
 if [ "$prometheus_exporter" == "y" ]
 then
