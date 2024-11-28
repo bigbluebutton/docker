@@ -88,9 +88,12 @@ services:
       DISABLE_SOUND_ALONE: ${DISABLE_SOUND_ALONE:-false}
       SOUNDS_LANGUAGE: ${SOUNDS_LANGUAGE:-en-us-callie}
       ESL_PASSWORD: ${FSESL_PASSWORD:-ClueCon}
+    {{ if .Env.SIP_IP_ALLOWLIST }}
+    ports:
+      - 5060:5060/udp
+    {{ end }}
     volumes:
-      - ./conf/sip_profiles:/etc/freeswitch/sip_profiles/external
-      - ./conf/dialplan_public:/etc/freeswitch/dialplan/public_docker
+      - ./conf/sip_profiles:/etc/freeswitch/sip_profiles/external-dialin
       - ./data/freeswitch-meetings:/var/freeswitch/meetings
     networks:
       bbb-net:

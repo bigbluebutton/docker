@@ -1,0 +1,86 @@
+<profile name="external-dialin">
+  <!-- http://wiki.freeswitch.org/wiki/Sofia_Configuration_Files -->
+  <!-- This profile is only for outbound registrations to providers -->
+  <gateways>
+    <X-PRE-PROCESS cmd="include" data="external-dialin/*.xml"/>
+  </gateways>
+
+  <aliases>
+    <!--
+        <alias name="outbound"/>
+        <alias name="nat"/>
+    -->
+  </aliases>
+
+  <domains>
+    <domain name="all" alias="false" parse="true"/>
+  </domains>
+
+  <settings>
+    <param name="debug" value="1"/>
+    <!-- If you want FreeSWITCH to shutdown if this profile fails to load, uncomment the next line. -->
+    <!-- <param name="shutdown-on-fail" value="true"/> -->
+    <param name="sip-trace" value="no"/>
+    <param name="sip-capture" value="no"/>
+    <param name="rfc2833-pt" value="101"/>
+    <!-- RFC 5626 : Send reg-id and sip.instance -->
+    <!--<param name="enable-rfc-5626" value="true"/> -->
+    <param name="sip-port" value="5060"/>
+    <param name="dialplan" value="XML"/>
+    <param name="context" value="public"/>
+    <param name="dtmf-duration" value="2000"/>
+    <param name="inbound-codec-prefs" value="$${global_codec_prefs}"/>
+    <param name="outbound-codec-prefs" value="$${outbound_codec_prefs}"/>
+    <param name="hold-music" value="$${hold_music}"/>
+    <param name="rtp-timer-name" value="soft"/>
+    <!--<param name="enable-100rel" value="true"/>-->
+    <!--<param name="disable-srv503" value="true"/>-->
+    <!-- This could be set to "passive" -->
+    <param name="local-network-acl" value="localnet.auto"/>
+    <param name="manage-presence" value="false"/>
+
+
+    <!-- Added for Microsoft Edge browser -->
+    <param name="apply-candidate-acl" value="localnet.auto"/>
+    <param name="apply-candidate-acl" value="wan_v4.auto"/>
+    <param name="apply-candidate-acl" value="rfc1918.auto"/>
+    <param name="apply-candidate-acl" value="any_v4.auto"/>
+
+    <!-- used to share presence info across sofia profiles
+         manage-presence needs to be set to passive on this profile
+         if you want it to behave as if it were the internal profile
+         for presence.
+    -->
+    <!-- Name of the db to use for this profile -->
+    <param name="dbname" value="sqlite://memory://file:external_dialin?mode=memory&amp;cache=shared"/>
+    <!--<param name="presence-hosts" value="$${domain}"/>-->
+    <!--<param name="force-register-domain" value="$${domain}"/>-->
+    <!--all inbound reg will stored in the db using this domain -->
+    <!--<param name="force-register-db-domain" value="$${domain}"/>-->
+    <!-- ************************************************* -->
+
+    <!--<param name="aggressive-nat-detection" value="true"/>-->
+    <param name="inbound-codec-negotiation" value="generous"/>
+    <param name="nonce-ttl" value="60"/>
+    <param name="auth-calls" value="false"/>
+    <param name="inbound-late-negotiation" value="true"/>
+    <param name="inbound-zrtp-passthru" value="true"/> <!-- (also enables late negotiation) -->
+
+    <param name="rtp-ip" value="$${local_ip_v4}"/>
+    <param name="sip-ip" value="$${local_ip_v4}"/>
+    <param name="ext-rtp-ip" value="$${external_ip_v4}"/>
+    <param name="ext-sip-ip" value="$${external_ip_v4}"/>
+
+    <param name="rtp-timeout-sec" value="300"/>
+    <param name="rtp-hold-timeout-sec" value="1800"/>
+    <param name="enable-3pcc" value="proxy"/>
+
+    <!-- enable rtcp on every channel also can be done per leg basis with rtcp_audio_interval_msec variable set to passthru to pass it across a call-->
+    <param name="rtcp-audio-interval-msec" value="5000"/>
+    <param name="rtcp-video-interval-msec" value="5000"/>
+
+    <!-- Cut down in the join time -->
+    <param name="dtmf-type" value="info"/>
+    <param name="liberal-dtmf" value="true"/>
+  </settings>
+</profile>
