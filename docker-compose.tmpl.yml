@@ -446,6 +446,7 @@ services:
     volumes:
       - ./data/haproxy/letsencrypt:/etc/letsencrypt
       - ./mod/haproxy/haproxy.cfg:/etc/haproxy/haproxy.cfg
+      - ./mod/haproxy/protocolmap:/etc/haproxy/protocolmap
     environment:
       - IGNORE_TLS_CERT_ERRORS={{$ignore_tls_cert_errors}}
       - CERT1=${DOMAIN}
