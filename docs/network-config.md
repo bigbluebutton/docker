@@ -24,6 +24,7 @@ Services as configured.
 | coturn | network_mode: host | |
 | greenlight | | | ports: 10.7.7.1:5000:80
 | prometheus | bbb-net | 10.7.7.33 |
+| bbb-export-annotations | bbb-net | 10.7.7.19 |
 
 ```yml
 networks:  

@@ -173,6 +173,27 @@ services:
       bbb-net:
         ipv4_address: 10.7.7.18
 
+  bbb-export-annotations:
+    build:
+      context: mod/bbb-export-annotations
+      additional_contexts:
+        bigbluebutton: ./repos/bigbluebutton
+    image: alangecker/bbb-docker-bbb-export-annotations:v2.7.0
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - etherpad
+      - bbb-pads
+    networks:
+    # need connections to:
+    # https://github.com/bigbluebutton/bigbluebutton/blob/v2.7.0/bbb-export-annotations/config/settings.json
+    # "bbbWebAPI": "http://127.0.0.1:8090",    -> bbb-web
+    # "bbbPadsAPI": "http://127.0.0.1:9002",   -> bbb-pads
+      bbb-net:
+        ipv4_address: 10.7.7.19
+    volumes:
+      - bigbluebutton:/var/bigbluebutton
+
   redis:
     image: redis:7.2-alpine
     restart: unless-stopped
