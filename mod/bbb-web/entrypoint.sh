@@ -11,9 +11,11 @@ mkdir -p /var/bigbluebutton/recording/publish
 mkdir -p /var/bigbluebutton/recording/status/recorded
 mkdir -p /var/bigbluebutton/recording/status/archived
 mkdir -p /var/bigbluebutton/recording/status/processed
+mkdir -p /var/bigbluebutton/recording/status/ended
 mkdir -p /var/bigbluebutton/recording/status/sanity
 mkdir -p /var/bigbluebutton/recording/status/published
 mkdir -p /var/bigbluebutton/captions
+mkdir -p /var/bigbluebutton/captions/inbox
 mkdir -p /var/bigbluebutton/published
 mkdir -p /var/bigbluebutton/deleted
 mkdir -p /var/bigbluebutton/unpublished
