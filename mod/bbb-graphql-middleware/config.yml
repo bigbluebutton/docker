@@ -6,7 +6,7 @@ redis:
   port: 6379
   password: ""
 hasura:
-  url: ws://bbb-graphql-server:8085/v1/graphql
+  url: ws://nginx:8185/v1/graphql
 graphql-actions:
   url: http://bbb-graphql-actions:8093
 auth_hook:

@@ -1,4 +1,4 @@
-FROM node:18-bookworm-slim AS builder
+FROM node:22-bookworm-slim AS builder
 
 
 RUN apt-get update && apt-get install -y git wget
@@ -12,7 +12,7 @@ RUN cd /bbb-webhooks && npm ci --omit=dev && rm -rf /bbb-webhooks./.git
 RUN chmod 777 /bbb-webhooks/config
 # ------------------------------
 
-FROM node:18-bookworm-slim
+FROM node:22-bookworm-slim
 RUN useradd --uid 2004 --user-group bbb-webhooks
 
 COPY --from=builder /usr/bin/yq /usr/bin/yq

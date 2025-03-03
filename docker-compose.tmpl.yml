@@ -145,8 +145,8 @@ services:
         - plugin=./repos/bbb-etherpad-plugin
         - skin=./repos/bbb-etherpad-skin
       args:
-        TAG_ETHERPAD: "2.2.6"
-    image: alangecker/bbb-docker-etherpad:2.2.6-s{{ .Env.COMMIT_ETHERPAD_SKIN }}-p{{ .Env.COMMIT_ETHERPAD_PLUGIN }}
+        TAG_ETHERPAD: "2.2.7"
+    image: alangecker/bbb-docker-etherpad:2.2.7-s{{ .Env.COMMIT_ETHERPAD_SKIN }}-p{{ .Env.COMMIT_ETHERPAD_PLUGIN }}
     restart: unless-stopped
     depends_on:
       - redis
@@ -178,7 +178,7 @@ services:
       context: mod/bbb-export-annotations
       additional_contexts:
         bigbluebutton: ./repos/bigbluebutton
-    image: alangecker/bbb-docker-bbb-export-annotations:v2.7.0
+    image: alangecker/bbb-docker-bbb-export-annotations:{{ .Env.TAG_BBB }}
     restart: unless-stopped
     depends_on:
       - redis
@@ -288,7 +288,8 @@ services:
         - src=./repos/bigbluebutton/bbb-graphql-server
       args:
         BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
-        GRAPHQL_ENGINE_TAG: v2.44.0
+        GRAPHQL_ENGINE_TAG: v2.45.0
+    image: alangecker/bbb-docker-graphql-server:{{ .Env.TAG_BBB }}
     depends_on:
       - postgres
       - bbb-web
@@ -315,6 +316,7 @@ services:
       {{ end }}
       args:
         BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+    image: alangecker/bbb-docker-graphql-actions:{{ .Env.TAG_BBB }}
     restart: unless-stopped
     depends_on:
       - redis
@@ -339,6 +341,7 @@ services:
       {{ end }}
       args:
         BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+    image: alangecker/bbb-docker-graphql-middleware:{{ .Env.TAG_BBB }}
     restart: unless-stopped
     depends_on:
       - bbb-graphql-server
@@ -348,6 +351,8 @@ services:
     networks:
       bbb-net:
         ipv4_address: 10.7.7.32
+    extra_hosts:
+      - "nginx:10.7.7.1"
 
     {{ if isTrue .Env.DEV_MODE }}
     user: ${BBB_DEV_UID}:${BBB_DEV_GID}
@@ -374,7 +379,7 @@ services:
 
   periodic:
     build: mod/periodic
-    image: alangecker/bbb-docker-periodic:v2.7.0
+    image: alangecker/bbb-docker-periodic:v3.0.0
     restart: unless-stopped
 
     volumes:
@@ -494,7 +499,7 @@ services:
 {{ if isTrue .Env.ENABLE_GREENLIGHT }}
   # greenlight
   greenlight:
-    image: bigbluebutton/greenlight:v3.4.1
+    image: bigbluebutton/greenlight:v3.5.0
     restart: unless-stopped
     env_file: .env
     depends_on:

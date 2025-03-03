@@ -4,11 +4,17 @@ FROM bigbluebutton/bbb-build:$BBB_BUILD_TAG AS builder
 
 RUN useradd --uid 2004 --user-group webrtc-sfu 
 
+# cache packages
+COPY --from=source /package.json /cache/package.json
+RUN cd /cache && npm install --unsafe-perm
+
 COPY --from=source / /app
 
 ENV NODE_ENV production
 
+
 RUN cd /app \
+  && rm -rf /app/node_modules && cp -a /cache/node_modules /app/node_modules \
  && cp config/default.example.yml config/production.yml \
  && npm install --unsafe-perm \
  && npm cache clear --force \
@@ -18,7 +24,7 @@ RUN cd /app \
 
 
 # =============================
-FROM node:18-bookworm-slim
+FROM node:22-bookworm-slim
 RUN useradd --uid 2004 --user-group webrtc-sfu 
 ENV NODE_ENV production
 

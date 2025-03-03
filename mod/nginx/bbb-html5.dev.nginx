@@ -3,6 +3,11 @@ location = /html5client/locales/ {
   alias /usr/share/bigbluebutton/html5-client/locales/;
   autoindex on;
   autoindex_format json;
+
+  # Prevent browsers from caching
+  add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0";
+  add_header Pragma "no-cache";
+  add_header Expires 0;
 }
 
 # running from source (npm start)

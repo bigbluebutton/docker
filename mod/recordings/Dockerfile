@@ -38,7 +38,7 @@ ENV LANGUAGE en_US.UTF-8
 
 # compile and install mkclean
 RUN cd /tmp \
-    && wget https://netcologne.dl.sourceforge.net/project/matroska/mkclean/mkclean-0.8.10.tar.bz2 \
+    && wget https://phoenixnap.dl.sourceforge.net/project/matroska/mkclean/mkclean-0.8.10.tar.bz2 \
     && tar -xf /tmp/mkclean-0.8.10.tar.bz2 \
     && cd /tmp/mkclean-0.8.10 \
     && sed -i 's/\r//g' ./mkclean/configure.compiled \
@@ -54,7 +54,7 @@ RUN wget -q https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VE
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 # add yq for bbb-record
-RUN  wget -q https://github.com/mikefarah/yq/releases/download/3.4.1/yq_linux_amd64 -O /usr/bin/yq \
+RUN  wget -q https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_amd64 -O /usr/bin/yq \
     && chmod +x /usr/bin/yq
 
 RUN mkdir -p \

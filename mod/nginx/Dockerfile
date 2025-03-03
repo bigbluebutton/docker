@@ -16,9 +16,12 @@ RUN find /source/dist -name '*.js' -exec gzip -k -f -9 '{}' \; \
     && find /source/dist -name '*.css' -exec gzip -k -f -9 '{}' \; \
     && find /source/dist -name '*.wasm' -exec gzip -k -f -9 '{}' \;
 
+RUN sed -i "s/VERSION/$BBB_BUILD_TAG/g" /source/dist/index.html && \
+    sed -i "s/VERSION/$BBB_BUILD_TAG/g" /source/dist/stylesheets/fonts.css
+
 # --------------------
 
-FROM nginx:1.25-alpine
+FROM nginx:1.27-alpine
 
 COPY --from=builder-learning-dashboard /bbb-learning-dashboard/build /www/learning-analytics-dashboard/
 COPY --from=builder-playback /bbb-playback/build /www/playback/presentation/2.3

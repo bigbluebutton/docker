@@ -7,6 +7,11 @@ set -e
 
 declare -p | grep -Ev '^declare -[[:alpha:]]*r' > /container.env
 
+# when used with an IP, we'll also disable certbot
+if [[ "$CERT1" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+  IGNORE_TLS_CERT_ERRORS=true
+fi
+
 if [ "$IGNORE_TLS_CERT_ERRORS"  ] && [ "$IGNORE_TLS_CERT_ERRORS" != "false" ]; then
     # use self signed certificate
     if [ ! -f /etc/haproxy/certs/haproxy-10.7.7.1.pem ]; then

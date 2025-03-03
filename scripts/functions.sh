@@ -16,6 +16,8 @@ function ensure_submodules {
     
 }
 
+# this file should exist, otherwise it is created by docker
+# with the wrong permissions
 function ensure_bbbhtml5yml {
     if [ ! -f conf/bbb-html5.yml ]; then
 
