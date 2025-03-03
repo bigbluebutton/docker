@@ -177,7 +177,7 @@ services:
     build:
       context: mod/bbb-export-annotations
       additional_contexts:
-        bigbluebutton: ./repos/bigbluebutton
+        src: ./repos/bigbluebutton/bbb-export-annotations
     image: alangecker/bbb-docker-bbb-export-annotations:{{ .Env.TAG_BBB }}
     restart: unless-stopped
     depends_on:
@@ -193,6 +193,8 @@ services:
         ipv4_address: 10.7.7.19
     volumes:
       - ./data/bigbluebutton:/var/bigbluebutton
+    tmpfs:
+      - /tmp
 
   redis:
     image: redis:7.2-alpine

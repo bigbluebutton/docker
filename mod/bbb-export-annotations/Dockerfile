@@ -1,24 +1,23 @@
-FROM node:18-bullseye-slim AS builder
+FROM node:22-bookworm-slim AS builder
 
-COPY --from=bigbluebutton /bbb-export-annotations /bbb-export-annotations
+COPY --from=src / /bbb-export-annotations
 RUN cd /bbb-export-annotations && npm ci && npm install
 
 # --------------------
 
-FROM node:18-bullseye-slim
+FROM node:22-bookworm-slim
 
-#depends on;
-#Depends: nodejs,npm,bbb-apps-akka,bbb-web,cairosvg,ghostscript,imagemagick, nodejs (>= 18), nodejs (<< 20)
-#see repo https://ubuntu.bigbluebutton.org/focal-270/ bigbluebutton-focal main
-#apt info bbb-export-annotations
-#missing dependency: poppler-utils for pdftocairo bin -> covert background / original presentation to png
+RUN groupadd -g 998 bigbluebutton \
+    && useradd -m -u 998 -g bigbluebutton bigbluebutton
+
 RUN apt update && apt install -y \
     nodejs npm cairosvg ghostscript imagemagick nodejs poppler-utils
-#    && useradd --uid 2004 --create-home --user-group bbb-export
 
 COPY --from=builder /bbb-export-annotations /bbb-export-annotations
-#we need acces to volume bigbluebutton!
-USER root
 COPY ./config/settings.json /bbb-export-annotations/config/settings.json
-COPY entrypoint.sh /entrypoint.sh
-ENTRYPOINT /entrypoint.sh
+
+USER bigbluebutton
+WORKDIR /bbb-export-annotations
+ENV NODE_ENV=production
+
+ENTRYPOINT npm start
