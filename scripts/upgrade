@@ -42,6 +42,7 @@ else
 
     if [ -d "./postgres-data" ]; then
         echo "folder ./postgres-data still exists and probably uses postgres 12. migrating to a fresh postgres 16 data directory..."
+        docker compose down --remove-orphans
         ./scripts/postgres-migrate ./postgres-data ./data/postgres 16
         mv postgres-data postgres-data.automigrate-bak
     fi
