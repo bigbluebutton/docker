@@ -15,6 +15,8 @@ you can now run bbb-docker locally by simply starting
 $ ./scripts/dev
 ```
 
+Use the API Mate with the link presented in the console to create & join a conference.
+
 ### Hints
 - the html5 component will watch and automatically reload on any changes 🚀
 - if you change anything in the other components, you need to
@@ -26,10 +28,7 @@ $ ./scripts/dev
   `$ ./scripts/generate-compose`
 - view the logs with \
   `$ docker compose logs -f`
-- and access the API via \
-  https://mconf.github.io/api-mate/#server=https://10.7.7.1/bigbluebutton/api&sharedSecret=SuperSecret
-    * At some point your browser will warn you about an invalid certificate, but you can press _"Accept the Risk and Continue" / "Proceed to 10.7.7.1 (unsafe)"_
-
+- At some point your browser will warn you about an invalid certificate, but you can press _"Accept the Risk and Continue" / "Proceed to 10.7.7.1 (unsafe)"_
 
 ## Notes
 - Due to the self signed ssl certificate it is currently not possible to notify greenlight about recordings in dev mode
