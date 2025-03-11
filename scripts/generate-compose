@@ -7,6 +7,8 @@ cd $(dirname $0)/..
 . scripts/functions.sh
 load_env
 
+ensure_bbbhtml5yml
+
 # check for non-optional environment variables,
 # which got introduced later and may miss in existing
 # .env files during upgrades
@@ -16,18 +18,11 @@ if [ -z "$EXTERNAL_IPv4" ]; then
     exit 1
 fi
 
-if [ "$ENABLE_COTURN" == true ]; then
-  if [ -z "$ENABLE_HTTPS_PROXY" ] && [ -z "$COTURN_TLS_CERT_PATH" ]; then
-    echo "ERROR: coturn requires TLS certificates."
-    echo "Either enable the https proxy for certificate retrival"
-    echo "or provide a path to your certificates in .env file."
+if [ "$ENABLE_HTTPS_PROXY" ] && [ -z "$LETSENCRYPT_EMAIL" ] && [ -z "$DEV_MODE" ]; then
+    echo "ERROR: LETSENCRYPT_EMAIL is not set in .env"
+    echo "you need to specify an email adress, otherwise the certificate"
+    echo "retrieval will fail"
     exit 1
-  fi
-  if [ -z "$ENABLE_HTTPS_PROXY" ] && [ "$DEV_MODE" == true ]; then
-    echo "ERROR: the https proxy can't get a certificate if ran locally and therefor coturn will never start"
-    echo "you should disable coturn in .env"
-    exit 1
-  fi
 fi
 
 function get_tag {
@@ -40,6 +35,9 @@ function get_tag {
   fi
 }
 
+# https://hub.docker.com/r/bigbluebutton/bbb-build
+BBB_BUILD_TAG=v3.0.x-release--2025-02-06-143818
+
 docker run  \
     --rm  \
     -v $(pwd)/docker-compose.tmpl.yml:/docker-compose.tmpl.yml \
@@ -48,19 +46,20 @@ docker run  \
     -e TAG_WEBRTC_SFU=$(get_tag repos/bbb-webrtc-sfu) \
     -e TAG_WEBHOOKS=$(get_tag repos/bbb-webhooks) \
     -e TAG_PLAYBACK=$(get_tag repos/bbb-playback) \
+    -e TAG_WEBRTC_RECORDER=$(get_tag repos/bbb-webrtc-recorder) \
     -e TAG_PADS=$(get_tag repos/bbb-pads) \
     -e COMMIT_ETHERPAD_SKIN=$(get_tag repos/bbb-etherpad-skin) \
     -e COMMIT_ETHERPAD_PLUGIN=$(get_tag repos/bbb-etherpad-plugin) \
+    -e BBB_BUILD_TAG=${BBB_BUILD_TAG} \
     -e DEV_MODE=${DEV_MODE:-false} \
+    -e IGNORE_TLS_CERT_ERRORS=${IGNORE_TLS_CERT_ERRORS:-} \
     -e EXTERNAL_IPv6=${EXTERNAL_IPv6:-} \
+    -e SIP_IP_ALLOWLIST=${SIP_IP_ALLOWLIST:-} \
     -e ENABLE_RECORDING=${ENABLE_RECORDING:-false} \
     -e ENABLE_HTTPS_PROXY=${ENABLE_HTTPS_PROXY:-false} \
     -e ENABLE_WEBHOOKS=${ENABLE_WEBHOOKS:-false} \
-    -e ENABLE_COTURN=${ENABLE_COTURN:-false} \
     -e ENABLE_GREENLIGHT=${ENABLE_GREENLIGHT:-false} \
     -e ENABLE_PROMETHEUS_EXPORTER=${ENABLE_PROMETHEUS_EXPORTER:-false} \
     -e ENABLE_PROMETHEUS_EXPORTER_OPTIMIZATION=${ENABLE_PROMETHEUS_EXPORTER_OPTIMIZATION:-false} \
-    -e NUMBER_OF_BACKEND_NODEJS_PROCESSES=${NUMBER_OF_BACKEND_NODEJS_PROCESSES:-1} \
-    -e NUMBER_OF_FRONTEND_NODEJS_PROCESSES=${NUMBER_OF_FRONTEND_NODEJS_PROCESSES:-1} \
     jwilder/dockerize -template /docker-compose.tmpl.yml \
     > docker-compose.yml

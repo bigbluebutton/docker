@@ -1,9 +1,9 @@
 <img width="1012" alt="bbb-docker-banner" src="https://user-images.githubusercontent.com/1273169/141153216-0386cd4e-0aaf-473a-8f42-a048e52ed0d7.png">
 
 
-# 📦 BigBlueButton 2.7 Docker
+# 📦 BigBlueButton 3.0 Docker
 
-Version: 2.7.3 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigbluebutton/docker/issues) | [Upgrading](docs/upgrading.md) | [Development](docs/development.md)
+Version: 3.0.1 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigbluebutton/docker/issues) | [Upgrading](docs/upgrading.md) | [Development](docs/development.md)
 
 ## Features
 - Easy installation
@@ -13,16 +13,19 @@ Version: 2.7.3 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigblue
 - Full IPv6 support
 - Runs on any major linux distributon (Debian, Ubuntu, CentOS,...)
 
+## currently missing / broken
+- NAT support
+- bbb-transcription-controller
+- livekit
+
 ## Requirements
 - 4GB of RAM
 - Linux (it will not work under Windows/WSL)
 - Root access (bbb-docker uses host networking, so it won't work with Kubernetes, any "CaaS"-Service, etc.)
 - Public IPv4 (expect issues with a firewall / NAT)
+- firewall allows internal networking (e.g. for ufw: `ufw allow 10.7.7.0/24`)
 
-## What is not implemented yet
-- bbb-lti
-
-## Install
+## Install production server
 1. Ensure the requirements above are fulfilled (it really doesn't work without them)
 2. Install docker-ce & docker-compose-plugin
     1. follow instructions
@@ -59,7 +62,20 @@ Version: 2.7.3 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigblue
     $ docker compose exec greenlight bundle exec rake admin:create
     ```
 
+## Development setup
+1. Clone this repository
+   ```sh
+   $  git clone --recurse-submodules https://github.com/bigbluebutton/docker.git bbb-dev
+   ```
+2. Start dev server
+   ```sh
+   $ cd bbb-dev
+   $ ./scripts/dev
+   ```
+3. Use API Mate with the link presented in the console to create & join a conference
+
+
 ## Further How-To's
-- [Running behind NAT](docs/behind-nat.md)
+<!-- - [Running behind NAT](docs/behind-nat.md) -->
 - [Integration into an existing web server](docs/existing-web-server.md)
 

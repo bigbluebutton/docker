@@ -1,0 +1,8 @@
+ARG BBB_BUILD_TAG
+FROM bigbluebutton/bbb-build:$BBB_BUILD_TAG AS builder
+
+WORKDIR /app
+
+ENV GOPATH /gopath
+
+CMD ["go", "run", "cmd/bbb-graphql-middleware/main.go", "--signal", "SIGTERM"]

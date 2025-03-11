@@ -1,30 +1,21 @@
-map $remote_addr $freeswitch_addr {
-    "~:"    [::1];
-    default    10.7.7.1;
-}
-
-upstream poolhtml5servers {
-  zone poolhtml5servers 32k;
-  least_conn;
-  server 10.7.7.200:4100 fail_timeout=10s max_fails=4 backup;
-  server 10.7.7.201:4101 fail_timeout=120s max_fails=1;
-  server 10.7.7.202:4102 fail_timeout=120s max_fails=1;
-  server 10.7.7.203:4103 fail_timeout=120s max_fails=1;
-  # TODO: set server list based on NUMBER_OF_FRONTEND_NODEJS_PROCESSES
-  # server 10.7.7.204:4104 fail_timeout=120s max_fails=1;
-  # server 10.7.7.205:4105 fail_timeout=120s max_fails=1;
-  # server 10.7.7.206:4106 fail_timeout=120s max_fails=1;
-  # server 10.7.7.207:4107 fail_timeout=120s max_fails=1;
-}
-
 server {
+  # proxied from HAProxy
+  listen 48082 http2 proxy_protocol;
+  listen 48081 proxy_protocol;
+
+  # optional ports for other reverse proxies
   listen 48087 default_server;
   listen [::]:48087 default_server;
+
   server_name _;
   access_log /dev/stdout;
   absolute_redirect off;
   root /www/;
   
+  # This variable is used instead of $scheme by bigbluebutton nginx include
+  # files, so $scheme can be overridden in reverse-proxy configurations.
+  set $real_scheme $scheme;
+
   # opt-out of google's floc tracking
   # https://www.eff.org/deeplinks/2021/03/googles-floc-terrible-idea
   add_header Permissions-Policy "interest-cohort=()";
@@ -67,4 +58,29 @@ server {
     client_body_timeout 6h;
     send_timeout        6h;
   }
+}
+
+upstream hasura {
+    least_conn;
+    server bbb-graphql-server:8085;
+    # you might want to add more bbb-graphql-server@ instances to balance the
+    # load to multiple bbb-graphql-server instances. Execute 
+    # `systemctl enable --now bbb-graphql-server@8086` and uncomment the
+    # following line:
+    # server 127.0.0.1:8086;
+}
+server {
+    listen 10.7.7.1:8185;
+    listen 127.0.0.1:8185;
+
+    root /var/www/html;
+
+    location / {
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_set_header Host $host;
+
+	    proxy_pass http://hasura;
+    }
 }

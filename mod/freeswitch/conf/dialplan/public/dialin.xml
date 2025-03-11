@@ -1,0 +1,31 @@
+<include>
+  <extension name="from_my_provider">
+    <!-- match only calls from dial-in which haven't got transfered yet   -->
+    <condition field="destination_number" expression="^(?!SEND_TO_CONFERENCE).*$"/>
+    <condition field="${sofia_profile_name}" expression="^external-dialin$">
+      <action application="start_dtmf" />
+      <action application="answer"/>
+      <action application="sleep" data="1000"/>
+      <action application="play_and_get_digits" data="9 9 3 30000 # conference/conf-pin.wav ivr/ivr-that_was_an_invalid_entry.wav pin \d+"/>
+      <action application="set_profile_var" data="caller_id_name=${regex(${caller_id_name}|^.*(.{4})$|xxx-xxx-%1)}"/>
+      <action application="transfer" data="SEND_TO_CONFERENCE XML public"/>
+    </condition>
+  </extension>
+
+  <extension name="check_if_conference_active">
+    <condition field="${conference ${pin} list}" expression="/sofia/g" />
+    <condition field="destination_number" expression="^SEND_TO_CONFERENCE$">
+      <action application="set" data="bbb_authorized=true"/>
+      <action application="transfer" data="${pin} XML default"/>
+    </condition>
+  </extension>
+
+  <extension name="conf_bad_pin">
+    <condition field="${pin}" expression="^\d{5}$">
+      <action application="answer"/>
+      <action application="sleep" data="1000"/>
+      <action application="play_and_get_digits" data="9 9 3 30000 # conference/conf-bad-pin.wav ivr/ivr-that_was_an_invalid_entry.wav pin \d+"/>
+      <action application="transfer" data="SEND_TO_CONFERENCE XML public"/>
+    </condition>
+  </extension>
+</include>
