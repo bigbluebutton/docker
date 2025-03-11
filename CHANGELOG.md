@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## Release v3.0.1 (2025-03-11)
+**Breaking change!** make sure to read the [upgrading notes](https://github.com/bigbluebutton/docker/blob/develop/docs/upgrading.md)
+
+- :tada: **BigBlueButton 3.0** [#313](https://github.com/bigbluebutton/docker/pull/313)
+
+
 ## Release v2.7.3 (2023-12-08)
 
 **Breaking change!** make sure to read the [upgrading notes](https://github.com/bigbluebutton/docker/blob/develop/docs/upgrading.md)
