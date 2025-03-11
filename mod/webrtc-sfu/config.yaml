@@ -1,0 +1,32 @@
+kurento: []
+redisHost: 10.7.7.5
+clientHost: 10.7.7.1
+recordingAdapter: bbb-webrtc-recorder
+
+mcs-host: 10.7.7.1
+mcs-address: 10.7.7.1
+freeswitch:
+  ip: 10.7.7.10
+  sip_ip: 10.7.7.10
+  port: 5066
+  esl_ip: 10.7.7.10
+  esl_port: 8021
+
+log:
+  # trace|debug|info|warn|error
+  level: debug
+  # Whether to log to stdout
+  stdout: true
+  # Whether to log to a file
+  file: false
+
+mediasoup:
+  dedicatedMediaTypeWorkers:
+    audio: auto
+  workerBalancing:
+    strategy: least-loaded
+
+  plainRtp:
+    listenIp:
+      ip: "0.0.0.0"
+      announcedIp: "10.7.7.1"

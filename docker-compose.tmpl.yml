@@ -3,46 +3,23 @@
 # don't edit this directly.
 {{/* -------- */}}
 
-version: '3.6'
-
-# html5 templates
-x-html5-backend: &html5backend
-  build: 
-    context: mod/html5
-    additional_contexts:
-      - source=./repos/bigbluebutton/bigbluebutton-html5
-    args:
-      BBB_BUILD_TAG: bbb27-2023-06-13-java17
-      TAG_BBB: {{ .Env.TAG_BBB }}
-  image: alangecker/bbb-docker-html5:{{ .Env.TAG_BBB }}
-  restart: unless-stopped
-  depends_on:
-    - redis
-    - mongodb
-    - etherpad
-  environment: &html5backend-env
-    DOMAIN: ${DOMAIN}
-    CLIENT_TITLE: ${CLIENT_TITLE}
-    LISTEN_ONLY_MODE: ${LISTEN_ONLY_MODE:-true}
-    DISABLE_ECHO_TEST: ${DISABLE_ECHO_TEST:-false}
-    AUTO_SHARE_WEBCAM: ${AUTO_SHARE_WEBCAM:-false}
-    DISABLE_VIDEO_PREVIEW: ${DISABLE_VIDEO_PREVIEW:-false}
-    CHAT_ENABLED: ${CHAT_ENABLED:-true}
-    CHAT_START_CLOSED: ${CHAT_START_CLOSED:-false}
-    BREAKOUTROOM_LIMIT: ${BREAKOUTROOM_LIMIT:-8}
-    DEV_MODE: ${DEV_MODE:-}
-    BBB_HTML5_ROLE: backend
-
-x-html5-frontend: &html5frontend
-    <<: *html5backend
-    volumes:
-      - html5-static:/html5-static:rw
-    environment: &html5frontend-env
-      <<: *html5backend-env
-      BBB_HTML5_ROLE: frontend
-# =========================
+{{ $ignore_tls_cert_errors :=  or (isTrue .Env.DEV_MODE) (isTrue .Env.IGNORE_TLS_CERT_ERRORS)}}
 
 services:
+  {{ if isTrue .Env.DEV_MODE }}
+  html5-dev:
+    build: 
+      context: mod/html5-dev
+      args:
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+    user: ${BBB_DEV_UID}:${BBB_DEV_GID}
+    restart: unless-stopped
+    volumes:
+      - ./repos/bigbluebutton/bigbluebutton-html5:/app/:rw
+      - ./.cache/npm:/tmp/.npm:rw
+    network_mode: host
+  {{ end }}
+
   bbb-web:
     build: 
       context: mod/bbb-web
@@ -51,59 +28,36 @@ services:
         - src-common-message=./repos/bigbluebutton/bbb-common-message
         - src-common-web=./repos/bigbluebutton/bbb-common-web
       args:
-        BBB_BUILD_TAG: bbb27-2023-06-13-java17
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
     image: alangecker/bbb-docker-web:{{ .Env.TAG_BBB }}
     restart: unless-stopped
     depends_on:
         - redis
         - etherpad
         - bbb-pads
+        - collabora
     healthcheck:
       test: wget --no-proxy --no-verbose --tries=1 --spider http://10.7.7.2:8090/bigbluebutton/api || exit 1
       start_period: 2m
     environment:
-      DEV_MODE: ${DEV_MODE:-}
+      IGNORE_TLS_CERT_ERRORS: {{ $ignore_tls_cert_errors }}
       DOMAIN: ${DOMAIN}
       ENABLE_RECORDING: ${ENABLE_RECORDING:-false}
       SHARED_SECRET: ${SHARED_SECRET}
       WELCOME_MESSAGE: ${WELCOME_MESSAGE:-}
       WELCOME_FOOTER: ${WELCOME_FOOTER}
       STUN_SERVER: stun:${STUN_IP}:${STUN_PORT}
-      TURN_SERVER: ${TURN_SERVER:-}
+      ENABLE_HTTPS_PROXY: ${ENABLE_HTTPS_PROXY:-false}
       TURN_SECRET: ${TURN_SECRET:-}
+      TURN_EXT_SERVER: ${TURN_EXT_SERVER:-}
+      TURN_EXT_SECRET: ${TURN_EXT_SECRET:-}
       ENABLE_LEARNING_DASHBOARD: ${ENABLE_LEARNING_DASHBOARD:-true}
-      NUMBER_OF_BACKEND_NODEJS_PROCESSES: {{ .Env.NUMBER_OF_BACKEND_NODEJS_PROCESSES }}
     volumes:
-      - bigbluebutton:/var/bigbluebutton
-      - vol-freeswitch:/var/freeswitch/meetings
+      - ./data/bigbluebutton:/var/bigbluebutton
+      - ./data/freeswitch-meetings:/var/freeswitch/meetings
     networks:
       bbb-net:
         ipv4_address: 10.7.7.2
-
-
-{{ range $i := loop 0 (atoi .Env.NUMBER_OF_BACKEND_NODEJS_PROCESSES) }}
-  html5-backend-{{ add $i 1 }}:
-    <<: *html5backend
-    environment:
-      <<: *html5backend-env
-      INSTANCE_ID: {{ add $i 1 }}
-      PORT: {{ add 4000 $i }}
-    networks:
-      bbb-net:
-        ipv4_address: 10.7.7.{{ add 100 $i }}
-{{end}}
-
-{{ range $i := loop 0 (atoi .Env.NUMBER_OF_FRONTEND_NODEJS_PROCESSES) }}
-  html5-frontend-{{ add $i 1 }}:
-    <<: *html5frontend
-    environment:
-      <<: *html5frontend-env
-      INSTANCE_ID: {{ add $i 1 }}
-      PORT: {{ add 4100 $i }}
-    networks:
-      bbb-net:
-        ipv4_address: 10.7.7.{{ add 200 $i }}
-{{end}}
 
 
   freeswitch:
@@ -115,7 +69,7 @@ services:
         - build-files=./repos/bigbluebutton/build/packages-template/bbb-freeswitch-core/
         - fs-config=./repos/bigbluebutton/bbb-voice-conference/config/freeswitch/conf/
       args:
-        BBB_BUILD_TAG: bbb27-2023-06-13-java17
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
     image: alangecker/bbb-docker-freeswitch:{{ .Env.TAG_FREESWITCH }}-{{ .Env.TAG_BBB }}
     restart: unless-stopped
     cap_add:
@@ -134,11 +88,16 @@ services:
       DISABLE_SOUND_ALONE: ${DISABLE_SOUND_ALONE:-false}
       SOUNDS_LANGUAGE: ${SOUNDS_LANGUAGE:-en-us-callie}
       ESL_PASSWORD: ${FSESL_PASSWORD:-ClueCon}
+    {{ if .Env.SIP_IP_ALLOWLIST }}
+    ports:
+      - 5060:5060/udp
+    {{ end }}
     volumes:
-      - ./conf/sip_profiles:/etc/freeswitch/sip_profiles/external
-      - ./conf/dialplan_public:/etc/freeswitch/dialplan/public_docker
-      - vol-freeswitch:/var/freeswitch/meetings
-    network_mode: host
+      - ./conf/sip_profiles:/etc/freeswitch/sip_profiles/external-dialin
+      - ./data/freeswitch-meetings:/var/freeswitch/meetings
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.10
     logging:
       # reduce logs to a minimum, so `docker compose logs -f` still works
       driver: "local"
@@ -153,26 +112,31 @@ services:
       additional_contexts:
         - src-learning-dashboard=./repos/bigbluebutton/bbb-learning-dashboard
         - src-playback=./repos/bbb-playback
+        - src-html5=./repos/bigbluebutton/bigbluebutton-html5
       args:
-        BBB_BUILD_TAG: bbb27-2023-06-13-java17
-    image: alangecker/bbb-docker-nginx:1.23-{{ .Env.TAG_PLAYBACK }}-{{ .Env.TAG_BBB }}
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+        TAG_BBB: {{ .Env.TAG_BBB }}
+    image: alangecker/bbb-docker-nginx:{{ .Env.TAG_BBB }}-{{ .Env.TAG_PLAYBACK }}-1.25
     restart: unless-stopped
-    depends_on:
-      - etherpad
-      - webrtc-sfu
-      - html5-backend-1
     volumes:
-      - bigbluebutton:/var/bigbluebutton
-      - html5-static:/html5-static:ro
+      - ./data/bigbluebutton:/var/bigbluebutton
       - ${DEFAULT_PRESENTATION:-/dev/null}:/www/default.pdf
+
+      {{ if isTrue .Env.DEV_MODE }}
+      # overwrite html5 config 
+      - ./mod/nginx/bbb-html5.dev.nginx:/etc/nginx/bbb/bbb-html5.nginx:ro
+      {{ end }}
+    tmpfs:
+     - /tmp
     network_mode: host
     extra_hosts:
       - "host.docker.internal:10.7.7.1"
       - "bbb-web:10.7.7.2"
       - "etherpad:10.7.7.4"
       - "webrtc-sfu:10.7.7.1"
-      - "html5:10.7.7.11"
       - "greenlight:10.7.7.21"
+      - "bbb-graphql-server:10.7.7.31"
+      - "bbb-graphql-middleware:10.7.7.32"
 
   etherpad:
     build: 
@@ -181,11 +145,12 @@ services:
         - plugin=./repos/bbb-etherpad-plugin
         - skin=./repos/bbb-etherpad-skin
       args:
-        TAG_ETHERPAD: "1.9.1"
-    image: alangecker/bbb-docker-etherpad:1.9.1-s{{ .Env.COMMIT_ETHERPAD_SKIN }}-p{{ .Env.COMMIT_ETHERPAD_PLUGIN }}
+        TAG_ETHERPAD: "2.2.7"
+    image: alangecker/bbb-docker-etherpad:2.2.7-s{{ .Env.COMMIT_ETHERPAD_SKIN }}-p{{ .Env.COMMIT_ETHERPAD_PLUGIN }}
     restart: unless-stopped
     depends_on:
       - redis
+      - collabora
     environment:
       ETHERPAD_API_KEY: ${ETHERPAD_API_KEY}
     networks:
@@ -208,6 +173,29 @@ services:
       bbb-net:
         ipv4_address: 10.7.7.18
 
+  bbb-export-annotations:
+    build:
+      context: mod/bbb-export-annotations
+      additional_contexts:
+        src: ./repos/bigbluebutton/bbb-export-annotations
+    image: alangecker/bbb-docker-bbb-export-annotations:{{ .Env.TAG_BBB }}
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - etherpad
+      - bbb-pads
+    networks:
+    # need connections to:
+    # https://github.com/bigbluebutton/bigbluebutton/blob/v2.7.0/bbb-export-annotations/config/settings.json
+    # "bbbWebAPI": "http://127.0.0.1:8090",    -> bbb-web
+    # "bbbPadsAPI": "http://127.0.0.1:9002",   -> bbb-pads
+      bbb-net:
+        ipv4_address: 10.7.7.19
+    volumes:
+      - ./data/bigbluebutton:/var/bigbluebutton
+    tmpfs:
+      - /tmp
+
   redis:
     image: redis:7.2-alpine
     restart: unless-stopped
@@ -220,66 +208,34 @@ services:
       bbb-net:
         ipv4_address: 10.7.7.5
 
-  mongodb:
-    container_name: bbb-mongodb
-    image: mongo:4.4
-    restart: unless-stopped
-    volumes:
-      - ./mod/mongo/mongod.conf:/etc/mongod.conf
-      - ./mod/mongo/init-replica.sh:/docker-entrypoint-initdb.d/init-replica.sh
-    tmpfs:
-      - /data/configdb
-      - /data/db
-    command: mongod --config /etc/mongod.conf --oplogSize 8 --replSet rs0 --noauth
-    healthcheck:
-      test: bash -c "if mongo --eval 'quit(db.runCommand({ ping':' 1 }).ok ? 0 ':' 2)'; then exit 0; fi; exit 1;"
-    networks:
-      bbb-net:
-        ipv4_address: 10.7.7.6
-
-  #  TODO: remove as soon as not required anymore by webrtc-sfu
-  kurento:
-    image: kurento/kurento-media-server:6.18
-    restart: unless-stopped
-    network_mode: host
-    volumes:
-      - vol-kurento:/var/kurento
-
   webrtc-sfu:
     build: 
       context: mod/webrtc-sfu
       additional_contexts:
         - source=./repos/bbb-webrtc-sfu
       args:
-        BBB_BUILD_TAG: bbb27-2023-06-13-java17
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
     image: alangecker/bbb-docker-webrtc-sfu:{{ .Env.TAG_WEBRTC_SFU }}
     restart: unless-stopped
     depends_on:
       - redis
       - freeswitch
-      - kurento
     environment:
-      CLIENT_HOST: 10.7.7.1
-      REDIS_HOST: 10.7.7.5
-      FREESWITCH_IP: 10.7.7.1
-      FREESWITCH_SIP_IP: ${EXTERNAL_IPv4}
-      MCS_HOST: 0.0.0.0
-      MCS_ADDRESS: 127.0.0.1
-      ESL_IP: 10.7.7.1
       ESL_PASSWORD: ${FSESL_PASSWORD:-ClueCon}
-      # TODO: add mediasoup IPv6
-      # TODO: can listen to 0.0.0.0 for nat support? https://github.com/versatica/mediasoup/issues/487
-    {{ if .Env.EXTERNAL_IPv6 }}
-      MS_WEBRTC_LISTEN_IPS: '[{"ip":"{{ .Env.EXTERNAL_IPv6 }}", "announcedIp":"{{ .Env.EXTERNAL_IPv6 }}"}, {"ip":"${EXTERNAL_IPv4}", "announcedIp":"${EXTERNAL_IPv4}"}]'
-    {{else}}
+      {{ if .Env.EXTERNAL_IPv6 }}
+      MS_WEBRTC_LISTEN_IPS: '[{"ip":"::", "announcedIp":"${EXTERNAL_IPv6}"}, {"ip":"${EXTERNAL_IPv4}", "announcedIp":"${EXTERNAL_IPv4}"}]'
+      {{else}}
       MS_WEBRTC_LISTEN_IPS: '[{"ip":"${EXTERNAL_IPv4}", "announcedIp":"${EXTERNAL_IPv4}"}]'
-    {{end}}
-      MS_RTP_LISTEN_IP: '{"ip":"0.0.0.0", "announcedIp":"${EXTERNAL_IPv4}"}'
+      {{end}}
     volumes:
-      - vol-mediasoup:/var/mediasoup
+      - ./data/mediasoup:/var/mediasoup
     tmpfs:
       - /var/log/bbb-webrtc-sfu
     network_mode: host
+    security_opt:
+      - seccomp:unconfined # allow io_uring access for mediasoup
+    ulimits:
+      memlock: -1 # allow io_uring_register_buffers to allocate enough ram
 
   fsesl-akka:
     build: 
@@ -289,7 +245,7 @@ services:
         - src-fsesl-client=./repos/bigbluebutton/bbb-fsesl-client
         - src-fsesl-akka=./repos/bigbluebutton/akka-bbb-fsesl
       args:
-        BBB_BUILD_TAG: bbb27-2023-06-13-java17
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
     image: alangecker/bbb-docker-fsesl-akka:{{ .Env.TAG_BBB }}
     restart: unless-stopped
     depends_on:
@@ -307,47 +263,131 @@ services:
       additional_contexts:
         - src-common-message=./repos/bigbluebutton/bbb-common-message
         - src-apps-akka=./repos/bigbluebutton/akka-bbb-apps
+        - src-config=./repos/bigbluebutton/bigbluebutton-html5/private/config/
       args:
-        BBB_BUILD_TAG: bbb27-2023-06-13-java17
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+        TAG_BBB: {{ .Env.TAG_BBB }}
     image: alangecker/bbb-docker-apps-akka:{{ .Env.TAG_BBB }}
     restart: unless-stopped
     depends_on:
       - redis
+      - postgres
     environment:
       DOMAIN: ${DOMAIN}
       SHARED_SECRET: ${SHARED_SECRET}
+      POSTGRES_PASSWORD: ${POSTGRESQL_SECRET:-password}
     volumes:
-      - vol-freeswitch:/var/freeswitch/meetings
+      - ./data/freeswitch-meetings:/var/freeswitch/meetings
+      - ./conf/bbb-html5.yml:/etc/bigbluebutton/bbb-html5.yml:ro
     networks:
       bbb-net:
         ipv4_address: 10.7.7.15
 
-  jodconverter:
-    build: mod/jodconverter
-    image: alangecker/bbb-docker-jodconverter:latest
-    security_opt:
-      - 'no-new-privileges:true'
+  bbb-graphql-server:
+    build:
+      context: mod/bbb-graphql-server
+      additional_contexts:
+        - src=./repos/bigbluebutton/bbb-graphql-server
+      args:
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+        GRAPHQL_ENGINE_TAG: v2.45.0
+    image: alangecker/bbb-docker-graphql-server:{{ .Env.TAG_BBB }}
+    depends_on:
+      - postgres
+      - bbb-web
+      - apps-akka
+      - bbb-graphql-actions
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRESQL_SECRET:-password}
+      HASURA_GRAPHQL_ADMIN_SECRET: TODO_CHANGE_ME
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.31
+
+
+  bbb-graphql-actions:
+    build:
+      context: mod/bbb-graphql-actions
+      {{ if isTrue .Env.DEV_MODE }}
+      dockerfile: Dockerfile.dev
+      {{ else }}
+      additional_contexts:
+        - src=./repos/bigbluebutton/bbb-graphql-actions
+      {{ end }}
+      args:
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+    image: alangecker/bbb-docker-graphql-actions:{{ .Env.TAG_BBB }}
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - apps-akka
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.30
+    {{ if isTrue .Env.DEV_MODE }}
+    volumes:
+      - ./repos/bigbluebutton/bbb-graphql-actions:/app/:rw
+      - ./.cache/npm:/tmp/.npm:rw
+    {{ end }}
+
+  bbb-graphql-middleware:
+    build:
+      context: mod/bbb-graphql-middleware
+      {{ if isTrue .Env.DEV_MODE }}
+      dockerfile: Dockerfile.dev
+      {{ else }}
+      additional_contexts:
+        - src=./repos/bigbluebutton/bbb-graphql-middleware
+      {{ end }}
+      args:
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+    image: alangecker/bbb-docker-graphql-middleware:{{ .Env.TAG_BBB }}
+    restart: unless-stopped
+    depends_on:
+      - bbb-graphql-server
+      - bbb-graphql-actions
+      - bbb-web
+      - redis
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.32
+    extra_hosts:
+      - "nginx:10.7.7.1"
+
+    {{ if isTrue .Env.DEV_MODE }}
+    user: ${BBB_DEV_UID}:${BBB_DEV_GID}
+    volumes:
+      - ./repos/bigbluebutton/bbb-graphql-middleware:/app/:ro
+      - ./repos/bigbluebutton/bbb-graphql-middleware/config/config.yml:/usr/share/bbb-graphql-middleware/config.yml:ro
+      - ./mod/bbb-graphql-middleware/config.yml:/etc/bigbluebutton/bbb-graphql-middleware.yml:ro
+      - ./.cache/go:/gopath:rw
+      - ./.cache/go-build:/.cache/go-build:rw
+    {{ end }}
+
+  collabora:
+    image: collabora/code:latest
     restart: unless-stopped
     tmpfs:
       - /tmp
-    deploy:
-      resources:
-        limits:
-          memory: 512M
     networks:
       bbb-net:
         ipv4_address: 10.7.7.20
+    # disable logging (way to verbose)
+    logging:
+      driver: none
+
 
   periodic:
     build: mod/periodic
-    image: alangecker/bbb-docker-periodic:v2.7.0
+    image: alangecker/bbb-docker-periodic:v3.0.0
     restart: unless-stopped
-    depends_on:
-      - mongodb
+
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - bigbluebutton:/var/bigbluebutton
-      - vol-mediasoup:/var/mediasoup
+      - ./data/bigbluebutton:/var/bigbluebutton
+      - ./data/mediasoup:/var/mediasoup
     tmpfs:
       - /var/log/bigbluebutton
     environment:
@@ -368,8 +408,8 @@ services:
         - presentation=./repos/bigbluebutton/record-and-playback/presentation
         - bbb-conf=./repos/bigbluebutton/bigbluebutton-config
       args:
-        BBB_BUILD_TAG: bbb27-2023-06-13-java17
-        TAG_BBB_PRESENTATION_VIDEO: "4.0.3"
+        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+        TAG_BBB_PRESENTATION_VIDEO: "5.0.0-beta.2"
     image: alangecker/bbb-docker-recordings:{{ .Env.TAG_BBB }}
     restart: unless-stopped
     depends_on:
@@ -379,16 +419,32 @@ services:
       DOMAIN: ${DOMAIN}
       SHARED_SECRET: ${SHARED_SECRET}
     volumes:
-      - bigbluebutton:/var/bigbluebutton
-      - vol-freeswitch:/var/freeswitch/meetings
-      - vol-mediasoup:/var/mediasoup
-      - vol-kurento:/var/kurento
+      - ./data/bigbluebutton:/var/bigbluebutton
+      - ./data/freeswitch-meetings:/var/freeswitch/meetings
+      - ./data/mediasoup:/var/mediasoup
+      - ./data/bbb-webrtc-recorder:/var/lib/bbb-webrtc-recorder
     tmpfs:
       - /var/log/bigbluebutton
       - /tmp
     networks:
       bbb-net:
         ipv4_address: 10.7.7.16
+
+  bbb-webrtc-recorder:
+    build:
+      context: mod/bbb-webrtc-recorder
+      additional_contexts:
+        - src=./repos/bbb-webrtc-recorder
+    image: alangecker/bbb-docker-webrtc-recorder:{{ .Env.TAG_WEBRTC_RECORDER }}
+    depends_on:
+      - redis
+    volumes: 
+      - ./data/bbb-webrtc-recorder:/var/lib/bbb-webrtc-recorder
+    # WebRTC connection to bbb-webrtc-sfu seem to 
+    # only to work via the external IP
+    network_mode: host
+    extra_hosts:
+      - "redis:10.7.7.5"
 {{end}}
 
 {{ if isTrue .Env.ENABLE_WEBHOOKS }}
@@ -411,32 +467,21 @@ services:
 {{end}}
 
 {{ if isTrue .Env.ENABLE_HTTPS_PROXY }}
-  # https
-  https_proxy:
-    image: valian/docker-nginx-auto-ssl
-    restart: unless-stopped
+
+  haproxy:
+    build: mod/haproxy
+    image: alangecker/bbb-haproxy:2.8.10
     volumes:
-      - ssl_data:/etc/resty-auto-ssl
-    {{ if .Env.EXTERNAL_IPv6 }}
-      - ./mod/https/site.conf:/etc/nginx/conf.d/bbb-docker.conf
-    {{else}}
-      - ./mod/https/site-ipv4only.conf:/etc/nginx/conf.d/bbb-docker.conf
-    {{end}}
-    {{ if isTrue .Env.DEV_MODE }}
-      # allow bbb api access without https
-      - ./mod/https/force-https.conf:/usr/local/openresty/nginx/conf/force-https.conf
-    {{end}}
+      - ./data/haproxy/letsencrypt:/etc/letsencrypt
+      - ./mod/haproxy/haproxy.cfg:/etc/haproxy/haproxy.cfg
+      - ./mod/haproxy/protocolmap:/etc/haproxy/protocolmap
     environment:
-      {{ if isTrue .Env.DEV_MODE }}
-      ALLOWED_DOMAINS: ""
-      {{else}}
-      ALLOWED_DOMAINS: ${DOMAIN}
-      {{end}}
-      RESOLVER_ADDRESS: ${RESOLVER_ADDRESS:-9.9.9.9}
+      - IGNORE_TLS_CERT_ERRORS={{$ignore_tls_cert_errors}}
+      - CERT1=${DOMAIN}
+      - EMAIL=${LETSENCRYPT_EMAIL}
     network_mode: host
 {{end}}
 
-{{ if isTrue .Env.ENABLE_COTURN }}
   # coturn
   coturn:
     image: coturn/coturn:4.6-alpine
@@ -445,26 +490,18 @@ services:
       - "--external-ip=${EXTERNAL_IPv4}/${EXTERNAL_IPv4}"
       - "--external-ip=${EXTERNAL_IPv6:-::1}/${EXTERNAL_IPv6:-::1}"
       - "--static-auth-secret=${TURN_SECRET}"
+      - "--allowed-peer-ip=${EXTERNAL_IPv4}"
+      - "--relay-ip=${EXTERNAL_IPv4}"
+      - "--relay-ip=${EXTERNAL_IPv6:-::1}"
     volumes:
-      {{ if isTrue .Env.ENABLE_HTTPS_PROXY }}
-      - ssl_data:/etc/resty-auto-ssl
-      {{else}}
-      - ${COTURN_TLS_CERT_PATH}:/tmp/cert.pem
-      - ${COTURN_TLS_KEY_PATH}:/tmp/key.pem
-      {{end}}
-      - ./mod/coturn/entrypoint.sh:/usr/local/bin/docker-entrypoint.sh
       - ./mod/coturn/turnserver.conf:/etc/coturn/turnserver.conf
-    environment:
-      ENABLE_HTTPS_PROXY:
-    user: root
     network_mode: host
-{{end}}
 
 
 {{ if isTrue .Env.ENABLE_GREENLIGHT }}
   # greenlight
   greenlight:
-    image: bigbluebutton/greenlight:v3.0.6.1
+    image: bigbluebutton/greenlight:v3.5.0
     restart: unless-stopped
     env_file: .env
     depends_on:
@@ -474,8 +511,8 @@ services:
     environment:
       DATABASE_URL: postgres://postgres:${POSTGRESQL_SECRET:-password}@postgres:5432/greenlight-v3
       REDIS_URL: redis://redis:6379
-      {{ if isTrue .Env.DEV_MODE }}
-      BIGBLUEBUTTON_ENDPOINT: http://10.7.7.1/bigbluebutton/api
+      {{ if $ignore_tls_cert_errors }}
+      BIGBLUEBUTTON_ENDPOINT: http://10.7.7.1:48083/bigbluebutton/api
       {{else}}
       BIGBLUEBUTTON_ENDPOINT: https://${DOMAIN}/bigbluebutton/api
       {{end}}
@@ -483,16 +520,17 @@ services:
       SECRET_KEY_BASE: ${RAILS_SECRET}
       RELATIVE_URL_ROOT: /
     volumes:
-       - ./greenlight-data:/usr/src/app/storage
+       - ./data/greenlight:/usr/src/app/storage
     networks:
       bbb-net:
         ipv4_address: 10.7.7.21
+{{end}}
 
   postgres:
-    image: postgres:12-alpine
+    image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: greenlight-v3
+      POSTGRES_MULTIPLE_DATABASES: bbb_graphql,hasura_app,greenlight
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${POSTGRESQL_SECRET:-password}
     healthcheck:
@@ -501,11 +539,11 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+      - ./data/postgres:/var/lib/postgresql/data
+      - ./mod/postgres/initdb.sh:/docker-entrypoint-initdb.d/initdb.sh
     networks:
       bbb-net:
         ipv4_address: 10.7.7.22
-{{end}}
 
 {{ if isTrue .Env.ENABLE_PROMETHEUS_EXPORTER }}
   # prometheus
@@ -521,24 +559,13 @@ services:
         ipv4_address: 10.7.7.33
     {{ if isTrue .Env.ENABLE_PROMETHEUS_EXPORTER_OPTIMIZATION }}
     volumes:
-      - bigbluebutton:/var/bigbluebutton:ro
+      - ./data/bigbluebutton:/var/bigbluebutton:ro
     {{end}}
 
     # the exporter requires /etc/bigbluebutton/bigbluebutton-release
     tmpfs:
       - /etc/bigbluebutton:mode=777
     entrypoint: sh -c 'echo "BIGBLUEBUTTON_RELEASE=2.7.3" > /etc/bigbluebutton/bigbluebutton-release && python server.py'
-{{end}}
-
-
-volumes:
-  bigbluebutton:
-  vol-freeswitch:
-  vol-kurento:
-  vol-mediasoup:
-  html5-static:
-{{ if isTrue .Env.ENABLE_HTTPS_PROXY }}
-  ssl_data:
 {{end}}
 
 networks:

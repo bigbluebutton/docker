@@ -8,10 +8,26 @@
         <constructor-arg index="0" value="{{ .Env.STUN_SERVER }}"/>
     </bean>
 
-    {{if .Env.TURN_SERVER }}
-        <bean id="turn0" class="org.bigbluebutton.web.services.turn.TurnServer">
-            <constructor-arg index="0" value="{{ .Env.TURN_SECRET }}"/>
-            <constructor-arg index="1" value="{{ .Env.TURN_SERVER }}"/>
+    <bean id="turn0" class="org.bigbluebutton.web.services.turn.TurnServer">
+        <constructor-arg index="0" value="{{ .Env.TURN_SECRET }}"/>
+        <constructor-arg index="1" value="turn:{{ .Env.DOMAIN }}:3478"/>
+        <constructor-arg index="2" value="86400"/>
+    </bean>
+
+    {{if and (isTrue .Env.ENABLE_HTTPS_PROXY) (not (isTrue .Env.IGNORE_TLS_CERT_ERRORS))  }}
+    {{/* ignore when using a self signed certificate in dev mode */}}
+    <bean id="turn1" class="org.bigbluebutton.web.services.turn.TurnServer">
+        <constructor-arg index="0" value="{{ .Env.TURN_SECRET }}"/>
+        <constructor-arg index="1" value="turns:{{ .Env.DOMAIN }}:443?transport=tcp"/>
+        <constructor-arg index="2" value="86400"/>
+    </bean>
+    {{end}}
+
+
+    {{if .Env.TURN_EXT_SERVER }}
+        <bean id="turn2" class="org.bigbluebutton.web.services.turn.TurnServer">
+            <constructor-arg index="0" value="{{ .Env.TURN_EXT_SECRET }}"/>
+            <constructor-arg index="1" value="{{ .Env.TURN_EXT_SERVER }}"/>
             <constructor-arg index="2" value="86400"/>
         </bean>
     {{end}}
@@ -24,8 +40,14 @@
         </property>
         <property name="turnServers">
             <set>
-                {{if .Env.TURN_SERVER }}
                 <ref bean="turn0" />
+                
+                {{if and (isTrue .Env.ENABLE_HTTPS_PROXY) (not (isTrue .Env.IGNORE_TLS_CERT_ERRORS))  }}
+                <ref bean="turn1" />
+                {{end}}
+
+                {{if .Env.TURN_EXT_SERVER }}
+                <ref bean="turn2" />
                 {{end}}
             </set>
         </property>

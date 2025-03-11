@@ -1,0 +1,70 @@
+#!/bin/bash
+
+set -e
+cd "$(dirname "$0")/.."
+. scripts/functions.sh
+
+ensure_bbbhtml5yml
+
+create_dev_env () {
+    cp dev.env .env
+    sed -i "s/BBB_DEV_UID=.*/BBB_DEV_UID=$(id -u)/" .env 
+    sed -i "s/BBB_DEV_GID=.*/BBB_DEV_GID=$(id -g)/" .env
+    load_env
+}
+
+if [ -f ".env" ]; then
+    load_env
+    if [[ "$DEV_MODE" == "" ]]; then
+        echo "Error: .env is not configured as a development environment"
+        echo ""
+        read -r -p "Should .env be automatically overwritten with a predefined .env? [Y/n]" response
+        response=${response,,} # tolower
+        if [[ $response =~ ^(y| ) ]] || [[ -z $response ]]; then
+            cp .env .env.bak
+            create_dev_env
+        else
+            echo "we can't continue with a .env file configured as a development environment"
+            exit 1
+        fi
+    fi
+else
+    echo "# creating a .env for the dev setup"
+    create_dev_env
+fi
+
+
+echo ""
+echo "# ensure submodules are checked out"
+ensure_submodules
+
+echo ""
+echo "# ensure IP in .env is correct"
+EXTERNAL_IPv4=$(ip route get 8.8.8.8 | head -1 | awk '{ print $7 }')
+echo "The IP of this machine in the local network seems to be"
+echo "   $EXTERNAL_IPv4"
+sed -i "s/EXTERNAL_IPv4=.*/EXTERNAL_IPv4=${EXTERNAL_IPv4}/" .env
+sed -i "s/DOMAIN=.*/DOMAIN=${EXTERNAL_IPv4}/" .env
+
+echo ""
+echo "# recreating docker-compose.yml"
+./scripts/generate-compose
+
+echo ""
+echo "# rebuilding images"
+docker compose build
+
+
+echo ""
+echo "============================================"
+echo "BBB Development server"
+echo "============================================"
+echo "API Mate: https://mconf.github.io/api-mate/#server=https://${EXTERNAL_IPv4}/bigbluebutton/api&sharedSecret=SuperSecret"
+echo "Greenlight: https://${EXTERNAL_IPv4}/"
+echo "Check containers:     docker-compose ps"
+echo "Rebuilding container: docker-compose up --build CONTAINERNAME"
+echo "============================================"
+
+sleep 1
+
+docker compose up

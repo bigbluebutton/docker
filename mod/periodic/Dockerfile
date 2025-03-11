@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 
 # -- install docker cli
 COPY --from=library/docker:latest /usr/local/bin/docker /usr/bin/docker

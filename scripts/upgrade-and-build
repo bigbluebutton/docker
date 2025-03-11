@@ -14,11 +14,6 @@ then
     exit
 
 else
-
-    echo ""
-    echo "# pull newest git submodules"
-    ./scripts/checkout-submodules
-
     echo ""
     echo "# recreate docker-compose.yml"
     ./scripts/generate-compose

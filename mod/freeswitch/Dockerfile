@@ -28,7 +28,7 @@ RUN cd /build && ./build.sh
 
 # add english sounds
 RUN mkdir -p /build/staging/opt/freeswitch/share/freeswitch && \
-    wget http://bigbluebutton.org/downloads/sounds.tar.gz -O sounds.tar.gz && \
+    wget https://ubuntu.bigbluebutton.org/sounds.tar.gz -O sounds.tar.gz && \
     tar xvfz sounds.tar.gz -C /build/staging/opt/freeswitch/share/freeswitch && \
     wget https://gitlab.senfcall.de/senfcall-public/mute-and-unmute-sounds/-/archive/master/mute-and-unmute-sounds-master.zip && \
     unzip mute-and-unmute-sounds-master.zip && \
@@ -42,11 +42,11 @@ COPY --from=fs-config / /build/staging/opt/freeswitch/etc/freeswitch/
 # ===============================================
 
 # we are using ubuntu here, because libjpeg8 is required, but not available in debian
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 RUN apt-get update && \
     apt-get install -y \
         xmlstarlet wget iptables curl \
-        libfreetype6 libcurl4 libspeex1 libspeexdsp1 libopus0 libsndfile1 libopusfile0 liblua5.2-0 libjbig0 libldns2 libedit2 libtiff5 libpng16-16 \
+        libfreetype6 libcurl4 libspeex1 libspeexdsp1 libopus0 libsndfile1 libopusfile0 liblua5.2-0 libjbig0 libldns3 libedit2 libtiff5 libpng16-16 libsqlite3-0 \
     && \
 # install libopusenc0
     wget -O /tmp/libopusenc0_0.2.1-1bbb2_amd64.deb https://launchpad.net/~bigbluebutton/+archive/ubuntu/support/+files/libopusenc0_0.2.1-1bbb2_amd64.deb \

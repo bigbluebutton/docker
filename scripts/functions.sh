@@ -1,15 +1,5 @@
 function load_env {
-    FILE=.env
-    if [ "$BBB_DOCKER_DEV" = "1" ]; then
-        FILE=dev.env
-    else
-        FILE=.env
-    fi
-
-    if [ -f $FILE ]
-    then
-        export $(cat $FILE | sed 's/#.*//g' | grep -v "WELCOME_FOOTER" | grep -v "WELCOME_MESSAGE" | grep -v "CLIENT_TITLE" | xargs)
-    fi
+    export $(cat .env | sed 's/#.*//g' | grep -v "WELCOME_FOOTER" | grep -v "WELCOME_MESSAGE" | xargs)
 }
 
 function ensure_submodules {
@@ -26,3 +16,16 @@ function ensure_submodules {
     
 }
 
+# this file should exist, otherwise it is created by docker
+# with the wrong permissions
+function ensure_bbbhtml5yml {
+    if [ ! -f conf/bbb-html5.yml ]; then
+
+        cat << EOF > conf/bbb-html5.yml
+# this file equals the /etc/bigbluebutton/bbb-html5.yml file referenced in the docs
+public:
+  app:
+    appName: BigBlueButton HTML5 Client (docker)
+EOF
+    fi
+}

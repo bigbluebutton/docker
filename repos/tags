@@ -3,11 +3,12 @@
 # used to determine submodule tags without the need for
 # checking out the whole submodule
 
-repos/bbb-etherpad-plugin 068ded5
+repos/bbb-etherpad-plugin 88f3f6b
 repos/bbb-etherpad-skin 8328b77
-repos/bbb-pads v1.5.2
-repos/bbb-playback v5.0.2
-repos/bbb-webhooks v2.6.1
-repos/bbb-webrtc-sfu v2.12.0
-repos/bigbluebutton v2.7.3
-repos/freeswitch v1.10.10
+repos/bbb-pads v1.5.3
+repos/bbb-playback v5.2.1
+repos/bbb-webhooks v3.3.0
+repos/bbb-webrtc-recorder v0.7.0
+repos/bbb-webrtc-sfu v2.17.0-beta.4
+repos/bigbluebutton v3.0.1
+repos/freeswitch v1.10.12
