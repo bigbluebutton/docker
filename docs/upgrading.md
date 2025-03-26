@@ -2,7 +2,9 @@
 
 ### Breaking changes `v2.7.x` -> `v3.0.x`
 - **A setup behind NAT does currently not work!**
-- on every SIP Profiles the extension field needs to be set to "DIALIN" 
+- `LETSENCRYPT_EMAIL` is now required in `.env` when used with the integrated HAProxy
+- the greenlight postgres database is now called `greenlight` instead of `greenlight-v3`
+
 
 ### Breaking changes `v2.6.x` -> `v2.7.x`
 - We use now Docker Compose V2
