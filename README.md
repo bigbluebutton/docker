@@ -3,7 +3,7 @@
 
 # 📦 BigBlueButton 3.0 Docker
 
-Version: 3.0.1 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigbluebutton/docker/issues) | [Upgrading](docs/upgrading.md) | [Development](docs/development.md)
+Version: 3.0.4 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigbluebutton/docker/issues) | [Upgrading](docs/upgrading.md) | [Development](docs/development.md)
 
 ## Features
 - Easy installation
