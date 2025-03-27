@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## Release v3.0.4 (2025-03-27)
+- update to 3.0.4 @tibroc [#347](https://github.com/bigbluebutton/docker/pull/347
+- fix not accepting length of dial in / voiceBridge numbers @alangecker
+- upgrade: migrate postgres & greenlight data @alangecker
+
 ## Release v3.0.1 (2025-03-11)
 **Breaking change!** make sure to read the [upgrading notes](https://github.com/bigbluebutton/docker/blob/develop/docs/upgrading.md)
 

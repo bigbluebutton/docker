@@ -1,0 +1,57 @@
+#!/bin/bash -e
+
+OLD_DATA_DIR=$(realpath "$1")
+NEW_DATA_DIR=$(realpath "$2")
+NEW_POSTGRES_VERSION=$3
+
+if [ -d "$NEW_DATA_DIR" ]; then
+    echo "new postgres data directory $2 already exists. this is not expected"
+    exit 1
+fi
+
+
+OLD_PG_VERSION=$(cat "$OLD_DATA_DIR/PG_VERSION")
+
+
+
+echo spin up a temporary postgres instance on $OLD_DATA_DIR
+TEMP_CONTAINER_ID=$(docker run --detach --rm "-v=$OLD_DATA_DIR:/var/lib/postgresql/data"  -e POSTGRES_HOST_AUTH_METHOD=trust postgres:$OLD_PG_VERSION-alpine)
+
+until docker exec $TEMP_CONTAINER_ID psql -U postgres -c "select 1" > /dev/null 2>&1; do
+  echo "Waiting for postgres server..."
+  sleep 1
+done
+
+echo "find old greenlight database..."
+if docker exec $TEMP_CONTAINER_ID psql -U postgres -lqt | cut -d \| -f 1  | grep greenlight-v3; then
+    OLD_DATABASE=greenlight-v3
+elif docker exec $TEMP_CONTAINER_ID psql -U postgres -lqt | cut -d \| -f 1  | grep greenlight; then
+    OLD_DATABASE=greenlight
+fi
+echo "old database is called $OLD_DATABASE"
+echo ""
+
+echo "dumping data from old databse..."
+GREENLIGHT_DUMP=$(mktemp)
+docker exec $TEMP_CONTAINER_ID pg_dump -U postgres $OLD_DATABASE > $GREENLIGHT_DUMP
+docker stop $TEMP_CONTAINER_ID
+
+
+echo spin up a temporary postgres instance on $NEW_DATA_DIR
+TEMP_CONTAINER_ID=$(docker run --detach --rm "-v=$NEW_DATA_DIR:/var/lib/postgresql/data"  -e POSTGRES_HOST_AUTH_METHOD=trust postgres:$NEW_POSTGRES_VERSION-alpine)
+
+until docker exec $TEMP_CONTAINER_ID psql -U postgres -c "select 1" > /dev/null 2>&1; do
+  echo "Waiting for postgres server..."
+  sleep 1
+done
+
+echo "create all databases..."
+for database in "bbb_graphql" "hasura_app" "greenlight"; do
+    echo "creating $database"
+    docker exec $TEMP_CONTAINER_ID psql -U postgres -c "CREATE DATABASE $database;" -c "GRANT ALL PRIVILEGES ON DATABASE $database TO postgres;"
+done
+
+echo "restoring greenlight from dump..."
+cat $GREENLIGHT_DUMP | docker exec -i $TEMP_CONTAINER_ID psql -U postgres greenlight
+
+docker stop $TEMP_CONTAINER_ID

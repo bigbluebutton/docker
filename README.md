@@ -3,7 +3,7 @@
 
 # 📦 BigBlueButton 3.0 Docker
 
-Version: 3.0.1 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigbluebutton/docker/issues) | [Upgrading](docs/upgrading.md) | [Development](docs/development.md)
+Version: 3.0.4 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigbluebutton/docker/issues) | [Upgrading](docs/upgrading.md) | [Development](docs/development.md)
 
 ## Features
 - Easy installation
@@ -24,6 +24,7 @@ Version: 3.0.1 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigblue
 - Root access (bbb-docker uses host networking, so it won't work with Kubernetes, any "CaaS"-Service, etc.)
 - Public IPv4 (expect issues with a firewall / NAT)
 - firewall allows internal networking (e.g. for ufw: `ufw allow 10.7.7.0/24`)
+- git installed
 
 ## Install production server
 1. Ensure the requirements above are fulfilled (it really doesn't work without them)
@@ -40,7 +41,7 @@ Version: 3.0.1 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigblue
    $ git clone https://github.com/bigbluebutton/docker.git bbb-docker
    $ cd bbb-docker
 
-   # use the more stable main branch (sometimes older)
+   # optional: use the more stable main branch (often much older)
    $ git checkout main 
    ```
 4. Run setup:

@@ -509,7 +509,7 @@ services:
       - redis
 
     environment:
-      DATABASE_URL: postgres://postgres:${POSTGRESQL_SECRET:-password}@postgres:5432/greenlight-v3
+      DATABASE_URL: postgres://postgres:${POSTGRESQL_SECRET:-password}@postgres:5432/greenlight
       REDIS_URL: redis://redis:6379
       {{ if $ignore_tls_cert_errors }}
       BIGBLUEBUTTON_ENDPOINT: http://10.7.7.1:48083/bigbluebutton/api
