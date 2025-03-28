@@ -11,7 +11,24 @@ RUN cd /bbb-playback && npm install && npm run-script build
 FROM bigbluebutton/bbb-build:$BBB_BUILD_TAG AS builder-html5
 COPY --from=src-html5 / /source
 RUN cd /source && CI=true npm ci
-RUN cd /source && DISABLE_ESLINT_PLUGIN=true npm run build
+RUN cd /source && DISABLE_ESLINT_PLUGIN=true npm run build-safari && npm run build
+RUN cd /source/dist && \
+    HASH=$(ls | grep -Eo 'bundle\.[a-f0-9]{20}\.js' | head -n 1 | grep -Eo '[a-f0-9]{20}') && \
+    if [ -z "$HASH" ]; then \
+      echo "Bundle hash not found."; \
+    else \
+      for FILE in *.safari.js *.safari.js.map; do \
+        if [[ "$FILE" == *"$HASH"* ]]; then \
+          continue; \
+        fi; \
+        PREFIX="${FILE%%.safari.js*}"; \
+        SUFFIX="${FILE#*.safari.js}"; \
+        NEW_NAME="${PREFIX}.${HASH}.safari.js${SUFFIX}"; \
+        echo "Renaming $FILE → $NEW_NAME"; \
+        mv "$FILE" "$NEW_NAME"; \
+      done; \
+    fi
+
 RUN find /source/dist -name '*.js' -exec gzip -k -f -9 '{}' \; \
     && find /source/dist -name '*.css' -exec gzip -k -f -9 '{}' \; \
     && find /source/dist -name '*.wasm' -exec gzip -k -f -9 '{}' \;
