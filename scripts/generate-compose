@@ -36,7 +36,7 @@ function get_tag {
 }
 
 # https://hub.docker.com/r/bigbluebutton/bbb-build
-BBB_BUILD_TAG=v3.0.x-release--2025-02-06-143818
+BBB_BUILD_TAG=v3.0.x-release
 
 docker run  \
     --rm  \
