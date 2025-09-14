@@ -126,9 +126,11 @@ services:
       # overwrite html5 config 
       - ./mod/nginx/bbb-html5.dev.nginx:/etc/nginx/bbb/bbb-html5.nginx:ro
       {{ end }}
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.34
     tmpfs:
      - /tmp
-    network_mode: host
     extra_hosts:
       - "host.docker.internal:10.7.7.1"
       - "bbb-web:10.7.7.2"
@@ -353,8 +355,6 @@ services:
     networks:
       bbb-net:
         ipv4_address: 10.7.7.32
-    extra_hosts:
-      - "nginx:10.7.7.1"
 
     {{ if isTrue .Env.DEV_MODE }}
     user: ${BBB_DEV_UID}:${BBB_DEV_GID}
@@ -512,7 +512,7 @@ services:
       DATABASE_URL: postgres://postgres:${POSTGRESQL_SECRET:-password}@postgres:5432/greenlight
       REDIS_URL: redis://redis:6379
       {{ if $ignore_tls_cert_errors }}
-      BIGBLUEBUTTON_ENDPOINT: http://10.7.7.1:48083/bigbluebutton/api
+      BIGBLUEBUTTON_ENDPOINT: http://10.7.7.34:48083/bigbluebutton/api
       {{else}}
       BIGBLUEBUTTON_ENDPOINT: https://${DOMAIN}/bigbluebutton/api
       {{end}}

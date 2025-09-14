@@ -7,7 +7,7 @@ Services as configured.
 | html5-dev | network_mode: host | |
 | bbb-web | bbb-net | 10.7.7.2 |
 | freeswitch| bbb-net | 10.7.7.10 |
-| nginx | network_mode: host | |
+| nginx | bbb-net | 10.7.7.34 |
 | etherpad | bbb-net | 10.7.7.4 |
 | bbb-pads | bbb-net | 10.7.7.18 |
 | bbb-export-annotations | bbb-net | 10.7.7.19 |
