@@ -479,7 +479,12 @@ services:
       - IGNORE_TLS_CERT_ERRORS={{$ignore_tls_cert_errors}}
       - CERT1=${DOMAIN}
       - EMAIL=${LETSENCRYPT_EMAIL}
-    network_mode: host
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.35
 {{end}}
 
   # coturn
