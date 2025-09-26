@@ -54,6 +54,7 @@ services:
       TURN_EXT_SERVER: ${TURN_EXT_SERVER:-}
       TURN_EXT_SECRET: ${TURN_EXT_SECRET:-}
       ENABLE_LEARNING_DASHBOARD: ${ENABLE_LEARNING_DASHBOARD:-true}
+      COLLABORA_URL: ${COLLABORA_URL:-https://collabora:9980/cool}
     volumes:
       - ./data/bigbluebutton:/var/bigbluebutton
       - ./data/freeswitch-meetings:/var/freeswitch/meetings
@@ -157,6 +158,7 @@ services:
       {{ end }}
     environment:
       ETHERPAD_API_KEY: ${ETHERPAD_API_KEY}
+      COLLABORA_URL:    ${COLLABORA_URL:-https://collabora:9980/cool}
     networks:
       bbb-net:
         ipv4_address: 10.7.7.4
