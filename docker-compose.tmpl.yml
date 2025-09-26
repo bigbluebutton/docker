@@ -35,7 +35,9 @@ services:
         - redis
         - etherpad
         - bbb-pads
+        {{ if isTrue .Env.ENABLE_COLLABORA }}
         - collabora
+        {{ end }}
     healthcheck:
       test: wget --no-proxy --no-verbose --tries=1 --spider http://10.7.7.2:8090/bigbluebutton/api || exit 1
       start_period: 2m
@@ -150,7 +152,9 @@ services:
     restart: unless-stopped
     depends_on:
       - redis
+      {{ if isTrue .Env.ENABLE_COLLABORA }}
       - collabora
+      {{ end }}
     environment:
       ETHERPAD_API_KEY: ${ETHERPAD_API_KEY}
     networks:
@@ -366,6 +370,7 @@ services:
       - ./.cache/go-build:/.cache/go-build:rw
     {{ end }}
 
+{{ if isTrue .Env.ENABLE_COLLABORA }}
   collabora:
     image: collabora/code:latest
     restart: unless-stopped
@@ -377,7 +382,7 @@ services:
     # disable logging (way to verbose)
     logging:
       driver: none
-
+{{ end }}
 
   periodic:
     build: mod/periodic
@@ -482,6 +487,7 @@ services:
     network_mode: host
 {{end}}
 
+{{ if isTrue .Env.ENABLE_COTURN }}
   # coturn
   coturn:
     image: coturn/coturn:4.6-alpine
@@ -496,7 +502,7 @@ services:
     volumes:
       - ./mod/coturn/turnserver.conf:/etc/coturn/turnserver.conf
     network_mode: host
-
+{{end}}
 
 {{ if isTrue .Env.ENABLE_GREENLIGHT }}
   # greenlight
