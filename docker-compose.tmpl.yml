@@ -471,6 +471,7 @@ services:
   haproxy:
     build: mod/haproxy
     image: alangecker/bbb-haproxy:2.8.10
+    restart: unless-stopped
     volumes:
       - ./data/haproxy/letsencrypt:/etc/letsencrypt
       - ./mod/haproxy/haproxy.cfg:/etc/haproxy/haproxy.cfg
