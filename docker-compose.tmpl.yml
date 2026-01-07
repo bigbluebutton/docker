@@ -213,6 +213,8 @@ services:
     networks:
       bbb-net:
         ipv4_address: 10.7.7.5
+    volumes:
+      - ./data/redis:/data
 
   webrtc-sfu:
     build: 
@@ -504,6 +506,7 @@ services:
       - "--relay-ip=${EXTERNAL_IPv6:-::1}"
     volumes:
       - ./mod/coturn/turnserver.conf:/etc/coturn/turnserver.conf
+      - ./data/coturn:/var/lib/coturn
     network_mode: host
 {{end}}
 
