@@ -1,7 +1,7 @@
 FROM node:22-bookworm-slim AS builder
 
 COPY --from=src / /bbb-pads
-RUN cd /bbb-pads && rm -r .git && npm install --production
+RUN cd /bbb-pads && npm install --production
 
 
 RUN chmod 777 /bbb-pads/config

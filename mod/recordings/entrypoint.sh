@@ -5,7 +5,7 @@ touch /var/log/bigbluebutton/bbb-web.log
 touch /var/log/bigbluebutton/sanity.log
 touch /var/log/bigbluebutton/post_publish.log
 mkdir -p /var/log/bigbluebutton/presentation
-chown -R bigbluebutton:bigbluebutton /var/log/bigbluebutton
+chown -R 998:998 /var/log/bigbluebutton
 
 dockerize \
     -template /etc/bigbluebutton/recording/recording.yml.tmpl:/etc/bigbluebutton/recording/recording.yml \
