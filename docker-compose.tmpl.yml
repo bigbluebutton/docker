@@ -133,7 +133,7 @@ services:
       # make sure nginx ports are also still available under the
       # IPs 127.0.0.1 & 10.7.7.1 for backwards compatibility with exiting setup
       # Warning: deprecated! this gets removed at some point
-      # Do not use them for new setups
+      # Use 10.7.7.34 for new setups
       - "127.0.0.1:48082:48082"
       - "127.0.0.1:48081:48081"
       - "127.0.0.1:48087:48087"
