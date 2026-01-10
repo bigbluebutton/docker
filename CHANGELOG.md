@@ -1,6 +1,13 @@
 # Changelog
 
 ## Unreleased
+- update to 3.0.19 @alangecker [#377](https://github.com/bigbluebutton/docker/pull/377)
+- Add restart policy to HAProxy container @timoschwarzer [#373](https://github.com/bigbluebutton/docker/pull/373)
+- Add enable switches for Collabora and Coturn + make Collabora URL configurable @kevinveenbirkenbach [#372](https://github.com/bigbluebutton/docker/pull/372)
+- Add missing volume mounts for coturn and redis
+ @matthijskooijman [#370](https://github.com/bigbluebutton/docker/pull/370)
+- Stop using network_mode: host for nginx and haproxy @ matthijskooijman
+ [#369](https://github.com/bigbluebutton/docker/pull/369)
 
 ## Release v3.0.4 (2025-03-27)
 - update to 3.0.4 @tibroc [#347](https://github.com/bigbluebutton/docker/pull/347
