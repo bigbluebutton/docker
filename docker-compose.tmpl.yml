@@ -129,6 +129,17 @@ services:
       # overwrite html5 config 
       - ./mod/nginx/bbb-html5.dev.nginx:/etc/nginx/bbb/bbb-html5.nginx:ro
       {{ end }}
+    ports:
+      # make sure nginx ports are also still available under the
+      # IPs 127.0.0.1 & 10.7.7.1 for backwards compatibility with exiting setup
+      # Warning: deprecated! this gets removed at some point
+      # Do not use them for new setups
+      - "127.0.0.1:48082:48082"
+      - "127.0.0.1:48081:48081"
+      - "127.0.0.1:48087:48087"
+      - "10.7.7.1:48082:48082"
+      - "10.7.7.1:48081:48081"
+      - "10.7.7.1:48087:48087"
     networks:
       bbb-net:
         ipv4_address: 10.7.7.34
@@ -568,7 +579,7 @@ services:
     image: greenstatic/bigbluebutton-exporter:latest
     restart: unless-stopped
     environment:
-      API_BASE_URL: http://10.7.7.1:48087/bigbluebutton/api/
+      API_BASE_URL: http://10.7.7.34:48087/bigbluebutton/api/
       API_SECRET: ${SHARED_SECRET}
       RECORDINGS_METRICS_READ_FROM_DISK: "${ENABLE_PROMETHEUS_EXPORTER_OPTIMIZATION:-false}"
     networks:
