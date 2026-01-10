@@ -38,7 +38,7 @@ RUN sed -i "s/VERSION/$BBB_BUILD_TAG/g" /source/dist/index.html && \
 
 # --------------------
 
-FROM nginx:1.27-alpine
+FROM nginx:1.29-alpine
 
 COPY --from=builder-learning-dashboard /bbb-learning-dashboard/build /www/learning-analytics-dashboard/
 COPY --from=builder-playback /bbb-playback/build /www/playback/presentation/2.3
