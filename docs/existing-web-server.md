@@ -8,7 +8,17 @@ You could dedicate a virtual host to BigBlueButton, allowing external access to 
 
 ## Installation
 1. Install BigBlueButton Docker [as explained above](#install). While running the setup script, please choose `n` when you're asked the following question: `Should an automatic HTTPS Proxy be included? (y/n)`.
-2. Now all the required Docker containers should be running. BigBlueButton listens to port 48087. Create a virtual host by which BigBlueButton will be publicly accessible (in this case, let's assume the following server name for the virtual host: `bbb.example.com`). Enable SSL for the new _https_ virtual host. Make sure that the SSL certificate you will be using is signed by a CA (Certificate Authority). You could generate an SSL certificate for free using Let's Encrypt. It is suggested to add some directives to the _http_ virtual host `bbb.example.com` to redirect all requests to the _https_ one.
+2. Now all the required Docker containers should be running. BigBlueButton listens to port 48087 (among others, but 48087 is intended for external reverse proxies). By default, the port is only opened on the internal bbb-net network created by docker-compose, so either your reverse proxy should run within the same docker-compose file or otherwise have access to the network, or the port should be made available on the host system by adding something like:
+   ```
+   ports:
+    - "127.0.0.1:48087:48087
+    - "[::1]:48087:48087
+   ```
+   In the `nginx` container config in `docker-compose.yml`.
+
+   The rest of this document assumes you did the latter.
+
+3. Create a virtual host by which BigBlueButton will be publicly accessible (in this case, let's assume the following server name for the virtual host: `bbb.example.com`). Enable SSL for the new _https_ virtual host. Make sure that the SSL certificate you will be using is signed by a CA (Certificate Authority). You could generate an SSL certificate for free using Let's Encrypt. It is suggested to add some directives to the _http_ virtual host `bbb.example.com` to redirect all requests to the _https_ one.
 
 At this point, choose one of the following sections according to which Web server you're running ([Apache](#integration-with-apache)).
 
