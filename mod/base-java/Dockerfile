@@ -2,7 +2,7 @@ FROM eclipse-temurin:17-jre-jammy
 
 RUN apt-get update && apt-get install -y \
         wget unzip gosu locales \
-        libmagickcore-extra xpdf-utils curl \
+        imagemagick xpdf-utils curl \
     && sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
 
 ENV LANG en_US.UTF-8  
