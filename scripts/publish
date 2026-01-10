@@ -4,7 +4,7 @@ set -e
 cd "$(dirname "$0")/.."
 
 # load .env
-. functions.sh
+. scripts/functions.sh
 load_env
 
 if [ -z "$ENABLE_WEBHOOKS" ]; then
@@ -21,8 +21,8 @@ fi
 # generate compose file
 ./scripts/generate-compose
 
-# ensure submodules are matching tags.env
-./scripts/checkout-submodules
+# ensure submodules are correctly checked out
+git submodule update  
 
 # build and push java base image
 docker build -t alangecker/bbb-docker-base-java:latest mod/base-java
@@ -33,16 +33,20 @@ docker compose build
 # push images
 docker push alangecker/bbb-docker-base-java:latest
 docker compose push \
-    html5-backend-1 \
-    bbb-web \
-    freeswitch \
     apps-akka \
+    bbb-export-annotations \
+    bbb-graphql-actions \
+    bbb-graphql-middleware \
+    bbb-graphql-server \
     bbb-pads \
+    bbb-web \
+    bbb-webrtc-recorder \
     etherpad \
     fsesl-akka \
-    jodconverter \
+    haproxy \
     nginx \
     periodic \
     recordings \
     webhooks \
-    webrtc-sfu
+    webrtc-sfu \
+    freeswitch
