@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+
+## Release v3.0.19 (2026-01-24)
 - update to 3.0.19 @alangecker [#377](https://github.com/bigbluebutton/docker/pull/377)
 - Add restart policy to HAProxy container @timoschwarzer [#373](https://github.com/bigbluebutton/docker/pull/373)
 - Add enable switches for Collabora and Coturn + make Collabora URL configurable @kevinveenbirkenbach [#372](https://github.com/bigbluebutton/docker/pull/372)
@@ -8,6 +10,7 @@
  @matthijskooijman [#370](https://github.com/bigbluebutton/docker/pull/370)
 - Stop using network_mode: host for nginx and haproxy @ matthijskooijman
  [#369](https://github.com/bigbluebutton/docker/pull/369)
+- Fix failing graphql-server healthcheck @mlutfy  [#380](https://github.com/bigbluebutton/docker/pull/380) [#367](https://github.com/bigbluebutton/docker/issues/367) 
 
 ## Release v3.0.4 (2025-03-27)
 - update to 3.0.4 @tibroc [#347](https://github.com/bigbluebutton/docker/pull/347
