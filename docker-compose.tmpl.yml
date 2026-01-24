@@ -323,6 +323,12 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${POSTGRESQL_SECRET:-password}
       HASURA_GRAPHQL_ADMIN_SECRET: TODO_CHANGE_ME
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8085/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     networks:
       bbb-net:
         ipv4_address: 10.7.7.31
