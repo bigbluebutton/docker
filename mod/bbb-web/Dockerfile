@@ -16,10 +16,12 @@ RUN cd /bbb-common-web && ./deploy.sh
 COPY --from=src-web / /bbb-web
 
 # compile bbb-web
-RUN cd /bbb-web && grails assemble
+RUN cd /bbb-web && sh ./gradlew assemble
 
 # compile pres-checker
-RUN cd /bbb-web/pres-checker && gradle resolveDeps
+RUN cd /bbb-web/pres-checker && gradle jar
+RUN mkdir -p /bbb-web/pres-checker/lib && find /bbb-web/pres-checker && \
+    cp /bbb-web/pres-checker/build/libs/bbb-pres-check-0.0.1.jar /bbb-web/pres-checker/lib
 
 # extract .war
 RUN unzip -q /bbb-web/build/libs/bigbluebutton-0.10.0.war -d /dist
@@ -32,10 +34,10 @@ FROM alangecker/bbb-docker-base-java
 RUN mkdir -p /usr/share/bigbluebutton/blank \
     && cd /usr/share/bigbluebutton/blank \
     && wget \
-        https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/v2.4.0/bigbluebutton-config/slides/blank-svg.svg \
-        https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/v2.4.0/bigbluebutton-config/slides/blank-thumb.png \
-        https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/v2.4.0/bigbluebutton-config/slides/blank-presentation.pdf \
-        https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/v2.4.0/bigbluebutton-config/slides/blank-png.png \
+        https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/v3.0.19/bigbluebutton-config/slides/blank-svg.svg \
+        https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/v3.0.19/bigbluebutton-config/slides/blank-thumb.png \
+        https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/v3.0.19/bigbluebutton-config/slides/blank-presentation.pdf \
+        https://raw.githubusercontent.com/bigbluebutton/bigbluebutton/v3.0.19/bigbluebutton-config/slides/blank-png.png \
     && sed -i 's/<policy domain="coder" rights="none" pattern="PDF" \/>/<policy domain="coder" rights="write" pattern="PDF" \/>/g' /etc/ImageMagick-6/policy.xml \
     && sed -i '/potrace/d' /etc/ImageMagick-6/delegates.xml
 
@@ -53,5 +55,6 @@ COPY bbb-web.properties /etc/bigbluebutton/bbb-web.properties.tmpl
 COPY turn-stun-servers.xml /etc/bigbluebutton/turn-stun-servers.xml.tmpl
 COPY logback.xml /usr/share/bbb-web/WEB-INF/classes/logback.xml
 COPY office-convert.sh /usr/share/bbb-libreoffice-conversion/convert.sh
+COPY run-in-systemd.sh /usr/share/bbb-web/run-in-systemd.sh
 
 ENTRYPOINT ["/entrypoint.sh"]

@@ -31,6 +31,6 @@ timeoutSecs="${timeoutSecs:0:3}"
 
 # The timeout is important.
 
-timeout $(printf %03d $timeoutSecs)s curl -F "data=@${source}" -k https://collabora:9980/cool/convert-to/$convertTo > "${dest}"
+timeout $(printf %03d $timeoutSecs)s curl -F "data=@${source}" -k $COLLABORA_URL/convert-to/$convertTo > "${dest}"
 
 exit 0

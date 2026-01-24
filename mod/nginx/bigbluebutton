@@ -70,8 +70,7 @@ upstream hasura {
     # server 127.0.0.1:8086;
 }
 server {
-    listen 10.7.7.1:8185;
-    listen 127.0.0.1:8185;
+    listen 8185;
 
     root /var/www/html;
 

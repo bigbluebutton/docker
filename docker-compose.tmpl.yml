@@ -35,7 +35,9 @@ services:
         - redis
         - etherpad
         - bbb-pads
+        {{ if isTrue .Env.ENABLE_COLLABORA }}
         - collabora
+        {{ end }}
     healthcheck:
       test: wget --no-proxy --no-verbose --tries=1 --spider http://10.7.7.2:8090/bigbluebutton/api || exit 1
       start_period: 2m
@@ -52,6 +54,7 @@ services:
       TURN_EXT_SERVER: ${TURN_EXT_SERVER:-}
       TURN_EXT_SECRET: ${TURN_EXT_SECRET:-}
       ENABLE_LEARNING_DASHBOARD: ${ENABLE_LEARNING_DASHBOARD:-true}
+      COLLABORA_URL: ${COLLABORA_URL:-https://collabora:9980/cool}
     volumes:
       - ./data/bigbluebutton:/var/bigbluebutton
       - ./data/freeswitch-meetings:/var/freeswitch/meetings
@@ -116,7 +119,7 @@ services:
       args:
         BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
         TAG_BBB: {{ .Env.TAG_BBB }}
-    image: alangecker/bbb-docker-nginx:{{ .Env.TAG_BBB }}-{{ .Env.TAG_PLAYBACK }}-1.25
+    image: alangecker/bbb-docker-nginx:{{ .Env.TAG_BBB }}-{{ .Env.TAG_PLAYBACK }}-1.29
     restart: unless-stopped
     volumes:
       - ./data/bigbluebutton:/var/bigbluebutton
@@ -126,9 +129,22 @@ services:
       # overwrite html5 config 
       - ./mod/nginx/bbb-html5.dev.nginx:/etc/nginx/bbb/bbb-html5.nginx:ro
       {{ end }}
+    ports:
+      # make sure nginx ports are also still available under the
+      # IPs 127.0.0.1 & 10.7.7.1 for backwards compatibility with exiting setup
+      # Warning: deprecated! this gets removed at some point
+      # Use 10.7.7.34 for new setups
+      - "127.0.0.1:48082:48082"
+      - "127.0.0.1:48081:48081"
+      - "127.0.0.1:48087:48087"
+      - "10.7.7.1:48082:48082"
+      - "10.7.7.1:48081:48081"
+      - "10.7.7.1:48087:48087"
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.34
     tmpfs:
      - /tmp
-    network_mode: host
     extra_hosts:
       - "host.docker.internal:10.7.7.1"
       - "bbb-web:10.7.7.2"
@@ -145,14 +161,17 @@ services:
         - plugin=./repos/bbb-etherpad-plugin
         - skin=./repos/bbb-etherpad-skin
       args:
-        TAG_ETHERPAD: "2.2.7"
-    image: alangecker/bbb-docker-etherpad:2.2.7-s{{ .Env.COMMIT_ETHERPAD_SKIN }}-p{{ .Env.COMMIT_ETHERPAD_PLUGIN }}
+        TAG_ETHERPAD: "2.4.2"
+    image: alangecker/bbb-docker-etherpad:2.4.2-s{{ .Env.COMMIT_ETHERPAD_SKIN }}-p{{ .Env.COMMIT_ETHERPAD_PLUGIN }}
     restart: unless-stopped
     depends_on:
       - redis
+      {{ if isTrue .Env.ENABLE_COLLABORA }}
       - collabora
+      {{ end }}
     environment:
       ETHERPAD_API_KEY: ${ETHERPAD_API_KEY}
+      COLLABORA_URL:    ${COLLABORA_URL:-https://collabora:9980/cool}
     networks:
       bbb-net:
         ipv4_address: 10.7.7.4
@@ -197,7 +216,7 @@ services:
       - /tmp
 
   redis:
-    image: redis:7.2-alpine
+    image: redis:8.4-alpine
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -207,6 +226,8 @@ services:
     networks:
       bbb-net:
         ipv4_address: 10.7.7.5
+    volumes:
+      - ./data/redis:/data
 
   webrtc-sfu:
     build: 
@@ -290,7 +311,7 @@ services:
         - src=./repos/bigbluebutton/bbb-graphql-server
       args:
         BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
-        GRAPHQL_ENGINE_TAG: v2.45.0
+        GRAPHQL_ENGINE_TAG: v2.48.1
     image: alangecker/bbb-docker-graphql-server:{{ .Env.TAG_BBB }}
     depends_on:
       - postgres
@@ -302,6 +323,12 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${POSTGRESQL_SECRET:-password}
       HASURA_GRAPHQL_ADMIN_SECRET: TODO_CHANGE_ME
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8085/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     networks:
       bbb-net:
         ipv4_address: 10.7.7.31
@@ -353,8 +380,6 @@ services:
     networks:
       bbb-net:
         ipv4_address: 10.7.7.32
-    extra_hosts:
-      - "nginx:10.7.7.1"
 
     {{ if isTrue .Env.DEV_MODE }}
     user: ${BBB_DEV_UID}:${BBB_DEV_GID}
@@ -366,6 +391,7 @@ services:
       - ./.cache/go-build:/.cache/go-build:rw
     {{ end }}
 
+{{ if isTrue .Env.ENABLE_COLLABORA }}
   collabora:
     image: collabora/code:latest
     restart: unless-stopped
@@ -377,7 +403,7 @@ services:
     # disable logging (way to verbose)
     logging:
       driver: none
-
+{{ end }}
 
   periodic:
     build: mod/periodic
@@ -409,7 +435,7 @@ services:
         - bbb-conf=./repos/bigbluebutton/bigbluebutton-config
       args:
         BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
-        TAG_BBB_PRESENTATION_VIDEO: "5.0.0-beta.2"
+        TAG_BBB_PRESENTATION_VIDEO: "5.0.0"
     image: alangecker/bbb-docker-recordings:{{ .Env.TAG_BBB }}
     restart: unless-stopped
     depends_on:
@@ -470,7 +496,8 @@ services:
 
   haproxy:
     build: mod/haproxy
-    image: alangecker/bbb-haproxy:2.8.10
+    image: alangecker/bbb-haproxy:3.0.9
+    restart: unless-stopped
     volumes:
       - ./data/haproxy/letsencrypt:/etc/letsencrypt
       - ./mod/haproxy/haproxy.cfg:/etc/haproxy/haproxy.cfg
@@ -479,12 +506,18 @@ services:
       - IGNORE_TLS_CERT_ERRORS={{$ignore_tls_cert_errors}}
       - CERT1=${DOMAIN}
       - EMAIL=${LETSENCRYPT_EMAIL}
-    network_mode: host
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.35
 {{end}}
 
+{{ if isTrue .Env.ENABLE_COTURN }}
   # coturn
   coturn:
-    image: coturn/coturn:4.6-alpine
+    image: coturn/coturn:4.8-alpine
     restart: unless-stopped
     command:
       - "--external-ip=${EXTERNAL_IPv4}/${EXTERNAL_IPv4}"
@@ -495,13 +528,14 @@ services:
       - "--relay-ip=${EXTERNAL_IPv6:-::1}"
     volumes:
       - ./mod/coturn/turnserver.conf:/etc/coturn/turnserver.conf
+      - ./data/coturn:/var/lib/coturn
     network_mode: host
-
+{{end}}
 
 {{ if isTrue .Env.ENABLE_GREENLIGHT }}
   # greenlight
   greenlight:
-    image: bigbluebutton/greenlight:v3.5.0
+    image: bigbluebutton/greenlight:v3.6.3
     restart: unless-stopped
     env_file: .env
     depends_on:
@@ -512,7 +546,7 @@ services:
       DATABASE_URL: postgres://postgres:${POSTGRESQL_SECRET:-password}@postgres:5432/greenlight
       REDIS_URL: redis://redis:6379
       {{ if $ignore_tls_cert_errors }}
-      BIGBLUEBUTTON_ENDPOINT: http://10.7.7.1:48083/bigbluebutton/api
+      BIGBLUEBUTTON_ENDPOINT: http://10.7.7.34:48083/bigbluebutton/api
       {{else}}
       BIGBLUEBUTTON_ENDPOINT: https://${DOMAIN}/bigbluebutton/api
       {{end}}
@@ -551,7 +585,7 @@ services:
     image: greenstatic/bigbluebutton-exporter:latest
     restart: unless-stopped
     environment:
-      API_BASE_URL: http://10.7.7.1:48087/bigbluebutton/api/
+      API_BASE_URL: http://10.7.7.34:48087/bigbluebutton/api/
       API_SECRET: ${SHARED_SECRET}
       RECORDINGS_METRICS_READ_FROM_DISK: "${ENABLE_PROMETHEUS_EXPORTER_OPTIMIZATION:-false}"
     networks:

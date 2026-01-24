@@ -1,5 +1,19 @@
+ARG BBB_BUILD_TAG
+FROM bigbluebutton/bbb-build:$BBB_BUILD_TAG AS builder
 
-FROM ruby:3.0-slim-bullseye
+# compile and install mkclean
+RUN cd /tmp \
+    && wget https://sourceforge.net/projects/matroska/files/mkclean/mkclean-0.8.10.tar.bz2/download -O mkclean-0.8.10.tar.bz2 \
+    && tar -xf /tmp/mkclean-0.8.10.tar.bz2 \
+    && cd /tmp/mkclean-0.8.10 \
+    && sed -i 's/\r//g' ./mkclean/configure.compiled \
+    && ./mkclean/configure.compiled \
+    && make -C mkclean \
+    && cp ./release/gcc_linux_x64/mkclean /usr/bin/mkclean \
+    && rm -r /tmp/mkclean-*
+
+
+FROM ruby:3.2-slim-trixie
 
 # install apt dependencies
 RUN apt-get update && apt-get install -y \
@@ -36,16 +50,7 @@ ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
 
-# compile and install mkclean
-RUN cd /tmp \
-    && wget https://phoenixnap.dl.sourceforge.net/project/matroska/mkclean/mkclean-0.8.10.tar.bz2 \
-    && tar -xf /tmp/mkclean-0.8.10.tar.bz2 \
-    && cd /tmp/mkclean-0.8.10 \
-    && sed -i 's/\r//g' ./mkclean/configure.compiled \
-    && ./mkclean/configure.compiled \
-    && make -C mkclean \
-    && cp ./release/gcc_linux_x64/mkclean /usr/bin/mkclean \
-    && rm -r /tmp/mkclean-*
+COPY --from=builder /usr/bin/mkclean /usr/bin/mkclean
 
 # add dockerize
 ENV DOCKERIZE_VERSION v0.6.1
@@ -78,7 +83,7 @@ COPY --from=presentation /scripts /usr/local/bigbluebutton/core/scripts/
 # install ruby dependencies
 RUN cd /usr/local/bigbluebutton/core \
     && gem install builder \
-    && gem install bundler --no-document \
+    && gem install bundler -v 2.4.22 --no-document \
     && bundle config set --local deployment true \
     && bundle install \
     && bundle clean \
@@ -102,17 +107,13 @@ RUN cd /usr/bin \
     && sed -i 's/systemctl.*//' /usr/bin/bbb-record \
     && echo "BIGBLUEBUTTON_RELEASE=$TAG_RECORDINGS" > /etc/bigbluebutton/bigbluebutton-release
 
-# create user
-# the ID should match the one creating the files in `core`
-RUN groupadd -g 998 bigbluebutton && useradd -m -u 998 -g bigbluebutton bigbluebutton
-
 # change owner
 # https://github.com/alangecker/bigbluebutton-docker/issues/63
 RUN chown -R 998:998 /usr/local/bigbluebutton
 
 ARG TAG_BBB_PRESENTATION_VIDEO
 RUN cd /tmp/ && \
-    wget -q -O bbb-presentation-video.zip "https://github.com/bigbluebutton/bbb-presentation-video/releases/download/${TAG_BBB_PRESENTATION_VIDEO}/ubuntu-20.04.zip" && \
+    wget -q -O bbb-presentation-video.zip "https://github.com/bigbluebutton/bbb-presentation-video/releases/download/${TAG_BBB_PRESENTATION_VIDEO}/ubuntu-22.04.zip" && \
     unzip -o bbb-presentation-video.zip -d bbb-presentation-video && \
     dpkg -i bbb-presentation-video/bbb-presentation-video*.deb && \
     rm -rf /tmp/*
