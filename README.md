@@ -38,40 +38,40 @@ Version: 3.0.19 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigblu
     3. Ensure you use a docker version ≥ 23.0 : `$ docker --version`
 3. Clone this repository
    ```sh
-   $ git clone https://github.com/bigbluebutton/docker.git bbb-docker
-   $ cd bbb-docker
+   git clone https://github.com/bigbluebutton/docker.git bbb-docker
+   cd bbb-docker
 
    # optional: use the more stable main branch (often much older)
-   $ git checkout main 
+   git checkout main 
    ```
 4. Run setup:
    ```bash
-   $ ./scripts/setup
+   ./scripts/setup
    ```
 5. (optional) Make additional configuration adjustments
    ```bash
-   $ nano .env
+   nano .env
    # always recreate the docker-compose.yml file after making any changes
-   $ ./scripts/generate-compose
+   ./scripts/generate-compose
    ```
 6. Start containers:
     ```bash
-    $ docker compose up -d --no-build
+    docker compose up -d --no-build
     ```
 7. If you use greenlight, you can create an admin account with:
     ```bash
-    $ docker compose exec greenlight bundle exec rake admin:create
+    docker compose exec greenlight bundle exec rake admin:create
     ```
 
 ## Development setup
 1. Clone this repository
    ```sh
-   $  git clone --recurse-submodules https://github.com/bigbluebutton/docker.git bbb-dev
+   git clone --recurse-submodules https://github.com/bigbluebutton/docker.git bbb-dev
    ```
 2. Start dev server
    ```sh
-   $ cd bbb-dev
-   $ ./scripts/dev
+   cd bbb-dev
+   ./scripts/dev
    ```
 3. Use API Mate with the link presented in the console to create & join a conference
 
