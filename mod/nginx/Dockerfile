@@ -33,8 +33,8 @@ RUN find /source/dist -name '*.js' -exec gzip -k -f -9 '{}' \; \
     && find /source/dist -name '*.css' -exec gzip -k -f -9 '{}' \; \
     && find /source/dist -name '*.wasm' -exec gzip -k -f -9 '{}' \;
 
-RUN sed -i "s/VERSION/$BBB_BUILD_TAG/g" /source/dist/index.html && \
-    sed -i "s/VERSION/$BBB_BUILD_TAG/g" /source/dist/stylesheets/fonts.css
+RUN sed -i "s/?v=VERSION/?v=$BBB_BUILD_TAG/g" /source/dist/index.html && \
+    sed -i "s/?v=VERSION/?v=$BBB_BUILD_TAG/g" /source/dist/stylesheets/fonts.css
 
 # --------------------
 
