@@ -535,7 +535,7 @@ services:
 {{ if isTrue .Env.ENABLE_GREENLIGHT }}
   # greenlight
   greenlight:
-    image: bigbluebutton/greenlight:v3.6.3
+    image: bigbluebutton/greenlight:v3.8.0
     restart: unless-stopped
     env_file: .env
     depends_on:
