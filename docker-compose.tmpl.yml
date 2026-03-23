@@ -311,7 +311,7 @@ services:
         - src=./repos/bigbluebutton/bbb-graphql-server
       args:
         BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
-        GRAPHQL_ENGINE_TAG: v2.48.1
+        GRAPHQL_ENGINE_TAG: v2.48.9
     image: alangecker/bbb-docker-graphql-server:{{ .Env.TAG_BBB }}
     depends_on:
       - postgres
@@ -435,7 +435,7 @@ services:
         - bbb-conf=./repos/bigbluebutton/bigbluebutton-config
       args:
         BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
-        TAG_BBB_PRESENTATION_VIDEO: "5.0.0"
+        TAG_BBB_PRESENTATION_VIDEO: "5.1.0-beta.2"
     image: alangecker/bbb-docker-recordings:{{ .Env.TAG_BBB }}
     restart: unless-stopped
     depends_on:
@@ -517,7 +517,7 @@ services:
 {{ if isTrue .Env.ENABLE_COTURN }}
   # coturn
   coturn:
-    image: coturn/coturn:4.8-alpine
+    image: coturn/coturn:4.9.0-alpine
     restart: unless-stopped
     command:
       - "--external-ip=${EXTERNAL_IPv4}/${EXTERNAL_IPv4}"
@@ -535,7 +535,7 @@ services:
 {{ if isTrue .Env.ENABLE_GREENLIGHT }}
   # greenlight
   greenlight:
-    image: bigbluebutton/greenlight:v3.6.3
+    image: bigbluebutton/greenlight:v3.8.0
     restart: unless-stopped
     env_file: .env
     depends_on:

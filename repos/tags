@@ -5,10 +5,10 @@
 
 repos/bbb-etherpad-plugin 88f3f6b
 repos/bbb-etherpad-skin 8328b77
-repos/bbb-pads v1.5.6
-repos/bbb-playback v5.4.3
-repos/bbb-webhooks v3.4.0
-repos/bbb-webrtc-recorder v0.13.1
-repos/bbb-webrtc-sfu v2.21.2
-repos/bigbluebutton v3.0.19
+repos/bbb-pads v1.5.8
+repos/bbb-playback v5.4.4
+repos/bbb-webhooks v3.6.0
+repos/bbb-webrtc-recorder v0.14.0
+repos/bbb-webrtc-sfu v2.22.0
+repos/bigbluebutton v3.0.23
 repos/freeswitch v1.10.12
