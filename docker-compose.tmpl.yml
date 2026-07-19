@@ -140,6 +140,10 @@ services:
       - "10.7.7.1:48082:48082"
       - "10.7.7.1:48081:48081"
       - "10.7.7.1:48087:48087"
+      {{ if .Env.NGINX_BIND_IP }}
+      # Optional access for a reverse proxy running on another host.
+      - "${NGINX_BIND_IP}:48087:48087"
+      {{ end }}
     networks:
       bbb-net:
         ipv4_address: 10.7.7.34
@@ -244,9 +248,9 @@ services:
     environment:
       ESL_PASSWORD: ${FSESL_PASSWORD:-ClueCon}
       {{ if .Env.EXTERNAL_IPv6 }}
-      MS_WEBRTC_LISTEN_IPS: '[{"ip":"::", "announcedIp":"${EXTERNAL_IPv6}"}, {"ip":"${EXTERNAL_IPv4}", "announcedIp":"${EXTERNAL_IPv4}"}]'
+      MS_WEBRTC_LISTEN_IPS: '[{"ip":"::", "announcedIp":"${EXTERNAL_IPv6}"}, {"ip":"{{ .Env.INTERNAL_IPv4 }}", "announcedIp":"${EXTERNAL_IPv4}"}]'
       {{else}}
-      MS_WEBRTC_LISTEN_IPS: '[{"ip":"${EXTERNAL_IPv4}", "announcedIp":"${EXTERNAL_IPv4}"}]'
+      MS_WEBRTC_LISTEN_IPS: '[{"ip":"{{ .Env.INTERNAL_IPv4 }}", "announcedIp":"${EXTERNAL_IPv4}"}]'
       {{end}}
     volumes:
       - ./data/mediasoup:/var/mediasoup
@@ -520,11 +524,11 @@ services:
     image: coturn/coturn:4.9.0-alpine
     restart: unless-stopped
     command:
-      - "--external-ip=${EXTERNAL_IPv4}/${EXTERNAL_IPv4}"
+      - "--external-ip=${EXTERNAL_IPv4}/{{ .Env.INTERNAL_IPv4 }}"
       - "--external-ip=${EXTERNAL_IPv6:-::1}/${EXTERNAL_IPv6:-::1}"
       - "--static-auth-secret=${TURN_SECRET}"
       - "--allowed-peer-ip=${EXTERNAL_IPv4}"
-      - "--relay-ip=${EXTERNAL_IPv4}"
+      - "--relay-ip={{ .Env.INTERNAL_IPv4 }}"
       - "--relay-ip=${EXTERNAL_IPv6:-::1}"
     volumes:
       - ./mod/coturn/turnserver.conf:/etc/coturn/turnserver.conf
