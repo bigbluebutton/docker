@@ -161,8 +161,8 @@ services:
         - plugin=./repos/bbb-etherpad-plugin
         - skin=./repos/bbb-etherpad-skin
       args:
-        TAG_ETHERPAD: "2.4.2"
-    image: alangecker/bbb-docker-etherpad:2.4.2-s{{ .Env.COMMIT_ETHERPAD_SKIN }}-p{{ .Env.COMMIT_ETHERPAD_PLUGIN }}
+        TAG_ETHERPAD: "2.6.0"
+    image: alangecker/bbb-docker-etherpad:2.6.0-s{{ .Env.COMMIT_ETHERPAD_SKIN }}-p{{ .Env.COMMIT_ETHERPAD_PLUGIN }}
     restart: unless-stopped
     depends_on:
       - redis
