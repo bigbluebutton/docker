@@ -526,6 +526,8 @@ services:
       - "--allowed-peer-ip=${EXTERNAL_IPv4}"
       - "--relay-ip=${EXTERNAL_IPv4}"
       - "--relay-ip=${EXTERNAL_IPv6:-::1}"
+      - "--listening-ip=${TURN_LISTENING_IPv4:-${EXTERNAL_IPv4}}"
+      - "--listening-ip=${TURN_LISTENING_IPv6:-${EXTERNAL_IPv6:-::1}}"
     volumes:
       - ./mod/coturn/turnserver.conf:/etc/coturn/turnserver.conf
       - ./data/coturn:/var/lib/coturn
