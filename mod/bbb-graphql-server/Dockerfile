@@ -2,7 +2,7 @@ ARG BBB_BUILD_TAG
 ARG GRAPHQL_ENGINE_TAG
 FROM bigbluebutton/bbb-build:$BBB_BUILD_TAG AS builder
 
-RUN curl -L https://github.com/hasura/graphql-engine/raw/stable/cli/get.sh | INSTALL_PATH=/usr/local/bin VERSION=v2.44.0 bash
+RUN curl -L https://github.com/hasura/graphql-engine/raw/stable/cli/get.sh | INSTALL_PATH=/usr/local/bin VERSION=$GRAPHQL_ENGINE_TAG bash
 RUN wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 && chmod a+x /usr/local/bin/yq
 
 # ----------------------------

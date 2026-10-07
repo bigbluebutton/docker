@@ -1,0 +1,26 @@
+expressServer:
+  host: 0.0.0.0
+
+hocuspocusServer:
+  host: 0.0.0.0
+
+commandExecution:
+  workDir: /tmp/shared-notes-dropbox/
+  runnerScript: "" # no additional sandbox for pdf generation
+  timeout: ""
+
+bbbWeb:
+  host: bbb-web
+
+log:
+  level: info
+
+redis:
+  host: redis
+
+rateLimit:
+  maxRequestsPerWindow: 60
+  windowInSeconds: 60
+
+postgres:
+  host: postgres

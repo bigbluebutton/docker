@@ -33,8 +33,10 @@ services:
     restart: unless-stopped
     depends_on:
         - redis
+        {{ if isTrue .Env.USE_INSECURE_ETHERPAD }}
         - etherpad
         - bbb-pads
+        {{ end }}
         {{ if isTrue .Env.ENABLE_COLLABORA }}
         - collabora
         {{ end }}
@@ -55,6 +57,7 @@ services:
       TURN_EXT_SECRET: ${TURN_EXT_SECRET:-}
       ENABLE_LEARNING_DASHBOARD: ${ENABLE_LEARNING_DASHBOARD:-true}
       COLLABORA_URL: ${COLLABORA_URL:-https://collabora:9980/cool}
+      USE_INSECURE_ETHERPAD: ${USE_INSECURE_ETHERPAD:-false}
     volumes:
       - ./data/bigbluebutton:/var/bigbluebutton
       - ./data/freeswitch-meetings:/var/freeswitch/meetings
@@ -118,7 +121,6 @@ services:
         - src-html5=./repos/bigbluebutton/bigbluebutton-html5
       args:
         BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
-        TAG_BBB: {{ .Env.TAG_BBB }}
     image: alangecker/bbb-docker-nginx:{{ .Env.TAG_BBB }}-{{ .Env.TAG_PLAYBACK }}-1.29
     restart: unless-stopped
     volumes:
@@ -153,7 +155,10 @@ services:
       - "greenlight:10.7.7.21"
       - "bbb-graphql-server:10.7.7.31"
       - "bbb-graphql-middleware:10.7.7.32"
+      - "bbb-shared-notes-server:10.7.7.23"
 
+
+  {{ if isTrue .Env.USE_INSECURE_ETHERPAD }}
   etherpad:
     build: 
       context: mod/etherpad
@@ -192,6 +197,24 @@ services:
       bbb-net:
         ipv4_address: 10.7.7.18
 
+  {{ else }}
+
+  bbb-shared-notes-server:
+    build:
+      context: mod/bbb-shared-notes-server
+      additional_contexts:
+        src: ./repos/bigbluebutton/bbb-shared-notes-server
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRESQL_SECRET:-password}
+    depends_on:
+      - redis
+      - postgres
+      - bbb-web
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.23
+  {{ end }}
+
   bbb-export-annotations:
     build:
       context: mod/bbb-export-annotations
@@ -201,8 +224,10 @@ services:
     restart: unless-stopped
     depends_on:
       - redis
+      {{ if isTrue .Env.USE_INSECURE_ETHERPAD }}
       - etherpad
       - bbb-pads
+      {{end}}
     networks:
     # need connections to:
     # https://github.com/bigbluebutton/bigbluebutton/blob/v2.7.0/bbb-export-annotations/config/settings.json
@@ -311,7 +336,7 @@ services:
         - src=./repos/bigbluebutton/bbb-graphql-server
       args:
         BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
-        GRAPHQL_ENGINE_TAG: v2.48.9
+        GRAPHQL_ENGINE_TAG: v2.49.3
     image: alangecker/bbb-docker-graphql-server:{{ .Env.TAG_BBB }}
     depends_on:
       - postgres
@@ -435,12 +460,16 @@ services:
         - bbb-conf=./repos/bigbluebutton/bigbluebutton-config
       args:
         BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
-        TAG_BBB_PRESENTATION_VIDEO: "5.1.0-beta.2"
+        TAG_BBB_PRESENTATION_VIDEO: "5.1.0-rc.4"
     image: alangecker/bbb-docker-recordings:{{ .Env.TAG_BBB }}
     restart: unless-stopped
     depends_on:
       - redis
+      {{ if isTrue .Env.USE_INSECURE_ETHERPAD }}
       - bbb-pads
+      {{ else }}
+      - bbb-shared-notes-server
+      {{ end }}
     environment:
       DOMAIN: ${DOMAIN}
       SHARED_SECRET: ${SHARED_SECRET}
@@ -517,7 +546,7 @@ services:
 {{ if isTrue .Env.ENABLE_COTURN }}
   # coturn
   coturn:
-    image: coturn/coturn:4.9.0-alpine
+    image: coturn/coturn:4.18.0-alpine
     restart: unless-stopped
     command:
       - "--external-ip=${EXTERNAL_IPv4}/${EXTERNAL_IPv4}"
@@ -535,7 +564,7 @@ services:
 {{ if isTrue .Env.ENABLE_GREENLIGHT }}
   # greenlight
   greenlight:
-    image: bigbluebutton/greenlight:v3.8.0
+    image: bigbluebutton/greenlight:v3.9.0.1
     restart: unless-stopped
     env_file: .env
     depends_on:
@@ -553,6 +582,7 @@ services:
       BIGBLUEBUTTON_SECRET: ${SHARED_SECRET}
       SECRET_KEY_BASE: ${RAILS_SECRET}
       RELATIVE_URL_ROOT: /
+      URL_HOST: https://${DOMAIN}
     volumes:
        - ./data/greenlight:/usr/src/app/storage
     networks:

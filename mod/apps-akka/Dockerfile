@@ -30,7 +30,7 @@ RUN yq e -i ".public.app.html5ClientBuild = \"$TAG_BBB\"" /settings.yml
 
 # ===================================================
 
-FROM alangecker/bbb-docker-base-java
+FROM alangecker/bbb-docker-base-java:21
 
 COPY --from=builder-settings /usr/local/bin/yq /usr/local/bin/yq
 COPY --from=builder /bbb-apps-akka-0.0.4 /bbb-apps-akka
