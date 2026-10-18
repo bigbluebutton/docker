@@ -204,6 +204,7 @@ services:
       context: mod/bbb-shared-notes-server
       additional_contexts:
         src: ./repos/bigbluebutton/bbb-shared-notes-server
+    image: alangecker/bbb-shared-notes-server:{{ .Env.TAG_BBB }}
     environment:
       POSTGRES_PASSWORD: ${POSTGRESQL_SECRET:-password}
     depends_on:
