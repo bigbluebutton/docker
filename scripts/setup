@@ -174,7 +174,6 @@ TURN_SECRET=$(head /dev/urandom | tr -dc A-Za-f0-9 | head -c 32)
 
 
 sed -i "s/SHARED_SECRET=.*/SHARED_SECRET=$RANDOM_1/" .env
-sed -i "s/ETHERPAD_API_KEY=.*/ETHERPAD_API_KEY=$RANDOM_2/" .env
 sed -i "s/RAILS_SECRET=.*/RAILS_SECRET=$RANDOM_3/" .env
 sed -i "s/FSESL_PASSWORD=.*/FSESL_PASSWORD=$RANDOM_4/" .env
 sed -i "s/POSTGRESQL_SECRET=.*/POSTGRESQL_SECRET=$RANDOM_5/" .env

@@ -33,10 +33,6 @@ services:
     restart: unless-stopped
     depends_on:
         - redis
-        {{ if isTrue .Env.USE_INSECURE_ETHERPAD }}
-        - etherpad
-        - bbb-pads
-        {{ end }}
         {{ if isTrue .Env.ENABLE_COLLABORA }}
         - collabora
         {{ end }}
@@ -57,7 +53,6 @@ services:
       TURN_EXT_SECRET: ${TURN_EXT_SECRET:-}
       ENABLE_LEARNING_DASHBOARD: ${ENABLE_LEARNING_DASHBOARD:-true}
       COLLABORA_URL: ${COLLABORA_URL:-https://collabora:9980/cool}
-      USE_INSECURE_ETHERPAD: ${USE_INSECURE_ETHERPAD:-false}
     volumes:
       - ./data/bigbluebutton:/var/bigbluebutton
       - ./data/freeswitch-meetings:/var/freeswitch/meetings
@@ -150,54 +145,12 @@ services:
     extra_hosts:
       - "host.docker.internal:10.7.7.1"
       - "bbb-web:10.7.7.2"
-      - "etherpad:10.7.7.4"
       - "webrtc-sfu:10.7.7.1"
       - "greenlight:10.7.7.21"
       - "bbb-graphql-server:10.7.7.31"
       - "bbb-graphql-middleware:10.7.7.32"
       - "bbb-shared-notes-server:10.7.7.23"
 
-
-  {{ if isTrue .Env.USE_INSECURE_ETHERPAD }}
-  etherpad:
-    build: 
-      context: mod/etherpad
-      additional_contexts:
-        - plugin=./repos/bbb-etherpad-plugin
-        - skin=./repos/bbb-etherpad-skin
-      args:
-        TAG_ETHERPAD: "2.4.2"
-    image: alangecker/bbb-docker-etherpad:2.4.2-s{{ .Env.COMMIT_ETHERPAD_SKIN }}-p{{ .Env.COMMIT_ETHERPAD_PLUGIN }}
-    restart: unless-stopped
-    depends_on:
-      - redis
-      {{ if isTrue .Env.ENABLE_COLLABORA }}
-      - collabora
-      {{ end }}
-    environment:
-      ETHERPAD_API_KEY: ${ETHERPAD_API_KEY}
-      COLLABORA_URL:    ${COLLABORA_URL:-https://collabora:9980/cool}
-    networks:
-      bbb-net:
-        ipv4_address: 10.7.7.4
-
-  bbb-pads:
-    build: 
-      context: mod/bbb-pads
-      additional_contexts:
-        - src=./repos/bbb-pads
-    image: alangecker/bbb-docker-pads:{{ .Env.TAG_PADS }}
-    restart: unless-stopped
-    depends_on:
-      - redis
-      - etherpad
-    environment:
-      ETHERPAD_API_KEY: ${ETHERPAD_API_KEY}
-    networks:
-      bbb-net:
-        ipv4_address: 10.7.7.18
-
-  {{ else }}
 
   bbb-shared-notes-server:
     build:
@@ -214,7 +167,6 @@ services:
     networks:
       bbb-net:
         ipv4_address: 10.7.7.23
-  {{ end }}
 
   bbb-export-annotations:
     build:
@@ -225,15 +177,10 @@ services:
     restart: unless-stopped
     depends_on:
       - redis
-      {{ if isTrue .Env.USE_INSECURE_ETHERPAD }}
-      - etherpad
-      - bbb-pads
-      {{end}}
     networks:
     # need connections to:
     # https://github.com/bigbluebutton/bigbluebutton/blob/v2.7.0/bbb-export-annotations/config/settings.json
     # "bbbWebAPI": "http://127.0.0.1:8090",    -> bbb-web
-    # "bbbPadsAPI": "http://127.0.0.1:9002",   -> bbb-pads
       bbb-net:
         ipv4_address: 10.7.7.19
     volumes:
@@ -466,11 +413,7 @@ services:
     restart: unless-stopped
     depends_on:
       - redis
-      {{ if isTrue .Env.USE_INSECURE_ETHERPAD }}
-      - bbb-pads
-      {{ else }}
       - bbb-shared-notes-server
-      {{ end }}
     environment:
       DOMAIN: ${DOMAIN}
       SHARED_SECRET: ${SHARED_SECRET}

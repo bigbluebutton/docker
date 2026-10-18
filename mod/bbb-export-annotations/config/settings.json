@@ -21,7 +21,6 @@
       "msgName": "NewPresFileAvailableMsg"
     },
     "bbbWebAPI": "http://bbb-web:8090",
-    "bbbPadsAPI": "http://bbb-pads:9002",
     "redis": {
       "host": "redis",
       "port": 6379,
