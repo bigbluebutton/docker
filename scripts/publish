@@ -38,10 +38,9 @@ docker compose push \
     bbb-graphql-actions \
     bbb-graphql-middleware \
     bbb-graphql-server \
-    bbb-pads \
+    bbb-shared-notes-server \
     bbb-web \
     bbb-webrtc-recorder \
-    etherpad \
     fsesl-akka \
     haproxy \
     nginx \
