@@ -8,8 +8,6 @@ Services as configured.
 | bbb-web | bbb-net | 10.7.7.2 |
 | freeswitch| bbb-net | 10.7.7.10 |
 | nginx | bbb-net | 10.7.7.34 |
-| etherpad | bbb-net | 10.7.7.4 |
-| bbb-pads | bbb-net | 10.7.7.18 |
 | bbb-export-annotations | bbb-net | 10.7.7.19 |
 | redis | bbb-net | 10.7.7.5 |
 | webrtc-sfu | network_mode: host | |

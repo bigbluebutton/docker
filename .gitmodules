@@ -1,9 +1,3 @@
-[submodule "repos/bbb-etherpad-skin"]
-	path = repos/bbb-etherpad-skin
-	url = https://github.com/alangecker/bbb-etherpad-skin
-[submodule "repos/bbb-etherpad-plugin"]
-	path = repos/bbb-etherpad-plugin
-	url = https://github.com/alangecker/bbb-etherpad-plugin
 [submodule "repos/bbb-webhooks"]
 	path = repos/bbb-webhooks
 	url = https://github.com/bigbluebutton/bbb-webhooks
@@ -19,9 +13,6 @@
 [submodule "repos/bbb-webrtc-sfu"]
 	path = repos/bbb-webrtc-sfu
 	url = https://github.com/bigbluebutton/bbb-webrtc-sfu.git
-[submodule "repos/bbb-pads"]
-	path = repos/bbb-pads
-	url = https://github.com/bigbluebutton/bbb-pads.git
 [submodule "repos/bbb-webrtc-recorder"]
 	path = repos/bbb-webrtc-recorder
 	url = https://github.com/bigbluebutton/bbb-webrtc-recorder.git

@@ -48,9 +48,6 @@ docker run  \
     -e TAG_WEBHOOKS=$(get_tag repos/bbb-webhooks) \
     -e TAG_PLAYBACK=$(get_tag repos/bbb-playback) \
     -e TAG_WEBRTC_RECORDER=$(get_tag repos/bbb-webrtc-recorder) \
-    -e TAG_PADS=$(get_tag repos/bbb-pads) \
-    -e COMMIT_ETHERPAD_SKIN=$(get_tag repos/bbb-etherpad-skin) \
-    -e COMMIT_ETHERPAD_PLUGIN=$(get_tag repos/bbb-etherpad-plugin) \
     -e BBB_BUILD_TAG=${BBB_BUILD_TAG} \
     -e DEV_MODE=${DEV_MODE:-false} \
     -e IGNORE_TLS_CERT_ERRORS=${IGNORE_TLS_CERT_ERRORS:-} \
@@ -64,6 +61,5 @@ docker run  \
     -e ENABLE_COLLABORA=${ENABLE_COLLABORA:-true} \
     -e ENABLE_PROMETHEUS_EXPORTER=${ENABLE_PROMETHEUS_EXPORTER:-false} \
     -e ENABLE_PROMETHEUS_EXPORTER_OPTIMIZATION=${ENABLE_PROMETHEUS_EXPORTER_OPTIMIZATION:-false} \
-    -e USE_INSECURE_ETHERPAD=${USE_INSECURE_ETHERPAD:-false} \
     jwilder/dockerize -template /docker-compose.tmpl.yml \
     > docker-compose.yml
