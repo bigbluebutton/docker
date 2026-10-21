@@ -18,6 +18,15 @@ if [ -z "$EXTERNAL_IPv4" ]; then
     exit 1
 fi
 
+if [ -z "$LIVEKIT_SECRET" ]; then
+    echo "ERROR: LIVEKIT_SECRET is not set in .env"
+    echo "BBB won't work without it."
+    echo ""
+    echo "add following to your .env file:"
+    echo "LIVEKIT_SECRET=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)"
+    exit 1
+fi
+
 if [ "${ENABLE_HTTPS_PROXY:-false}" != "false" ] && [ -z "$LETSENCRYPT_EMAIL" ] && [ -z "$DEV_MODE" ]; then
     echo "ERROR: LETSENCRYPT_EMAIL is not set in .env"
     echo "you need to specify an email adress, otherwise the certificate"
@@ -36,14 +45,12 @@ function get_tag {
 }
 
 # https://hub.docker.com/r/bigbluebutton/bbb-build
-BBB_BUILD_TAG=v3.0.x-release--2026-08-28-130955
-
+BBB_BUILD_TAG=v4.0.x-release--2026-10-08-103605
 
 docker run  \
     --rm  \
     -v $(pwd)/docker-compose.tmpl.yml:/docker-compose.tmpl.yml \
     -e TAG_BBB=$(get_tag repos/bigbluebutton) \
-    -e TAG_FREESWITCH=$(get_tag repos/freeswitch) \
     -e TAG_WEBRTC_SFU=$(get_tag repos/bbb-webrtc-sfu) \
     -e TAG_WEBHOOKS=$(get_tag repos/bbb-webhooks) \
     -e TAG_PLAYBACK=$(get_tag repos/bbb-playback) \

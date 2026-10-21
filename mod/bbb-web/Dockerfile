@@ -19,7 +19,7 @@ COPY --from=src-web / /bbb-web
 RUN cd /bbb-web && sh ./gradlew assemble
 
 # compile pres-checker
-RUN cd /bbb-web/pres-checker && gradle jar
+RUN cd /bbb-web/pres-checker && ../gradlew jar
 RUN mkdir -p /bbb-web/pres-checker/lib && find /bbb-web/pres-checker && \
     cp /bbb-web/pres-checker/build/libs/bbb-pres-check-0.0.1.jar /bbb-web/pres-checker/lib
 

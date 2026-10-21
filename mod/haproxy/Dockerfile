@@ -1,4 +1,4 @@
-FROM ghcr.io/tomdess/docker-haproxy-certbot:2.8.10
+FROM ghcr.io/tomdess/docker-haproxy-certbot:3.0.9
 
 # overwrite bootstrap.sh
 COPY bootstrap.sh /bootstrap.sh
