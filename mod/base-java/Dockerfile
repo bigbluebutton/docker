@@ -22,3 +22,5 @@ RUN wget -q https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VE
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 
+# for JVM services - reduces glibc malloc arena overhead
+ENV MALLOC_ARENA_MAX=2

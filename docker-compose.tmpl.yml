@@ -33,10 +33,6 @@ services:
     restart: unless-stopped
     depends_on:
         - redis
-        {{ if isTrue .Env.USE_INSECURE_ETHERPAD }}
-        - etherpad
-        - bbb-pads
-        {{ end }}
         {{ if isTrue .Env.ENABLE_COLLABORA }}
         - collabora
         {{ end }}
@@ -57,7 +53,6 @@ services:
       TURN_EXT_SECRET: ${TURN_EXT_SECRET:-}
       ENABLE_LEARNING_DASHBOARD: ${ENABLE_LEARNING_DASHBOARD:-true}
       COLLABORA_URL: ${COLLABORA_URL:-https://collabora:9980/cool}
-      USE_INSECURE_ETHERPAD: ${USE_INSECURE_ETHERPAD:-false}
     volumes:
       - ./data/bigbluebutton:/var/bigbluebutton
       - ./data/freeswitch-meetings:/var/freeswitch/meetings
@@ -65,52 +60,26 @@ services:
       bbb-net:
         ipv4_address: 10.7.7.2
 
-
-  freeswitch:
-    container_name: bbb-freeswitch
-    build: 
-      context: mod/freeswitch
-      additional_contexts:
-        - freeswitch=./repos/freeswitch/
-        - build-files=./repos/bigbluebutton/build/packages-template/bbb-freeswitch-core/
-        - fs-config=./repos/bigbluebutton/bbb-voice-conference/config/freeswitch/conf/
-      args:
-        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
-    image: alangecker/bbb-docker-freeswitch:{{ .Env.TAG_FREESWITCH }}-{{ .Env.TAG_BBB }}
+  livekit:
+    image: livekit/livekit-server:v1.13.10
+    depends_on:
+      - redis
+    command: --config /etc/livekit.yaml
     restart: unless-stopped
+    volumes:
+      - ./mod/livekit/livekit.yaml:/etc/livekit.yaml
+    extra_hosts:
+      - "redis:10.7.7.5"
+      - "webrtc-sfu:10.7.7.40"
+    environment:
+      LIVEKIT_KEYS: "bbb: ${LIVEKIT_SECRET}"
     cap_add:
-      - IPC_LOCK
-      - NET_ADMIN
-      - NET_RAW
-      - NET_BROADCAST
       - SYS_NICE
       - SYS_RESOURCE
-    environment:
-      DOMAIN: ${DOMAIN}
-      EXTERNAL_IPv4: ${EXTERNAL_IPv4}
-      EXTERNAL_IPv6: ${EXTERNAL_IPv6:-::1}
-      SIP_IP_ALLOWLIST: ${SIP_IP_ALLOWLIST:-}
-      DISABLE_SOUND_MUTED: ${DISABLE_SOUND_MUTED:-false}
-      DISABLE_SOUND_ALONE: ${DISABLE_SOUND_ALONE:-false}
-      SOUNDS_LANGUAGE: ${SOUNDS_LANGUAGE:-en-us-callie}
-      ESL_PASSWORD: ${FSESL_PASSWORD:-ClueCon}
-    {{ if .Env.SIP_IP_ALLOWLIST }}
-    ports:
-      - 5060:5060/udp
-    {{ end }}
-    volumes:
-      - ./conf/sip_profiles:/etc/freeswitch/sip_profiles/external-dialin
-      - ./data/freeswitch-meetings:/var/freeswitch/meetings
-    networks:
-      bbb-net:
-        ipv4_address: 10.7.7.10
-    logging:
-      # reduce logs to a minimum, so `docker compose logs -f` still works
-      driver: "local"
-      options:
-        max-size: "10k"
-        max-file: "1"
-        compress: "false"
+    # Host networking because the media ports are a wide UDP range and
+    # publishing them one by one through Docker's proxy is both slow and
+    # unreliable for real-time traffic.
+    network_mode: "host"
 
   nginx:
     build:
@@ -150,54 +119,12 @@ services:
     extra_hosts:
       - "host.docker.internal:10.7.7.1"
       - "bbb-web:10.7.7.2"
-      - "etherpad:10.7.7.4"
-      - "webrtc-sfu:10.7.7.1"
+      - "webrtc-sfu:10.7.7.40"
       - "greenlight:10.7.7.21"
       - "bbb-graphql-server:10.7.7.31"
       - "bbb-graphql-middleware:10.7.7.32"
       - "bbb-shared-notes-server:10.7.7.23"
 
-
-  {{ if isTrue .Env.USE_INSECURE_ETHERPAD }}
-  etherpad:
-    build: 
-      context: mod/etherpad
-      additional_contexts:
-        - plugin=./repos/bbb-etherpad-plugin
-        - skin=./repos/bbb-etherpad-skin
-      args:
-        TAG_ETHERPAD: "2.4.2"
-    image: alangecker/bbb-docker-etherpad:2.4.2-s{{ .Env.COMMIT_ETHERPAD_SKIN }}-p{{ .Env.COMMIT_ETHERPAD_PLUGIN }}
-    restart: unless-stopped
-    depends_on:
-      - redis
-      {{ if isTrue .Env.ENABLE_COLLABORA }}
-      - collabora
-      {{ end }}
-    environment:
-      ETHERPAD_API_KEY: ${ETHERPAD_API_KEY}
-      COLLABORA_URL:    ${COLLABORA_URL:-https://collabora:9980/cool}
-    networks:
-      bbb-net:
-        ipv4_address: 10.7.7.4
-
-  bbb-pads:
-    build: 
-      context: mod/bbb-pads
-      additional_contexts:
-        - src=./repos/bbb-pads
-    image: alangecker/bbb-docker-pads:{{ .Env.TAG_PADS }}
-    restart: unless-stopped
-    depends_on:
-      - redis
-      - etherpad
-    environment:
-      ETHERPAD_API_KEY: ${ETHERPAD_API_KEY}
-    networks:
-      bbb-net:
-        ipv4_address: 10.7.7.18
-
-  {{ else }}
 
   bbb-shared-notes-server:
     build:
@@ -214,7 +141,6 @@ services:
     networks:
       bbb-net:
         ipv4_address: 10.7.7.23
-  {{ end }}
 
   bbb-export-annotations:
     build:
@@ -225,15 +151,10 @@ services:
     restart: unless-stopped
     depends_on:
       - redis
-      {{ if isTrue .Env.USE_INSECURE_ETHERPAD }}
-      - etherpad
-      - bbb-pads
-      {{end}}
     networks:
     # need connections to:
     # https://github.com/bigbluebutton/bigbluebutton/blob/v2.7.0/bbb-export-annotations/config/settings.json
     # "bbbWebAPI": "http://127.0.0.1:8090",    -> bbb-web
-    # "bbbPadsAPI": "http://127.0.0.1:9002",   -> bbb-pads
       bbb-net:
         ipv4_address: 10.7.7.19
     volumes:
@@ -242,7 +163,7 @@ services:
       - /tmp
 
   redis:
-    image: redis:8.4-alpine
+    image: redis:8.10-alpine
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -266,43 +187,16 @@ services:
     restart: unless-stopped
     depends_on:
       - redis
-      - freeswitch
     environment:
-      ESL_PASSWORD: ${FSESL_PASSWORD:-ClueCon}
-      {{ if .Env.EXTERNAL_IPv6 }}
-      MS_WEBRTC_LISTEN_IPS: '[{"ip":"::", "announcedIp":"${EXTERNAL_IPv6}"}, {"ip":"${EXTERNAL_IPv4}", "announcedIp":"${EXTERNAL_IPv4}"}]'
-      {{else}}
-      MS_WEBRTC_LISTEN_IPS: '[{"ip":"${EXTERNAL_IPv4}", "announcedIp":"${EXTERNAL_IPv4}"}]'
-      {{end}}
+      LIVEKIT_SECRET: ${LIVEKIT_SECRET}
+      MEDIA_SERVER_ADAPTERS: "[]" # deactivate mediasoup & freeswitch
     volumes:
       - ./data/mediasoup:/var/mediasoup
     tmpfs:
       - /var/log/bbb-webrtc-sfu
-    network_mode: host
-    security_opt:
-      - seccomp:unconfined # allow io_uring access for mediasoup
-    ulimits:
-      memlock: -1 # allow io_uring_register_buffers to allocate enough ram
-
-  fsesl-akka:
-    build: 
-      context: mod/fsesl-akka
-      additional_contexts:
-        - src-common-message=./repos/bigbluebutton/bbb-common-message
-        - src-fsesl-client=./repos/bigbluebutton/bbb-fsesl-client
-        - src-fsesl-akka=./repos/bigbluebutton/akka-bbb-fsesl
-      args:
-        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
-    image: alangecker/bbb-docker-fsesl-akka:{{ .Env.TAG_BBB }}
-    restart: unless-stopped
-    depends_on:
-      - redis
-      - freeswitch
-    environment:
-      FSESL_PASSWORD: ${FSESL_PASSWORD:-ClueCon}
     networks:
       bbb-net:
-        ipv4_address: 10.7.7.14
+        ipv4_address: 10.7.7.40
 
   apps-akka:
     build: 
@@ -466,11 +360,7 @@ services:
     restart: unless-stopped
     depends_on:
       - redis
-      {{ if isTrue .Env.USE_INSECURE_ETHERPAD }}
-      - bbb-pads
-      {{ else }}
       - bbb-shared-notes-server
-      {{ end }}
     environment:
       DOMAIN: ${DOMAIN}
       SHARED_SECRET: ${SHARED_SECRET}

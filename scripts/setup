@@ -170,16 +170,16 @@ RANDOM_2=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
 RANDOM_3=$(head /dev/urandom | tr -dc a-f0-9 | head -c 128)
 RANDOM_4=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
 RANDOM_5=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
+RANDOM_6=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
 TURN_SECRET=$(head /dev/urandom | tr -dc A-Za-f0-9 | head -c 32)
 
 
 sed -i "s/SHARED_SECRET=.*/SHARED_SECRET=$RANDOM_1/" .env
-sed -i "s/ETHERPAD_API_KEY=.*/ETHERPAD_API_KEY=$RANDOM_2/" .env
 sed -i "s/RAILS_SECRET=.*/RAILS_SECRET=$RANDOM_3/" .env
 sed -i "s/FSESL_PASSWORD=.*/FSESL_PASSWORD=$RANDOM_4/" .env
 sed -i "s/POSTGRESQL_SECRET=.*/POSTGRESQL_SECRET=$RANDOM_5/" .env
+sed -i "s/LIVEKIT_SECRET=.*/LIVEKIT_SECRET=$RANDOM_6/" .env
 sed -i "s/.*TURN_SECRET=.*/TURN_SECRET=$TURN_SECRET/" .env
-
 
 ./scripts/generate-compose
 

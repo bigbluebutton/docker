@@ -24,7 +24,7 @@ RUN cd /app \
 
 
 # =============================
-FROM node:22-bookworm-slim
+FROM node:24-trixie-slim
 RUN useradd --uid 2004 --user-group webrtc-sfu 
 ENV NODE_ENV production
 

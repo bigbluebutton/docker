@@ -1,5 +1,4 @@
 redis_host: redis
-notes_endpoint: http://bbb-pads:9002/p
 bn_notes_endpoint: http://bbb-shared-notes-server:8787/loopback/api/documents
 playback_host: {{ .Env.DOMAIN }}
 playback_protocol: https

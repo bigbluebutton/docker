@@ -1,11 +1,11 @@
-FROM node:22-bookworm-slim AS builder
+FROM node:24-trixie-slim AS builder
 
 COPY --from=src / /bbb-export-annotations
 RUN cd /bbb-export-annotations && npm ci && npm install
 
 # --------------------
 
-FROM node:22-bookworm-slim
+FROM node:24-trixie-slim
 
 RUN groupadd -g 998 bigbluebutton \
     && useradd -m -u 998 -g bigbluebutton bigbluebutton
