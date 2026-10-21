@@ -1,4 +1,4 @@
-FROM node:22-bookworm-slim AS builder
+FROM node:24-trixie-slim AS builder
 
 COPY --from=src / /bbb-shared-notes-server
 RUN cd /bbb-shared-notes-server && npm ci --no-progress
@@ -18,7 +18,8 @@ RUN cd /bbb-shared-notes-server/ && \
 RUN chmod 777 /bbb-shared-notes-server/config
 # ------------------------------
 
-FROM node:22-bookworm-slim
+# wkhtmltopdf is not available on trixie
+FROM node:24-bookworm-slim
 
 RUN apt update && apt install -y wkhtmltopdf postgresql-client \
     && useradd --uid 2004 --create-home --user-group bbb-shared-notes-server

@@ -16,7 +16,6 @@ Version: 3.0.39 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigblu
 ## currently missing / broken
 - NAT support
 - bbb-transcription-controller
-- livekit
 
 ## Requirements
 - 4GB of RAM
