@@ -21,3 +21,12 @@ livekit:
   bbbDomain: BBB_DOMAIN
   tokenTTL: 14400
   key: bbb
+
+  rtcAgent:
+    enabled: true
+  sip:
+    enabled: true
+    requirePin: false # the PIN is enforced by FreeSWITCH, not by livekit-sip
+    dispatch:
+      options:
+        hidePhoneNumber: true

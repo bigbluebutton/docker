@@ -1,0 +1,8 @@
+log_level: debug
+api_key: bbb
+ws_url: ws://10.7.7.1:7880
+sip_port: 5062
+sip_port_listen: 5062
+redis:
+  address: redis:6379
+no_pin_wait_for_subscribe: false
