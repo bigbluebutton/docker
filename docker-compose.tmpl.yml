@@ -523,7 +523,7 @@ services:
       BIGBLUEBUTTON_SECRET: ${SHARED_SECRET}
       SECRET_KEY_BASE: ${RAILS_SECRET}
       RELATIVE_URL_ROOT: /
-      URL_HOST: https://${DOMAIN}
+      BYPASS_HOST: true
     volumes:
        - ./data/greenlight:/usr/src/app/storage
     networks:
