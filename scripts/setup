@@ -23,6 +23,13 @@ ensure_bbbhtml5yml
 
 EXTERNAL_IPv4=$(curl -4 -s https://icanhazip.com)
 EXTERNAL_IPv6=$(curl -6 -s -m 10 https://icanhazip.com || true)
+INTERNAL_IPv4="$EXTERNAL_IPv4"
+if command -v ip >/dev/null 2>&1; then
+    detected_ipv4=$(ip -4 route get 1.1.1.1 2>/dev/null | awk '{for (i = 1; i <= NF; i++) if ($i == "src") {print $(i + 1); exit}}')
+    if [ -n "$detected_ipv4" ]; then
+        INTERNAL_IPv4="$detected_ipv4"
+    fi
+fi
 
 greenlight=""
 while [[ ! $greenlight =~ ^(y|n)$ ]]; do
@@ -126,6 +133,7 @@ fi
 cp sample.env .env
 sed -i "s/EXTERNAL_IPv4=.*/EXTERNAL_IPv4=$EXTERNAL_IPv4/" .env
 sed -i "s/EXTERNAL_IPv6=.*/EXTERNAL_IPv6=$EXTERNAL_IPv6/" .env
+sed -i "s/INTERNAL_IPv4=.*/INTERNAL_IPv4=$INTERNAL_IPv4/" .env
 sed -i "s/DOMAIN=.*/DOMAIN=$DOMAIN/" .env
 sed -i "s/.*STUN_IP=.*/STUN_IP=$EXTERNAL_IPv4/" .env
 

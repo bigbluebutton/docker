@@ -8,11 +8,26 @@ You could dedicate a virtual host to BigBlueButton, allowing external access to 
 
 ## Installation
 1. Install BigBlueButton Docker [as explained above](#install). While running the setup script, please choose `n` when you're asked the following question: `Should an automatic HTTPS Proxy be included? (y/n)`.
-2. Now all the required Docker containers should be running. BigBlueButton listens to port 48087 (among others, but 48087 is intended for external reverse proxies). By default, the port is only opened on the internal bbb-net network created by docker-compose, so either your reverse proxy should run within the same docker-compose file or otherwise have access to the network, or the port should be made available on the host system by adding something like:
+2. Now all the required Docker containers should be running. BigBlueButton listens to port 48087 (among others, but 48087 is intended for external reverse proxies). By default, the port is only exposed on loopback and the local Docker bridge.
+
+   If the reverse proxy runs on the same host, use `127.0.0.1:48087`. If it runs on another host, set `NGINX_BIND_IP` in `.env` to an address assigned to the BigBlueButton host and regenerate Compose:
+
+   ```dotenv
+   NGINX_BIND_IP=192.168.50.10
+   ```
+
+   ```bash
+   ./scripts/generate-compose
+   docker compose up -d --no-build nginx
+   ```
+
+   Restrict TCP port `48087` to the reverse proxy's source address with the host or network firewall. Alternatively, attach a containerized reverse proxy to the `bbb-net` network and route it directly to the nginx container.
+
+   For a manual Compose override, publish only the host address that the reverse proxy can reach:
+
    ```
    ports:
-    - "127.0.0.1:48087:48087
-    - "[::1]:48087:48087
+    - "192.168.50.10:48087:48087"
    ```
    In the `nginx` container config in `docker-compose.yml`.
 
