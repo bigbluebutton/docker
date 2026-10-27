@@ -53,6 +53,7 @@ services:
       TURN_EXT_SECRET: ${TURN_EXT_SECRET:-}
       ENABLE_LEARNING_DASHBOARD: ${ENABLE_LEARNING_DASHBOARD:-true}
       COLLABORA_URL: ${COLLABORA_URL:-https://collabora:9980/cool}
+      DEFAULT_DIAL_ACCESS_NUMBER: ${SIP_DIALIN_NUMBER:-}
     volumes:
       - ./data/bigbluebutton:/var/bigbluebutton
       - ./data/freeswitch-meetings:/var/freeswitch/meetings
@@ -80,6 +81,55 @@ services:
     # publishing them one by one through Docker's proxy is both slow and
     # unreliable for real-time traffic.
     network_mode: "host"
+
+  {{ if isTrue .Env.ENABLE_SIP_DIALIN }}
+  livekit-sip:
+    build: 
+      context: mod/livekit-sip
+      additional_contexts:
+        - src-build=./repos/bigbluebutton/build/packages-template/bbb-livekit
+      args:
+        LIVEKIT_SIP_VERSION: v1.21.0
+    image: alangecker/bbb-livekit-sip:v1.21.0-{{ .Env.TAG_BBB }}
+    restart: unless-stopped
+    depends_on:
+      - redis
+    environment:
+      LIVEKIT_API_SECRET: "${LIVEKIT_SECRET}"
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.41
+
+  freeswitch:
+    build: 
+      context: mod/freeswitch
+      args:
+        FREESWITCH_VERSION: "1.11.3"
+    image: alangecker/bbb-freeswitch:v1.11.3-v4.0.0
+    restart: unless-stopped
+    cap_add:
+      - IPC_LOCK
+      - NET_ADMIN
+      - NET_RAW
+      - NET_BROADCAST
+      - SYS_NICE
+      - SYS_RESOURCE
+    volumes:
+      - ./conf/sip_profiles:/usr/share/freeswitch/conf/vanilla/sip_profiles/external:ro
+    extra_hosts:
+      - "livekit-sip:10.7.7.41"
+    network_mode: "host"
+    environment:
+      - SOUND_RATES=8000:16000
+      - SOUND_TYPES=en-us-callie
+    logging:
+      # reduce logs to a minimum, so `docker compose logs -f` still works
+      driver: "local"
+      options:
+        max-size: "10k"
+        max-file: "1"
+        compress: "false"
+  {{ end }}
 
   nginx:
     build:
