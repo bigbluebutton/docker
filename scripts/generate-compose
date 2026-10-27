@@ -68,5 +68,6 @@ docker run  \
     -e ENABLE_COLLABORA=${ENABLE_COLLABORA:-true} \
     -e ENABLE_PROMETHEUS_EXPORTER=${ENABLE_PROMETHEUS_EXPORTER:-false} \
     -e ENABLE_PROMETHEUS_EXPORTER_OPTIMIZATION=${ENABLE_PROMETHEUS_EXPORTER_OPTIMIZATION:-false} \
+    -e ENABLE_SIP_DIALIN=${ENABLE_SIP_DIALIN:-false} \
     jwilder/dockerize -template /docker-compose.tmpl.yml \
     > docker-compose.yml
