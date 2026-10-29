@@ -11,16 +11,23 @@
 
   <extension name="bbb_lk_sip_bridge">
     <condition field="destination_number" expression="^SEND_TO_LIVEKIT_SIP$">
-      <!-- Stop in-band DTMF detection so DTMF is not absorbed by FreeSWITCH. -->
+      <!-- Stop in-band DTMF detection: the trunk's RFC 2833 or SIP INFO digits
+           reach livekit-sip without it. For a trunk that sends DTMF only as
+           tones, remove this line (see DTMF troubleshooting). -->
       <action application="stop_dtmf"/>
-      <!-- Force RFC 2833 on the bridged b-leg toward livekit-sip. The BBB
-           external profile defaults to dtmf-type=info; livekit-sip negotiates
-           RFC 2833 by default. -->
-      <action application="bridge" data="{sip_dtmf_type=rfc2833}sofia/livekit/sip:${pin}@10.7.7.41:5062;transport=udp"/>
-      <!-- Control returns here only on failure (on success FreeSWITCH hangs up
-           the a-leg automatically, since hangup_after_bridge defaults to true).
-           On failure (e.g. no LiveKit dispatch for this voice bridge, or
-           livekit-sip down), play bad-pin and re-prompt. -->
+      <!-- Hang up the caller when livekit-sip ends the call; go back to the
+           PIN prompt when the bridge fails. -->
+      <action application="set" data="hangup_after_bridge=true"/>
+      <action application="set" data="continue_on_fail=true"/>
+      <!-- Stop waiting for livekit-sip to answer after 15 s (the default is 60 s). -->
+      <action application="set" data="call_timeout=15"/>
+      <!-- livekit-sip takes DTMF only as RFC 2833, and the BBB external
+           profile defaults to dtmf-type=info. dtmf_type applies to the
+           bridged leg only, so the trunk leg keeps its own DTMF mode.
+           absolute_codec_string keeps the codecs compatible across all legs
+           (provider, gateway and livekit-sip). The quotes keep the list in
+           one variable. -->
+      <action application="bridge" data="{absolute_codec_string='G722,PCMU,PCMA',dtmf_type=rfc2833}sofia/livekit/sip:${pin}@10.7.7.41:5062;transport=udp"/>
       <action application="transfer" data="LK_BAD_PIN XML public"/>
     </condition>
   </extension>
