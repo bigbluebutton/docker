@@ -18,7 +18,7 @@ if [ -z "$EXTERNAL_IPv4" ]; then
     exit 1
 fi
 
-if [ "$ENABLE_HTTPS_PROXY" ] && [ -z "$LETSENCRYPT_EMAIL" ] && [ -z "$DEV_MODE" ]; then
+if [ "${ENABLE_HTTPS_PROXY:-false}" != "false" ] && [ -z "$LETSENCRYPT_EMAIL" ] && [ -z "$DEV_MODE" ]; then
     echo "ERROR: LETSENCRYPT_EMAIL is not set in .env"
     echo "you need to specify an email adress, otherwise the certificate"
     echo "retrieval will fail"
@@ -36,7 +36,8 @@ function get_tag {
 }
 
 # https://hub.docker.com/r/bigbluebutton/bbb-build
-BBB_BUILD_TAG=v3.0.x-release--2025-10-30-133835
+BBB_BUILD_TAG=v3.0.x-release--2026-08-28-130955
+
 
 docker run  \
     --rm  \
@@ -63,5 +64,6 @@ docker run  \
     -e ENABLE_COLLABORA=${ENABLE_COLLABORA:-true} \
     -e ENABLE_PROMETHEUS_EXPORTER=${ENABLE_PROMETHEUS_EXPORTER:-false} \
     -e ENABLE_PROMETHEUS_EXPORTER_OPTIMIZATION=${ENABLE_PROMETHEUS_EXPORTER_OPTIMIZATION:-false} \
+    -e USE_INSECURE_ETHERPAD=${USE_INSECURE_ETHERPAD:-false} \
     jwilder/dockerize -template /docker-compose.tmpl.yml \
     > docker-compose.yml

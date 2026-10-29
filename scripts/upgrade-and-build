@@ -24,7 +24,7 @@ else
 
     echo ""
     echo "# rebuild images"
-    docker build -t alangecker/bbb-docker-base-java:latest mod/base-java
+    docker build -t alangecker/bbb-docker-base-java:21 mod/base-java
 
     # rebuild everything which got modified
     docker compose build

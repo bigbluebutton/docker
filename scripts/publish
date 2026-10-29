@@ -25,23 +25,22 @@ fi
 git submodule update  
 
 # build and push java base image
-docker build -t alangecker/bbb-docker-base-java:latest mod/base-java
+docker build -t alangecker/bbb-docker-base-java:21 mod/base-java
 
 # buld and push other images
 docker compose build
 
 # push images
-docker push alangecker/bbb-docker-base-java:latest
+docker push alangecker/bbb-docker-base-java:21
 docker compose push \
     apps-akka \
     bbb-export-annotations \
     bbb-graphql-actions \
     bbb-graphql-middleware \
     bbb-graphql-server \
-    bbb-pads \
+    bbb-shared-notes-server \
     bbb-web \
     bbb-webrtc-recorder \
-    etherpad \
     fsesl-akka \
     haproxy \
     nginx \

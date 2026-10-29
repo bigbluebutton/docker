@@ -54,7 +54,7 @@ RUN apt-get update && \
     && rm /tmp/libopusenc0_0.2.1-1bbb2_amd64.deb
 
 # add dockerize
-COPY --from=alangecker/bbb-docker-base-java /usr/local/bin/dockerize /usr/local/bin/dockerize
+COPY --from=alangecker/bbb-docker-base-java:21 /usr/local/bin/dockerize /usr/local/bin/dockerize
 
 # copy over built freeswitch & config
 COPY --from=builder /build/staging/opt /opt

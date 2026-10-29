@@ -19,7 +19,7 @@ RUN unzip /source/target/universal/bbb-fsesl-akka-0.0.2.zip -d /
 
 # # ===================================================
 
-FROM alangecker/bbb-docker-base-java
+FROM alangecker/bbb-docker-base-java:21
 
 COPY --from=builder /bbb-fsesl-akka-0.0.2 /bbb-fsesl-akka
 COPY bbb-fsesl-akka.conf /etc/bigbluebutton/bbb-fsesl-akka.conf.tmpl
