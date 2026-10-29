@@ -436,9 +436,14 @@ services:
       - redis
     volumes: 
       - ./data/bbb-webrtc-recorder:/var/lib/bbb-webrtc-recorder
-    # WebRTC connection to bbb-webrtc-sfu seem to 
-    # only to work via the external IP
-    network_mode: host
+    environment:
+      BBBRECORDER_LIVEKIT_APIKEY: "bbb"
+      BBBRECORDER_LIVEKIT_APISECRET: "${LIVEKIT_SECRET}"
+      BBBRECORDER_LIVEKIT_HOST: ws://10.7.7.1:7880
+      BBBRECORDER_LOG_LEVEL: "info"
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.42
     extra_hosts:
       - "redis:10.7.7.5"
 {{end}}
