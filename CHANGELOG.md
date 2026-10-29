@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## Release v3.0.39 (2026-10-29)
+- update to 3.0.39 with bbb-shared-notes-server @alangecker [#397](https://github.com/bigbluebutton/docker/pull/397)
+- Correctly check the ENABLE_HTTPS_PROXY variable @pslldq [#386](https://github.com/bigbluebutton/docker/pull/386)
+- removed $ to make commands paste-able @bilogic [#387](https://github.com/bigbluebutton/docker/pull/387)
+
+
 ## Release v3.0.19 (2026-01-24)
 - update to 3.0.19 @alangecker [#377](https://github.com/bigbluebutton/docker/pull/377)
 - Add restart policy to HAProxy container @timoschwarzer [#373](https://github.com/bigbluebutton/docker/pull/373)
