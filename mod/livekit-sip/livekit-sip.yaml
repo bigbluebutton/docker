@@ -1,4 +1,4 @@
-log_level: debug
+log_level: info
 api_key: bbb
 ws_url: ws://10.7.7.1:7880
 sip_port: 5062

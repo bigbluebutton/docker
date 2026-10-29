@@ -6,7 +6,7 @@ recordingAdapter: bbb-webrtc-recorder
 
 log:
   # trace|debug|info|warn|error
-  level: debug
+  level: info
   # Whether to log to stdout
   stdout: true
   # Whether to log to a file

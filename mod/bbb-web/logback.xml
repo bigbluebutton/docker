@@ -9,10 +9,10 @@
 
 	<logger name="akka" level="INFO" />
 	<logger name="io.lettuce" level="INFO" />
-	<logger name="org.bigbluebutton" level="DEBUG" />
+	<logger name="org.bigbluebutton" level="INFO" />
 
-	<logger name="grails.app.controllers" level="DEBUG" />
-	<logger name="grails.app.services" level="DEBUG" />
+	<logger name="grails.app.controllers" level="INFO" />
+	<logger name="grails.app.services" level="INFO" />
 
 	<logger name="org.grails.web.servlet" level="ERROR" />
 	<logger name="org.grails.web.pages" level="ERROR" />
