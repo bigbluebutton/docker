@@ -151,6 +151,10 @@ services:
       - ./mod/nginx/bbb-html5.dev.nginx:/etc/nginx/bbb/bbb-html5.nginx:ro
       {{ end }}
     ports:
+      {{ if $ignore_tls_cert_errors }}
+      - "0.0.0.0:48083:48083"
+      {{ end }}
+
       # make sure nginx ports are also still available under the
       # IPs 127.0.0.1 & 10.7.7.1 for backwards compatibility with exiting setup
       # Warning: deprecated! this gets removed at some point
@@ -521,7 +525,7 @@ services:
       DATABASE_URL: postgres://postgres:${POSTGRESQL_SECRET:-password}@postgres:5432/greenlight
       REDIS_URL: redis://redis:6379
       {{ if $ignore_tls_cert_errors }}
-      BIGBLUEBUTTON_ENDPOINT: http://10.7.7.34:48083/bigbluebutton/api
+      BIGBLUEBUTTON_ENDPOINT: http://${DOMAIN}:48083/bigbluebutton/api
       {{else}}
       BIGBLUEBUTTON_ENDPOINT: https://${DOMAIN}/bigbluebutton/api
       {{end}}
