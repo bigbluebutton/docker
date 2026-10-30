@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## Release v3.0.39-2 (2026-10-30)
+- fix broken greenlight host check @achimwilde [#403](https://github.com/bigbluebutton/docker/issues/403)
+
 ## Release v3.0.39 (2026-10-29)
 - update to 3.0.39 with bbb-shared-notes-server @alangecker [#397](https://github.com/bigbluebutton/docker/pull/397)
 - Correctly check the ENABLE_HTTPS_PROXY variable @pslldq [#386](https://github.com/bigbluebutton/docker/pull/386)
