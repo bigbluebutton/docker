@@ -29,6 +29,7 @@ services:
         - src-common-web=./repos/bigbluebutton/bbb-common-web
       args:
         BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+        TAG_BBB: {{ .Env.TAG_BBB }}
     image: alangecker/bbb-docker-web:{{ .Env.TAG_BBB }}
     restart: unless-stopped
     depends_on:
@@ -57,6 +58,7 @@ services:
     volumes:
       - ./data/bigbluebutton:/var/bigbluebutton
       - ./data/freeswitch-meetings:/var/freeswitch/meetings
+      - ./conf/bbb-web.properties:/etc/bigbluebutton/bbb-web.custom.properties:ro
     networks:
       bbb-net:
         ipv4_address: 10.7.7.2
@@ -149,6 +151,7 @@ services:
       {{ if isTrue .Env.DEV_MODE }}
       # overwrite html5 config 
       - ./mod/nginx/bbb-html5.dev.nginx:/etc/nginx/bbb/bbb-html5.nginx:ro
+      - ./conf/plugins:/www/plugins:ro
       {{ end }}
     ports:
       {{ if $ignore_tls_cert_errors }}
@@ -244,8 +247,6 @@ services:
     environment:
       LIVEKIT_SECRET: ${LIVEKIT_SECRET}
       MEDIA_SERVER_ADAPTERS: "[]" # deactivate mediasoup & freeswitch
-    volumes:
-      - ./data/mediasoup:/var/mediasoup
     tmpfs:
       - /var/log/bbb-webrtc-sfu
     networks:
@@ -402,7 +403,6 @@ services:
     volumes:
       - ./data/bigbluebutton:/var/bigbluebutton
       - ./data/freeswitch-meetings:/var/freeswitch/meetings
-      - ./data/mediasoup:/var/mediasoup
       - ./data/bbb-webrtc-recorder:/var/lib/bbb-webrtc-recorder
     tmpfs:
       - /var/log/bigbluebutton
