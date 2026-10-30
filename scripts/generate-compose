@@ -7,7 +7,7 @@ cd $(dirname $0)/..
 . scripts/functions.sh
 load_env
 
-ensure_bbbhtml5yml
+ensure_config_files_created
 
 # check for non-optional environment variables,
 # which got introduced later and may miss in existing

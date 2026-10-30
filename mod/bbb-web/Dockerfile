@@ -57,4 +57,7 @@ COPY logback.xml /usr/share/bbb-web/WEB-INF/classes/logback.xml
 COPY office-convert.sh /usr/share/bbb-libreoffice-conversion/convert.sh
 COPY run-in-systemd.sh /usr/share/bbb-web/run-in-systemd.sh
 
+ARG TAG_BBB "v4.0.0"
+RUN bash -c 'echo "BIGBLUEBUTTON_RELEASE=${TAG_BBB/v/}" > /etc/bigbluebutton/bigbluebutton-release'
+
 ENTRYPOINT ["/entrypoint.sh"]

@@ -24,8 +24,15 @@ chown -R bigbluebutton:bigbluebutton /var/bigbluebutton
 
 cd /usr/share/bbb-web/
 dockerize \
-    -template /etc/bigbluebutton/bbb-web.properties.tmpl:/etc/bigbluebutton/bbb-web.properties \
-    -template /etc/bigbluebutton/turn-stun-servers.xml.tmpl:/etc/bigbluebutton/turn-stun-servers.xml \
-    gosu bigbluebutton java -Dgrails.env=prod -Dserver.address=0.0.0.0 -Dserver.port=8090 -Dspring.main.allow-circular-references=true -Xms384m -Xmx384m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/var/bigbluebutton/diagnostics -cp . org.springframework.boot.loader.launch.WarLauncher
+    -template /etc/bigbluebutton/bbb-web.properties.tmpl:/etc/bigbluebutton/bbb-web.docker.properties \
+    -template /etc/bigbluebutton/turn-stun-servers.xml.tmpl:/etc/bigbluebutton/turn-stun-servers.xml
+
+# concat mod/bbb-web/bbb-web.properties and conf/bbb-web.properties
+cat \
+    /etc/bigbluebutton/bbb-web.docker.properties \
+    /etc/bigbluebutton/bbb-web.custom.properties \
+> /etc/bigbluebutton/bbb-web.properties
+
+gosu bigbluebutton java -Dgrails.env=prod -Dserver.address=0.0.0.0 -Dserver.port=8090 -Xms384m -Xmx384m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/var/bigbluebutton/diagnostics -cp . org.springframework.boot.loader.launch.WarLauncher
 
 
