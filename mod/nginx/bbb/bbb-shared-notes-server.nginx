@@ -1,7 +1,8 @@
 # For cluster-proxy setups it can be overridden in /etc/bigbluebutton/nginx/bbb-cluster.nginx
-if ($bbb_cors_origin = '') {
-        set $bbb_cors_origin '*';
-}
+#if ($bbb_cors_origin = '') {
+#        set $bbb_cors_origin '*';
+#}
+set $bbb_cors_origin '*';
 
 location /hocuspocus/collaboration {
   # Extract sessionToken from query parameter for auth_request
@@ -65,6 +66,8 @@ location /hocuspocus/api/ {
   auth_request_set $meeting_id $sent_http_meeting_id;
   auth_request_set $user_id $sent_http_user_id;
   auth_request_set $user_currently_online $sent_http_user_currently_online;
+  auth_request_set $meeting_name $sent_http_meeting_name;
+  auth_request_set $meeting_create_time $sent_http_meeting_create_time;
 
   gzip_static on;
   proxy_pass http://bbb-shared-notes-server:8787/api/;
@@ -76,6 +79,8 @@ location /hocuspocus/api/ {
   proxy_set_header User-id $user_id;
   # An empty auth result removes any client-supplied membership header.
   proxy_set_header User-Currently-Online $user_currently_online;
+  proxy_set_header Meeting-Name $meeting_name;
+  proxy_set_header Meeting-Create-Time $meeting_create_time;
 }
 
 location /hocuspocus/sample {

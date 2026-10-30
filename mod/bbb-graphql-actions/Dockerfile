@@ -16,7 +16,7 @@ RUN cd /src/dist && \
 
 
 # ------------------------------
-FROM node:22-bookworm-slim
+FROM node:24-trixie-slim
 
 RUN groupadd -g 2062 app \
     && useradd -m -u 2063 -g app app

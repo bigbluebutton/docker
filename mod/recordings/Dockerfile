@@ -59,8 +59,8 @@ RUN wget -q https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VE
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 # add yq for bbb-record
-RUN  wget -q https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_amd64 -O /usr/bin/yq \
-    && chmod +x /usr/bin/yq
+RUN  wget -q https://github.com/mikefarah/yq/releases/download/v4.53.2/yq_linux_amd64 -O /usr/bin/yq-go \
+    && chmod +x /usr/bin/yq-go
 
 RUN mkdir -p \
     /usr/local/bigbluebutton \

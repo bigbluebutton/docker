@@ -1,5 +1,5 @@
 # Build stage
-FROM golang:1.25 as builder
+FROM golang:1.27 as builder
 
 ARG APP_VERSION=devel
 ARG GOMOD=github.com/bigbluebutton/bbb-webrtc-recorder
@@ -21,7 +21,7 @@ RUN APP_VERSION=$(cat ./VERSION | sed 's/ /-/g') \
 RUN mv /app/build/bbb-webrtc-recorder /usr/bin/bbb-webrtc-recorder
 
 # Running stage
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 RUN apt-get update && apt-get install -y gosu
 

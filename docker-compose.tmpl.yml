@@ -29,14 +29,11 @@ services:
         - src-common-web=./repos/bigbluebutton/bbb-common-web
       args:
         BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
+        TAG_BBB: {{ .Env.TAG_BBB }}
     image: alangecker/bbb-docker-web:{{ .Env.TAG_BBB }}
     restart: unless-stopped
     depends_on:
         - redis
-        {{ if isTrue .Env.USE_INSECURE_ETHERPAD }}
-        - etherpad
-        - bbb-pads
-        {{ end }}
         {{ if isTrue .Env.ENABLE_COLLABORA }}
         - collabora
         {{ end }}
@@ -57,26 +54,60 @@ services:
       TURN_EXT_SECRET: ${TURN_EXT_SECRET:-}
       ENABLE_LEARNING_DASHBOARD: ${ENABLE_LEARNING_DASHBOARD:-true}
       COLLABORA_URL: ${COLLABORA_URL:-https://collabora:9980/cool}
-      USE_INSECURE_ETHERPAD: ${USE_INSECURE_ETHERPAD:-false}
+      DEFAULT_DIAL_ACCESS_NUMBER: ${SIP_DIALIN_NUMBER:-}
     volumes:
       - ./data/bigbluebutton:/var/bigbluebutton
       - ./data/freeswitch-meetings:/var/freeswitch/meetings
+      - ./conf/bbb-web.properties:/etc/bigbluebutton/bbb-web.custom.properties:ro
     networks:
       bbb-net:
         ipv4_address: 10.7.7.2
 
+  livekit:
+    image: livekit/livekit-server:v1.13.10
+    depends_on:
+      - redis
+    command: --config /etc/livekit.yaml
+    restart: unless-stopped
+    volumes:
+      - ./mod/livekit/livekit.yaml:/etc/livekit.yaml
+    extra_hosts:
+      - "redis:10.7.7.5"
+      - "webrtc-sfu:10.7.7.40"
+    environment:
+      LIVEKIT_KEYS: "bbb: ${LIVEKIT_SECRET}"
+    cap_add:
+      - SYS_NICE
+      - SYS_RESOURCE
+    # Host networking because the media ports are a wide UDP range and
+    # publishing them one by one through Docker's proxy is both slow and
+    # unreliable for real-time traffic.
+    network_mode: "host"
+
+  {{ if isTrue .Env.ENABLE_SIP_DIALIN }}
+  livekit-sip:
+    build: 
+      context: mod/livekit-sip
+      additional_contexts:
+        - src-build=./repos/bigbluebutton/build/packages-template/bbb-livekit
+      args:
+        LIVEKIT_SIP_VERSION: v1.21.0
+    image: alangecker/bbb-livekit-sip:v1.21.0-{{ .Env.TAG_BBB }}
+    restart: unless-stopped
+    depends_on:
+      - redis
+    environment:
+      LIVEKIT_API_SECRET: "${LIVEKIT_SECRET}"
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.41
 
   freeswitch:
-    container_name: bbb-freeswitch
     build: 
       context: mod/freeswitch
-      additional_contexts:
-        - freeswitch=./repos/freeswitch/
-        - build-files=./repos/bigbluebutton/build/packages-template/bbb-freeswitch-core/
-        - fs-config=./repos/bigbluebutton/bbb-voice-conference/config/freeswitch/conf/
       args:
-        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
-    image: alangecker/bbb-docker-freeswitch:{{ .Env.TAG_FREESWITCH }}-{{ .Env.TAG_BBB }}
+        FREESWITCH_VERSION: "1.11.3"
+    image: alangecker/bbb-freeswitch:v1.11.3-v4.0.0
     restart: unless-stopped
     cap_add:
       - IPC_LOCK
@@ -85,25 +116,14 @@ services:
       - NET_BROADCAST
       - SYS_NICE
       - SYS_RESOURCE
-    environment:
-      DOMAIN: ${DOMAIN}
-      EXTERNAL_IPv4: ${EXTERNAL_IPv4}
-      EXTERNAL_IPv6: ${EXTERNAL_IPv6:-::1}
-      SIP_IP_ALLOWLIST: ${SIP_IP_ALLOWLIST:-}
-      DISABLE_SOUND_MUTED: ${DISABLE_SOUND_MUTED:-false}
-      DISABLE_SOUND_ALONE: ${DISABLE_SOUND_ALONE:-false}
-      SOUNDS_LANGUAGE: ${SOUNDS_LANGUAGE:-en-us-callie}
-      ESL_PASSWORD: ${FSESL_PASSWORD:-ClueCon}
-    {{ if .Env.SIP_IP_ALLOWLIST }}
-    ports:
-      - 5060:5060/udp
-    {{ end }}
     volumes:
-      - ./conf/sip_profiles:/etc/freeswitch/sip_profiles/external-dialin
-      - ./data/freeswitch-meetings:/var/freeswitch/meetings
-    networks:
-      bbb-net:
-        ipv4_address: 10.7.7.10
+      - ./conf/sip_profiles:/usr/share/freeswitch/conf/vanilla/sip_profiles/external:ro
+    extra_hosts:
+      - "livekit-sip:10.7.7.41"
+    network_mode: "host"
+    environment:
+      - SOUND_RATES=8000:16000
+      - SOUND_TYPES=en-us-callie
     logging:
       # reduce logs to a minimum, so `docker compose logs -f` still works
       driver: "local"
@@ -111,6 +131,7 @@ services:
         max-size: "10k"
         max-file: "1"
         compress: "false"
+  {{ end }}
 
   nginx:
     build:
@@ -130,8 +151,13 @@ services:
       {{ if isTrue .Env.DEV_MODE }}
       # overwrite html5 config 
       - ./mod/nginx/bbb-html5.dev.nginx:/etc/nginx/bbb/bbb-html5.nginx:ro
+      - ./conf/plugins:/www/plugins:ro
       {{ end }}
     ports:
+      {{ if $ignore_tls_cert_errors }}
+      - "0.0.0.0:48083:48083"
+      {{ end }}
+
       # make sure nginx ports are also still available under the
       # IPs 127.0.0.1 & 10.7.7.1 for backwards compatibility with exiting setup
       # Warning: deprecated! this gets removed at some point
@@ -150,54 +176,12 @@ services:
     extra_hosts:
       - "host.docker.internal:10.7.7.1"
       - "bbb-web:10.7.7.2"
-      - "etherpad:10.7.7.4"
-      - "webrtc-sfu:10.7.7.1"
+      - "webrtc-sfu:10.7.7.40"
       - "greenlight:10.7.7.21"
       - "bbb-graphql-server:10.7.7.31"
       - "bbb-graphql-middleware:10.7.7.32"
       - "bbb-shared-notes-server:10.7.7.23"
 
-
-  {{ if isTrue .Env.USE_INSECURE_ETHERPAD }}
-  etherpad:
-    build: 
-      context: mod/etherpad
-      additional_contexts:
-        - plugin=./repos/bbb-etherpad-plugin
-        - skin=./repos/bbb-etherpad-skin
-      args:
-        TAG_ETHERPAD: "2.4.2"
-    image: alangecker/bbb-docker-etherpad:2.4.2-s{{ .Env.COMMIT_ETHERPAD_SKIN }}-p{{ .Env.COMMIT_ETHERPAD_PLUGIN }}
-    restart: unless-stopped
-    depends_on:
-      - redis
-      {{ if isTrue .Env.ENABLE_COLLABORA }}
-      - collabora
-      {{ end }}
-    environment:
-      ETHERPAD_API_KEY: ${ETHERPAD_API_KEY}
-      COLLABORA_URL:    ${COLLABORA_URL:-https://collabora:9980/cool}
-    networks:
-      bbb-net:
-        ipv4_address: 10.7.7.4
-
-  bbb-pads:
-    build: 
-      context: mod/bbb-pads
-      additional_contexts:
-        - src=./repos/bbb-pads
-    image: alangecker/bbb-docker-pads:{{ .Env.TAG_PADS }}
-    restart: unless-stopped
-    depends_on:
-      - redis
-      - etherpad
-    environment:
-      ETHERPAD_API_KEY: ${ETHERPAD_API_KEY}
-    networks:
-      bbb-net:
-        ipv4_address: 10.7.7.18
-
-  {{ else }}
 
   bbb-shared-notes-server:
     build:
@@ -214,7 +198,6 @@ services:
     networks:
       bbb-net:
         ipv4_address: 10.7.7.23
-  {{ end }}
 
   bbb-export-annotations:
     build:
@@ -225,15 +208,10 @@ services:
     restart: unless-stopped
     depends_on:
       - redis
-      {{ if isTrue .Env.USE_INSECURE_ETHERPAD }}
-      - etherpad
-      - bbb-pads
-      {{end}}
     networks:
     # need connections to:
     # https://github.com/bigbluebutton/bigbluebutton/blob/v2.7.0/bbb-export-annotations/config/settings.json
     # "bbbWebAPI": "http://127.0.0.1:8090",    -> bbb-web
-    # "bbbPadsAPI": "http://127.0.0.1:9002",   -> bbb-pads
       bbb-net:
         ipv4_address: 10.7.7.19
     volumes:
@@ -242,7 +220,7 @@ services:
       - /tmp
 
   redis:
-    image: redis:8.4-alpine
+    image: redis:8.10-alpine
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -266,43 +244,14 @@ services:
     restart: unless-stopped
     depends_on:
       - redis
-      - freeswitch
     environment:
-      ESL_PASSWORD: ${FSESL_PASSWORD:-ClueCon}
-      {{ if .Env.EXTERNAL_IPv6 }}
-      MS_WEBRTC_LISTEN_IPS: '[{"ip":"::", "announcedIp":"${EXTERNAL_IPv6}"}, {"ip":"${EXTERNAL_IPv4}", "announcedIp":"${EXTERNAL_IPv4}"}]'
-      {{else}}
-      MS_WEBRTC_LISTEN_IPS: '[{"ip":"${EXTERNAL_IPv4}", "announcedIp":"${EXTERNAL_IPv4}"}]'
-      {{end}}
-    volumes:
-      - ./data/mediasoup:/var/mediasoup
+      LIVEKIT_SECRET: ${LIVEKIT_SECRET}
+      MEDIA_SERVER_ADAPTERS: "[]" # deactivate mediasoup & freeswitch
     tmpfs:
       - /var/log/bbb-webrtc-sfu
-    network_mode: host
-    security_opt:
-      - seccomp:unconfined # allow io_uring access for mediasoup
-    ulimits:
-      memlock: -1 # allow io_uring_register_buffers to allocate enough ram
-
-  fsesl-akka:
-    build: 
-      context: mod/fsesl-akka
-      additional_contexts:
-        - src-common-message=./repos/bigbluebutton/bbb-common-message
-        - src-fsesl-client=./repos/bigbluebutton/bbb-fsesl-client
-        - src-fsesl-akka=./repos/bigbluebutton/akka-bbb-fsesl
-      args:
-        BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
-    image: alangecker/bbb-docker-fsesl-akka:{{ .Env.TAG_BBB }}
-    restart: unless-stopped
-    depends_on:
-      - redis
-      - freeswitch
-    environment:
-      FSESL_PASSWORD: ${FSESL_PASSWORD:-ClueCon}
     networks:
       bbb-net:
-        ipv4_address: 10.7.7.14
+        ipv4_address: 10.7.7.40
 
   apps-akka:
     build: 
@@ -431,25 +380,6 @@ services:
       driver: none
 {{ end }}
 
-  periodic:
-    build: mod/periodic
-    image: alangecker/bbb-docker-periodic:v3.0.0
-    restart: unless-stopped
-
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./data/bigbluebutton:/var/bigbluebutton
-      - ./data/mediasoup:/var/mediasoup
-    tmpfs:
-      - /var/log/bigbluebutton
-    environment:
-      ENABLE_RECORDING: ${ENABLE_RECORDING}
-      REMOVE_OLD_RECORDING: ${REMOVE_OLD_RECORDING}
-      RECORDING_MAX_AGE_DAYS: ${RECORDING_MAX_AGE_DAYS}
-    networks:
-      bbb-net:
-        ipv4_address: 10.7.7.12
-
 {{ if isTrue .Env.ENABLE_RECORDING }}
   # recordings
   recordings:
@@ -466,18 +396,13 @@ services:
     restart: unless-stopped
     depends_on:
       - redis
-      {{ if isTrue .Env.USE_INSECURE_ETHERPAD }}
-      - bbb-pads
-      {{ else }}
       - bbb-shared-notes-server
-      {{ end }}
     environment:
       DOMAIN: ${DOMAIN}
       SHARED_SECRET: ${SHARED_SECRET}
     volumes:
       - ./data/bigbluebutton:/var/bigbluebutton
       - ./data/freeswitch-meetings:/var/freeswitch/meetings
-      - ./data/mediasoup:/var/mediasoup
       - ./data/bbb-webrtc-recorder:/var/lib/bbb-webrtc-recorder
     tmpfs:
       - /var/log/bigbluebutton
@@ -496,9 +421,14 @@ services:
       - redis
     volumes: 
       - ./data/bbb-webrtc-recorder:/var/lib/bbb-webrtc-recorder
-    # WebRTC connection to bbb-webrtc-sfu seem to 
-    # only to work via the external IP
-    network_mode: host
+    environment:
+      BBBRECORDER_LIVEKIT_APIKEY: "bbb"
+      BBBRECORDER_LIVEKIT_APISECRET: "${LIVEKIT_SECRET}"
+      BBBRECORDER_LIVEKIT_HOST: ws://10.7.7.1:7880
+      BBBRECORDER_LOG_LEVEL: "info"
+    networks:
+      bbb-net:
+        ipv4_address: 10.7.7.42
     extra_hosts:
       - "redis:10.7.7.5"
 {{end}}
@@ -576,14 +506,14 @@ services:
       DATABASE_URL: postgres://postgres:${POSTGRESQL_SECRET:-password}@postgres:5432/greenlight
       REDIS_URL: redis://redis:6379
       {{ if $ignore_tls_cert_errors }}
-      BIGBLUEBUTTON_ENDPOINT: http://10.7.7.34:48083/bigbluebutton/api
+      BIGBLUEBUTTON_ENDPOINT: http://${DOMAIN}:48083/bigbluebutton/api
       {{else}}
       BIGBLUEBUTTON_ENDPOINT: https://${DOMAIN}/bigbluebutton/api
       {{end}}
       BIGBLUEBUTTON_SECRET: ${SHARED_SECRET}
       SECRET_KEY_BASE: ${RAILS_SECRET}
       RELATIVE_URL_ROOT: /
-      URL_HOST: https://${DOMAIN}
+      BYPASS_HOST: true
     volumes:
        - ./data/greenlight:/usr/src/app/storage
     networks:

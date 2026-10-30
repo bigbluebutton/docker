@@ -4,9 +4,10 @@
 <include>
   <gateway name="sipgate.de">
     <param name="proxy" value="sipgate.de"/>
-    <param name="username" value="USERNAME"/>
-    <param name="password" value="PASSWORD"/>
-    <param name="extension" value="EXTERNALDID"/>
+    <param name="username" value="PROVIDER-ACCOUNT"/>
+    <param name="password" value="PROVIDER-PASSWORD"/>
+    <param name="register" value="true"/>
+    <param name="context" value="public"/>
   </gateway>
 </include>
 -->
