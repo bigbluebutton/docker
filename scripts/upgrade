@@ -54,7 +54,6 @@ else
         mv ./greenlight-data ./data/greenlight
     fi
 
-    # TODO: ask for LETSENCRYPT_EMAIL
 
     echo ""
     echo "# pull newest images"

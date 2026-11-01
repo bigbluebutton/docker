@@ -21,8 +21,15 @@
         <constructor-arg index="1" value="turns:{{ .Env.DOMAIN }}:443?transport=tcp"/>
         <constructor-arg index="2" value="86400"/>
     </bean>
-    {{end}}
 
+    {{else}}
+    <bean id="turn1" class="org.bigbluebutton.web.services.turn.TurnServer">
+        <constructor-arg index="0" value="{{ .Env.TURN_SECRET }}"/>
+        <constructor-arg index="1" value="turn:{{ .Env.DOMAIN }}:3478?transport=tcp"/>
+        <constructor-arg index="2" value="86400"/>
+    </bean>
+
+    {{end}}
 
     {{if .Env.TURN_EXT_SERVER }}
         <bean id="turn2" class="org.bigbluebutton.web.services.turn.TurnServer">
@@ -40,14 +47,11 @@
         </property>
         <property name="turnServers">
             <set>
-                <ref bean="turn0" />
-                
-                {{if and (isTrue .Env.ENABLE_HTTPS_PROXY) (not (isTrue .Env.IGNORE_TLS_CERT_ERRORS))  }}
+                <ref bean="turn0" />               
                 <ref bean="turn1" />
-                {{end}}
 
                 {{if .Env.TURN_EXT_SERVER }}
-                <ref bean="turn2" />
+                <ref bean="turn3" />
                 {{end}}
             </set>
         </property>

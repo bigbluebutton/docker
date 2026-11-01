@@ -455,21 +455,25 @@ services:
 
 {{ if isTrue .Env.ENABLE_HTTPS_PROXY }}
 
-  haproxy:
-    build: mod/haproxy
-    image: alangecker/bbb-haproxy:3.0.9
+  https-proxy:
+    build: 
+      context: mod/caddy
+      args:
+        CADDY_TAG: "2.11"
+    image: alangecker/bbb-caddy:2.11
     restart: unless-stopped
+    
     volumes:
-      - ./data/haproxy/letsencrypt:/etc/letsencrypt
-      - ./mod/haproxy/haproxy.cfg:/etc/haproxy/haproxy.cfg
-      - ./mod/haproxy/protocolmap:/etc/haproxy/protocolmap
+      - ./data/caddy:/data
+      - ./mod/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
     environment:
-      - IGNORE_TLS_CERT_ERRORS={{$ignore_tls_cert_errors}}
-      - CERT1=${DOMAIN}
-      - EMAIL=${LETSENCRYPT_EMAIL}
+      - DOMAIN=${DOMAIN}
     ports:
       - 80:80
       - 443:443
+      - 443:443/udp
+    cap_add:
+      - NET_ADMIN
     networks:
       bbb-net:
         ipv4_address: 10.7.7.35

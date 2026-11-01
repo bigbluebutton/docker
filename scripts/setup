@@ -30,17 +30,10 @@ while [[ ! $greenlight =~ ^(y|n)$ ]]; do
 done
 
 https_proxy=""
-LETSENCRYPT_EMAIL=""
 while [[ ! $https_proxy =~ ^(y|n)$ ]]; do
     read -p "Should an automatic HTTPS Proxy be included? (y/n): " https_proxy
 done
 
-if [ "$https_proxy" == "y" ]
-then
-    while [[ ! $LETSENCRYPT_EMAIL =~ ^.+@.+\..+$ ]]; do
-        read -p "Please enter an Email adress for the Let's Encrypt notifications: " LETSENCRYPT_EMAIL
-    done
-fi
 
 DOMAIN=""
 while [[ -z "$DOMAIN" ]]; do
@@ -133,9 +126,6 @@ if [ ! "$https_proxy" == "y" ]
 then
     sed -i "s/ENABLE_HTTPS_PROXY.*/#ENABLE_HTTPS_PROXY=true/" .env
 fi
-
-sed -i "s/LETSENCRYPT_EMAIL=.*/LETSENCRYPT_EMAIL=$LETSENCRYPT_EMAIL/" .env
-
 
 if [ "$recording" == "y" ]
 then
