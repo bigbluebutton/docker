@@ -14,6 +14,9 @@ then
     exit
 
 else
+    echo ""
+    echo "# if submodules are checked out, update them"
+    git submodule update
 
     echo ""
     echo "# recreate docker-compose.yml"
@@ -69,6 +72,6 @@ else
     echo "we are on $COMMIT_HASH ($BRANCH_NAME)"
     echo ""
     echo "use following command for restarting bbb:"
-    echo "    $ docker compose up -d --no-build"
+    echo "    $ docker compose up -d --no-build --remove-orphans"
     echo "-------------------------------------"
 fi
