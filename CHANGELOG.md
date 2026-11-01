@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## Release v3.0.39-3 (2026-11-01)
+- Security: workaround for CVE-2026-111497 ("node2shell") and nginx update [#405](https://github.com/bigbluebutton/docker/issues/405)
+
 ## Release v3.0.39-2 (2026-10-30)
 - fix broken greenlight host check @achimwilde [#403](https://github.com/bigbluebutton/docker/issues/403)
 

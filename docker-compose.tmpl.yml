@@ -121,7 +121,7 @@ services:
         - src-html5=./repos/bigbluebutton/bigbluebutton-html5
       args:
         BBB_BUILD_TAG: {{ .Env.BBB_BUILD_TAG }}
-    image: alangecker/bbb-docker-nginx:{{ .Env.TAG_BBB }}-{{ .Env.TAG_PLAYBACK }}-1.29
+    image: alangecker/bbb-docker-nginx:{{ .Env.TAG_BBB }}-{{ .Env.TAG_PLAYBACK }}-1.31
     restart: unless-stopped
     volumes:
       - ./data/bigbluebutton:/var/bigbluebutton

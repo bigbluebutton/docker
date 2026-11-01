@@ -1,3 +1,11 @@
+# CVE-2026-111497 interim workaround: refuse request bodies that declare
+# Content-Encoding: br. Brotli is the only encoding affected by this CVE.
+# Remove once the Node.js runtime is upgraded to a fixed release.
+map $http_content_encoding $reject_br {
+    default 0;
+    "~*\bbr\b" 1;
+}
+
 server {
   # proxied from HAProxy
   listen 48082 http2 proxy_protocol;
@@ -20,6 +28,10 @@ server {
   # https://www.eff.org/deeplinks/2021/03/googles-floc-terrible-idea
   add_header Permissions-Policy "interest-cohort=()";
 
+  # CVE-2026-111497 interim workaround: reject Brotli request bodies
+  if ($reject_br) {
+      return 415;
+  }
 
   # Include specific rules for record and playback
   include /etc/nginx/bbb/*.nginx;
