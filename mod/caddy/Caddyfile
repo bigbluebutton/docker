@@ -1,10 +1,4 @@
 {
-	debug
-	log {
-		output stdout
-		format console
-		level DEBUG
-	}
 	default_sni {$DOMAIN}
 
 	servers :443 {
