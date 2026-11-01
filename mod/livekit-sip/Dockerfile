@@ -3,7 +3,7 @@ FROM golang:1.27.3 AS builder
 
 RUN apt update && apt install -y pkg-config libopus-dev libopusfile-dev libsoxr-dev
 
-ENV LIVKIT_SIP_VERSION=v1.21.0
+ENV LIVKIT_SIP_VERSION=v1.17.0
 
 RUN mkdir /tmp/livekit-sip && curl "https://github.com/livekit/sip/archive/${LIVKIT_SIP_VERSION}.tar.gz" -Lo - | tar -xzf - -C /tmp/livekit-sip && mv /tmp/livekit-sip/sip-* /src
 
