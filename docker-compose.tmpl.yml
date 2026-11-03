@@ -64,7 +64,8 @@ services:
         ipv4_address: 10.7.7.2
 
   livekit:
-    image: livekit/livekit-server:v1.13.10
+    build: mod/livekit
+    image: alangecker/bbb-docker-livekit:v1.13.11
     depends_on:
       - redis
     command: --config /etc/livekit.yaml

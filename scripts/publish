@@ -48,6 +48,7 @@ docker compose push \
     bbb-web \
     bbb-webrtc-recorder \
     https-proxy \
+    livekit \
     nginx \
     recordings \
     webhooks \
