@@ -1,9 +1,9 @@
 <img width="1012" alt="bbb-docker-banner" src="https://user-images.githubusercontent.com/1273169/141153216-0386cd4e-0aaf-473a-8f42-a048e52ed0d7.png">
 
 
-# 📦 BigBlueButton 3.0 Docker
+# 📦 BigBlueButton 4.0 Docker
 
-Version: 3.0.39 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigbluebutton/docker/issues) | [Upgrading](docs/upgrading.md) | [Development](docs/development.md)
+Version: 4.0.2 | [Changelog](CHANGELOG.md) | [Issues](https://github.com/bigbluebutton/docker/issues) | [Upgrading](docs/upgrading.md) | [Development](docs/development.md)
 
 ## Features
 - Easy installation
