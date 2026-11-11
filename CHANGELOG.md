@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- Add missing restart policy for bbb-shared-notes-server  [#406](https://github.com/bigbluebutton/docker/issues/406)
 
 ## Release v3.0.39-3 (2026-11-01)
 - Security: workaround for CVE-2026-111497 ("node2shell") and nginx update [#405](https://github.com/bigbluebutton/docker/issues/405)
