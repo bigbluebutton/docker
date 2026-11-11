@@ -51,7 +51,7 @@
                 <ref bean="turn1" />
 
                 {{if .Env.TURN_EXT_SERVER }}
-                <ref bean="turn3" />
+                <ref bean="turn2" />
                 {{end}}
             </set>
         </property>
