@@ -1,5 +1,9 @@
 # How To Upgrade bbb-docker
 
+## Breaking changes `v3.x` -> `v4.x`
+- SIP dialin requires now `ENABLE_SIP_DIALIN=true` in .env
+- Public SIP port changed from 5060 to 5080
+
 ### Breaking changes `v2.7.x` -> `v3.0.x`
 - **A setup behind NAT does currently not work!**
 - `LETSENCRYPT_EMAIL` is now required in `.env` when used with the integrated HAProxy

@@ -17,6 +17,11 @@ if [ -z "$ENABLE_RECORDING" ]; then
     exit 1
 fi
 
+if [ -z "$ENABLE_SIP_DIALIN" ]; then
+    echo "ERROR: ENABLE_SIP_DIALIN must be set to true, otherwise the image would not be built"
+    exit 1
+fi
+
 
 # generate compose file
 ./scripts/generate-compose
@@ -25,26 +30,26 @@ fi
 git submodule update  
 
 # build and push java base image
-docker build -t alangecker/bbb-docker-base-java:21 mod/base-java
+docker build --pull -t alangecker/bbb-docker-base-java:21 mod/base-java
 
 # buld and push other images
-docker compose build
+docker compose build --pull
 
 # push images
 docker push alangecker/bbb-docker-base-java:21
 docker compose push \
     apps-akka \
     bbb-export-annotations \
+    livekit-sip \
     bbb-graphql-actions \
     bbb-graphql-middleware \
     bbb-graphql-server \
     bbb-shared-notes-server \
     bbb-web \
     bbb-webrtc-recorder \
-    fsesl-akka \
-    haproxy \
+    https-proxy \
+    livekit \
     nginx \
-    periodic \
     recordings \
     webhooks \
     webrtc-sfu \

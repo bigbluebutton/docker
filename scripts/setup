@@ -19,7 +19,7 @@ then
 fi
 
 . scripts/functions.sh
-ensure_bbbhtml5yml
+ensure_config_files_created
 
 EXTERNAL_IPv4=$(curl -4 -s https://icanhazip.com)
 EXTERNAL_IPv6=$(curl -6 -s -m 10 https://icanhazip.com || true)
@@ -30,17 +30,10 @@ while [[ ! $greenlight =~ ^(y|n)$ ]]; do
 done
 
 https_proxy=""
-LETSENCRYPT_EMAIL=""
 while [[ ! $https_proxy =~ ^(y|n)$ ]]; do
     read -p "Should an automatic HTTPS Proxy be included? (y/n): " https_proxy
 done
 
-if [ "$https_proxy" == "y" ]
-then
-    while [[ ! $LETSENCRYPT_EMAIL =~ ^.+@.+\..+$ ]]; do
-        read -p "Please enter an Email adress for the Let's Encrypt notifications: " LETSENCRYPT_EMAIL
-    done
-fi
 
 DOMAIN=""
 while [[ -z "$DOMAIN" ]]; do
@@ -49,11 +42,6 @@ done
 
 recording=""
 echo "Should the recording feature be included?"
-echo "   IMPORTANT: this is currently a big privacy issues, because it will "
-echo "   record everything which happens in the conference, even when the button"
-echo "   suggests, that it does not."
-echo "   make sure that you always get people's consent, before they join a room!"
-echo "   https://github.com/bigbluebutton/bigbluebutton/issues/9202"
 while [[ ! $recording =~ ^(y|n)$ ]]; do
     read -p "Choice (y/n): " recording
 done
@@ -71,24 +59,6 @@ then
     while [[ ! $prometheus_exporter_optimization =~ ^(y|n)$ ]]; do
         read -p "Choice (y/n): " prometheus_exporter_optimization
     done
-fi
-
-if [ "$recording" == "y" ]
-then
-
-  remove_old_recording=""
-  while [[ ! $remove_old_recording =~ ^(y|n)$ ]]; do
-      read -p "Should old recordings be removed? (y/n): " remove_old_recording
-  done
-
-  if [ "$remove_old_recording" == "y" ]
-  then
-    recording_max_age_days=""
-    while [[ ! $recording_max_age_days =~ ^[0-9]{1,4}$ ]]; do
-        read -p "Please enter max age(days) for keeping recordings: " recording_max_age_days
-    done
-  fi
-
 fi
 
 ip_correct=""
@@ -139,18 +109,9 @@ then
     sed -i "s/ENABLE_HTTPS_PROXY.*/#ENABLE_HTTPS_PROXY=true/" .env
 fi
 
-sed -i "s/LETSENCRYPT_EMAIL=.*/LETSENCRYPT_EMAIL=$LETSENCRYPT_EMAIL/" .env
-
-
 if [ "$recording" == "y" ]
 then
     sed -i "s/#ENABLE_RECORDING.*/ENABLE_RECORDING=true/" .env
-fi
-
-if [ "$remove_old_recording" == "y" ]
-then
-    sed -i "s/#REMOVE_OLD_RECORDING=.*/REMOVE_OLD_RECORDING=true/" .env
-    sed -i "s/#RECORDING_MAX_AGE_DAYS=.*/RECORDING_MAX_AGE_DAYS=$recording_max_age_days/" .env
 fi
 
 
@@ -170,16 +131,16 @@ RANDOM_2=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
 RANDOM_3=$(head /dev/urandom | tr -dc a-f0-9 | head -c 128)
 RANDOM_4=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
 RANDOM_5=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
+RANDOM_6=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)
 TURN_SECRET=$(head /dev/urandom | tr -dc A-Za-f0-9 | head -c 32)
 
 
 sed -i "s/SHARED_SECRET=.*/SHARED_SECRET=$RANDOM_1/" .env
-sed -i "s/ETHERPAD_API_KEY=.*/ETHERPAD_API_KEY=$RANDOM_2/" .env
 sed -i "s/RAILS_SECRET=.*/RAILS_SECRET=$RANDOM_3/" .env
 sed -i "s/FSESL_PASSWORD=.*/FSESL_PASSWORD=$RANDOM_4/" .env
 sed -i "s/POSTGRESQL_SECRET=.*/POSTGRESQL_SECRET=$RANDOM_5/" .env
+sed -i "s/LIVEKIT_SECRET=.*/LIVEKIT_SECRET=$RANDOM_6/" .env
 sed -i "s/.*TURN_SECRET=.*/TURN_SECRET=$TURN_SECRET/" .env
-
 
 ./scripts/generate-compose
 

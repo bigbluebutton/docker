@@ -1,0 +1,72 @@
+{
+	default_sni {$DOMAIN}
+
+	servers :443 {
+		protocols h1 h2 h3
+
+		listener_wrappers {
+			layer4 {
+				# 1. Client explicitly offers stun.turn -> TURN
+				@turn tls alpn stun.turn
+				route @turn {
+					tls {
+						connection_policy {
+							default_sni {$DOMAIN}
+							alpn stun.turn
+						}
+					}
+					proxy 10.7.7.1:3478
+				}
+
+				# 2. No web ALPN at all (scripts, or TURN clients without ALPN):
+				#    terminate TLS and tell HTTP from STUN by content
+				@noalpn {
+					tls
+					not tls alpn h2 http/1.1
+				}
+				route @noalpn {
+					tls {
+						connection_policy {
+							default_sni {$DOMAIN}
+							alpn stun.turn
+						}
+					}
+					subroute {
+						# STUN header: 4 bytes, then magic cookie 21 12 A4 42 ('!' 0x12 <any> 'B')
+						@stun regexp `(?s)^....!\x12.B` 8
+						route @stun {
+							proxy 10.7.7.1:3478
+						}
+
+						@http http
+						route @http {
+							proxy 10.7.7.34:48081 {
+								proxy_protocol v1
+							}
+						}
+					}
+				}
+			}
+
+			# 3. Client ALPN explicitly offers h2 or http/1.1
+			tls
+		}
+	}
+}
+
+{$DOMAIN} {
+	tls {
+		protocols tls1.2 tls1.3
+	}
+
+	log {
+		output stdout
+		format console
+	}
+
+	reverse_proxy 10.7.7.34:48081 {
+		transport http {
+			proxy_protocol v1
+		}
+	}
+}

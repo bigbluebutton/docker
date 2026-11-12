@@ -19,7 +19,7 @@ COPY --from=src-web / /bbb-web
 RUN cd /bbb-web && sh ./gradlew assemble
 
 # compile pres-checker
-RUN cd /bbb-web/pres-checker && gradle jar
+RUN cd /bbb-web/pres-checker && ../gradlew jar
 RUN mkdir -p /bbb-web/pres-checker/lib && find /bbb-web/pres-checker && \
     cp /bbb-web/pres-checker/build/libs/bbb-pres-check-0.0.1.jar /bbb-web/pres-checker/lib
 
@@ -56,5 +56,8 @@ COPY turn-stun-servers.xml /etc/bigbluebutton/turn-stun-servers.xml.tmpl
 COPY logback.xml /usr/share/bbb-web/WEB-INF/classes/logback.xml
 COPY office-convert.sh /usr/share/bbb-libreoffice-conversion/convert.sh
 COPY run-in-systemd.sh /usr/share/bbb-web/run-in-systemd.sh
+
+ARG TAG_BBB "v4.0.0"
+RUN bash -c 'echo "BIGBLUEBUTTON_RELEASE=${TAG_BBB/v/}" > /etc/bigbluebutton/bigbluebutton-release'
 
 ENTRYPOINT ["/entrypoint.sh"]

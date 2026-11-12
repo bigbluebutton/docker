@@ -5,9 +5,9 @@ RUN apt-get update && apt-get install -y \
         imagemagick xpdf-utils curl \
     && sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
 
-ENV LANG en_US.UTF-8  
-ENV LANGUAGE en_US:en  
-ENV LC_ALL en_US.UTF-8     
+ENV LANG=en_US.UTF-8  
+ENV LANGUAGE=en_US:en  
+ENV LC_ALL=en_US.UTF-8     
 
 # add user & group
 RUN groupadd -g 998 bigbluebutton \
@@ -16,9 +16,11 @@ RUN groupadd -g 998 bigbluebutton \
     && chown bigbluebutton:bigbluebutton /etc/bigbluebutton
 
 # add dockerize
-ENV DOCKERIZE_VERSION v0.7.0
+ENV DOCKERIZE_VERSION=v0.7.0
 RUN wget -q https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 
+# for JVM services - reduces glibc malloc arena overhead
+ENV MALLOC_ARENA_MAX=2

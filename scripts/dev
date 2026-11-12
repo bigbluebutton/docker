@@ -4,7 +4,7 @@ set -e
 cd "$(dirname "$0")/.."
 . scripts/functions.sh
 
-ensure_bbbhtml5yml
+ensure_config_files_created
 
 create_dev_env () {
     cp dev.env .env

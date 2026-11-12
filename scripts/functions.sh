@@ -16,9 +16,9 @@ function ensure_submodules {
     
 }
 
-# this file should exist, otherwise it is created by docker
+# these files should exist, otherwise there are created by docker
 # with the wrong permissions
-function ensure_bbbhtml5yml {
+function ensure_config_files_created {
     if [ ! -f conf/bbb-html5.yml ]; then
 
         cat << EOF > conf/bbb-html5.yml
@@ -28,4 +28,14 @@ public:
     appName: BigBlueButton HTML5 Client (docker)
 EOF
     fi
+
+    if [ ! -f conf/bbb-web.properties ]; then
+
+        cat << EOF > conf/bbb-web.properties
+# this file equals the /etc/bigbluebutton/bbb-web.properties file referenced in the docs
+
+#pluginManifests=[{"url": "http://<your-URL>/manifest.json"}]
+EOF
+    fi
+
 }

@@ -1,0 +1,18 @@
+#!/bin/bash -e
+
+cd "$(dirname "$0")/.."
+
+. scripts/functions.sh
+load_env
+
+docker build --quiet --tag bbbctl mod/bbbctl >/dev/null
+
+INSECURE_FLAG=""
+if [ "$IGNORE_TLS_CERT_ERRORS"  ] && [ "$IGNORE_TLS_CERT_ERRORS" != "false" ]; then
+    INSECURE_FLAG="--insecure"
+fi
+
+docker run --rm -it \
+    -e "BBBCTL_SERVER=https://$DOMAIN" \
+    -e "BBBCTL_SECRET=$SHARED_SECRET" \
+    bbbctl bbbctl $INSECURE_FLAG "$@"

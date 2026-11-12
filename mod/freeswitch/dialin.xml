@@ -1,0 +1,43 @@
+<include>
+  <extension name="from_my_provider_lk">
+    <condition field="destination_number" expression="^(?!SEND_TO_LIVEKIT_SIP$|LK_BAD_PIN$).+$">
+      <action application="start_dtmf"/>
+      <action application="answer"/>
+      <action application="sleep" data="1000"/>
+      <action application="play_and_get_digits" data="5 9 3 30000 # conference/conf-pin.wav ivr/ivr-that_was_an_invalid_entry.wav pin \d+"/>
+      <action application="transfer" data="SEND_TO_LIVEKIT_SIP XML public"/>
+    </condition>
+  </extension>
+
+  <extension name="bbb_lk_sip_bridge">
+    <condition field="destination_number" expression="^SEND_TO_LIVEKIT_SIP$">
+      <!-- Stop in-band DTMF detection: the trunk's RFC 2833 or SIP INFO digits
+           reach livekit-sip without it. For a trunk that sends DTMF only as
+           tones, remove this line (see DTMF troubleshooting). -->
+      <action application="stop_dtmf"/>
+      <!-- Hang up the caller when livekit-sip ends the call; go back to the
+           PIN prompt when the bridge fails. -->
+      <action application="set" data="hangup_after_bridge=true"/>
+      <action application="set" data="continue_on_fail=true"/>
+      <!-- Stop waiting for livekit-sip to answer after 15 s (the default is 60 s). -->
+      <action application="set" data="call_timeout=15"/>
+      <!-- livekit-sip takes DTMF only as RFC 2833, and the BBB external
+           profile defaults to dtmf-type=info. dtmf_type applies to the
+           bridged leg only, so the trunk leg keeps its own DTMF mode.
+           absolute_codec_string keeps the codecs compatible across all legs
+           (provider, gateway and livekit-sip). The quotes keep the list in
+           one variable. -->
+      <action application="bridge" data="{absolute_codec_string='G722,PCMU,PCMA',dtmf_type=rfc2833}sofia/livekit/sip:${pin}@10.7.7.41:5062;transport=udp"/>
+      <action application="transfer" data="LK_BAD_PIN XML public"/>
+    </condition>
+  </extension>
+
+  <extension name="bbb_lk_bad_pin">
+    <condition field="destination_number" expression="^LK_BAD_PIN$">
+      <action application="answer"/>
+      <action application="sleep" data="1000"/>
+      <action application="play_and_get_digits" data="5 9 3 30000 # conference/conf-bad-pin.wav ivr/ivr-that_was_an_invalid_entry.wav pin \d+"/>
+      <action application="transfer" data="SEND_TO_LIVEKIT_SIP XML public"/>
+    </condition>
+  </extension>
+</include>

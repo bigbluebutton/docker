@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+**Breaking change!** make sure to read the [upgrading notes](https://github.com/bigbluebutton/docker/blob/develop/docs/upgrading.md)
+- BigBlueButton v4.0 @alangecker [#398](https://github.com/bigbluebutton/docker/pull/398)
 - Add missing restart policy for bbb-shared-notes-server  [#406](https://github.com/bigbluebutton/docker/issues/406)
 
 ## Release v3.0.39-3 (2026-11-01)
