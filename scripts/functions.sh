@@ -1,5 +1,5 @@
 function load_env {
-    export $(cat .env | sed 's/#.*//g' | grep -v "WELCOME_FOOTER" | grep -v "WELCOME_MESSAGE" | xargs)
+    export $(cat .env | sed 's/#.*//g' | grep -vE "^(WELCOME_FOOTER|WELCOME_MESSAGE|SIP_DIALIN_NUMBER)" | xargs)
 }
 
 function ensure_submodules {
