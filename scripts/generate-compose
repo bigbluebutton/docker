@@ -27,6 +27,15 @@ if [ -z "$LIVEKIT_SECRET" ]; then
     exit 1
 fi
 
+if [ -z "$PAGE_TOKEN_SECRET" ]; then
+    echo "ERROR: PAGE_TOKEN_SECRET is not set in .env"
+    echo "BBB won't work without it."
+    echo ""
+    echo "add following to your .env file:"
+    echo "PAGE_TOKEN_SECRET=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 40)"
+    exit 1
+fi
+
 
 function get_tag {
   # is submodule checked out?
@@ -39,7 +48,7 @@ function get_tag {
 }
 
 # https://hub.docker.com/r/bigbluebutton/bbb-build
-BBB_BUILD_TAG=v4.0.x-release--2026-10-21-124037
+BBB_BUILD_TAG=v4.0.x-release--2026-11-19-140801
 
 docker run  \
     --rm  \

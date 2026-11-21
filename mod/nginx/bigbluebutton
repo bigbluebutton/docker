@@ -35,6 +35,9 @@ server {
       return 415;
   }
 
+  # Mitigation for nginx2root and possible further http2 bugs
+  http2 off;
+
   # Include specific rules for record and playback
   include /etc/nginx/bbb/*.nginx;
 
@@ -85,6 +88,9 @@ upstream hasura {
 }
 server {
     listen 8185;
+    
+    # Mitigation for nginx2root and possible further http2 bugs
+    http2 off;
 
     root /var/www/html;
 
